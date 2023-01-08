@@ -26,6 +26,16 @@ internal class CalendarsModuleTest
         Assert.That(besselianEpoch, Is.EqualTo(1982.418424159278580).Within(1e-12));
     }
 
+    [Test]
+    public void BesselianEpochToJulianDate_Test()
+    {
+        double besselianEpoch = 1957.3;
+
+        JulianDate julianDate = CalendarsModule.BesselianEpochToJulianDate(besselianEpoch);
+
+        Assert.That(julianDate.Date, Is.EqualTo(2400000.5 + 35948.1915101513).Within(1e-9));
+    }
+
     #endregion
 
 }

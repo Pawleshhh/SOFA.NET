@@ -125,6 +125,9 @@ public readonly struct JulianDate : IComparable, IComparable<JulianDate>, IEquat
 
     public static JulianDate MaxValue { get; } = new JulianDate(maxValue);
 
+    public static JulianDate FromBesselianEpoch(double besselianEpoch)
+        => CalendarsModule.BesselianEpochToJulianDate(besselianEpoch);
+
     #endregion
 
     #region IComparable

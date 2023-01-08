@@ -44,4 +44,13 @@ public static class CalendarsModule
             + (julianDate.FractionOfDay + D1900)) / Constants.DTY;
     }
 
+    /// <summary>
+    /// Besselian Epoch to Julian Date.
+    /// SOFA name: iauEpb2jd
+    /// </summary>
+    /// <param name="besselianEpoch">Besselian epoch</param>
+    /// <returns>Julian date</returns>
+    public static JulianDate BesselianEpochToJulianDate(double besselianEpoch)
+        => new(Constants.DJM0 + (15019.81352 + (besselianEpoch - 1900.0) * Constants.DTY));
+
 }
