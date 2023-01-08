@@ -1,6 +1,6 @@
 ﻿namespace SOFA.NET;
 
-public static class SofaConstants
+public static class Constants
 {
 
     /// <summary>
