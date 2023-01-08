@@ -18,9 +18,12 @@ internal class JulianDateTest
         JulianDate julianDate = new JulianDate(dayNumber, fraction);
 
         // ASSERT
-        Assert.That(julianDate.DayNumber, Is.EqualTo(dayNumber));
-        Assert.That(julianDate.FractionOfDay, Is.EqualTo(fraction));
-        Assert.That(julianDate.Date, Is.EqualTo(date));
+        Assert.Multiple(() =>
+        {
+            Assert.That(julianDate.DayNumber, Is.EqualTo(dayNumber));
+            Assert.That(julianDate.FractionOfDay, Is.EqualTo(fraction));
+            Assert.That(julianDate.Date, Is.EqualTo(date));
+        });
     }
 
     [TestCase(0.5, 1.0)]
@@ -60,9 +63,12 @@ internal class JulianDateTest
         JulianDate julianDate = new JulianDate(date);
 
         // ASSERT
-        Assert.That(julianDate.Date, Is.EqualTo(date));
-        Assert.That(julianDate.DayNumber, Is.EqualTo(dayNumber));
-        Assert.That(julianDate.FractionOfDay, Is.EqualTo(fraction).Within(0.0001)); // There is tolerance because of numerical problems
+        Assert.Multiple(() =>
+        {
+            Assert.That(julianDate.Date, Is.EqualTo(date));
+            Assert.That(julianDate.DayNumber, Is.EqualTo(dayNumber));
+            Assert.That(julianDate.FractionOfDay, Is.EqualTo(fraction).Within(0.0001)); // There is tolerance because of numerical problems
+        });
     }
 
     [TestCase(0.0 - Epsilon)]
@@ -85,8 +91,11 @@ internal class JulianDateTest
         var (resultDayNumber, resultFraction) = julianDate;
 
         // ASSERT
-        Assert.That(resultDayNumber, Is.EqualTo(dayNumber));
-        Assert.That(resultFraction, Is.EqualTo(fraction));
+        Assert.Multiple(() =>
+        {
+            Assert.That(resultDayNumber, Is.EqualTo(dayNumber));
+            Assert.That(resultFraction, Is.EqualTo(fraction));
+        });
     }
 
     [TestCase]
@@ -100,7 +109,7 @@ internal class JulianDateTest
         bool result = julianDate.Equals(obj);
 
         // ASSERT
-        Assert.IsFalse(result);
+        Assert.That(result, Is.False);
     }
 
     [TestCase]
@@ -114,7 +123,7 @@ internal class JulianDateTest
         bool result = julianDate.Equals(obj);
 
         // ASSERT
-        Assert.IsFalse(result);
+        Assert.That(result, Is.False);
     }
 
     [TestCase(240519.44, 240519.44, true)]
@@ -152,7 +161,7 @@ internal class JulianDateTest
         int result = julianDate.CompareTo(obj);
 
         // ASSERT
-        Assert.Zero(result);
+        Assert.That(result, Is.Zero);
     }
 
     [Test]
@@ -166,7 +175,7 @@ internal class JulianDateTest
         int result = julianDate.CompareTo(obj);
 
         // ASSERT
-        Assert.Zero(result);
+        Assert.That(result, Is.Zero);
     }
 
     [TestCase(240519.44, 240519.44, 0)]
@@ -219,7 +228,7 @@ internal class JulianDateTest
         }
 
         // ASSERT
-        Assert.AreEqual(expectedResult, result);
+        Assert.That(result, Is.EqualTo(expectedResult));
     }
 
     private void CompareToTestHelper(JulianDate julianDate1, object julianDate2, int expectedResult, bool castJulianDate2)
@@ -236,7 +245,7 @@ internal class JulianDateTest
         }
 
         // ASSERT
-        Assert.AreEqual(expectedResult, result);
+        Assert.That(result, Is.EqualTo(expectedResult));
     }
 
     #endregion

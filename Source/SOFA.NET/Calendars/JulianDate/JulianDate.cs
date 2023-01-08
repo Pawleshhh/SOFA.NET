@@ -54,6 +54,13 @@ public readonly struct JulianDate : IComparable, IComparable<JulianDate>, IEquat
 
     #endregion
 
+    #region Methods
+
+    public double ToBesselianEpoch()
+        => CalendarsModule.JulianDateToBesselianEpoch(this);
+
+    #endregion
+
     #region Private methods
 
     private double RetrieveDayNumber(double date)

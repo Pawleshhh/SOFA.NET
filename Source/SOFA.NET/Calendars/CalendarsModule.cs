@@ -1,4 +1,6 @@
-﻿namespace SOFA.NET;
+﻿using System.Security.Cryptography;
+
+namespace SOFA.NET;
 
 public static class CalendarsModule
 {
@@ -25,6 +27,21 @@ public static class CalendarsModule
                 + id - 2432076L);
 
         return new(result + Constants.DJM0);
+    }
+
+    /// <summary>
+    /// Julian Date to Besselian Epoch
+    /// SOFA name: iauEpb
+    /// </summary>
+    /// <param name="julianDate">Julian date</param>
+    /// <returns>Besselian Epoch</returns>
+    public static double JulianDateToBesselianEpoch(JulianDate julianDate)
+    {
+        // J2000.0-B1900.0 (2415019.81352) in days
+        const double D1900 = 36524.68648;
+        return 1900.0
+            + ((julianDate.DayNumber - Constants.DJ00)
+            + (julianDate.FractionOfDay + D1900)) / Constants.DTY;
     }
 
 }
