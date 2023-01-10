@@ -46,6 +46,16 @@ internal class CalendarsModuleTest
         Assert.That(julianEpoch, Is.EqualTo(1979.760438056125941).Within(1e-12));
     }
 
+    [Test]
+    public void JulianEpochToJulianDate_Test()
+    {
+        double julianEpoch = 1996.8;
+
+        JulianDate julianDate = CalendarsModule.JulianEpochToJulianDate(julianEpoch);
+
+        Assert.That(julianDate.Date, Is.EqualTo(2400000.5 + 50375.7).Within(1e-9));
+    }
+
     #endregion
 
 }

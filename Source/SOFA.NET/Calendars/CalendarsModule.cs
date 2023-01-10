@@ -62,4 +62,12 @@ public static class CalendarsModule
     public static double JulianDateToJulianEpoch(JulianDate julianDate)
         => 2000.0 + ((julianDate.DayNumber - Constants.DJ00) / Constants.DJY);
 
+    /// <summary>
+    /// Julian Epoch to Julian Date
+    /// </summary>
+    /// <param name="julianEpoch">Julian epoch</param>
+    /// <returns>Julian date</returns>
+    public static JulianDate JulianEpochToJulianDate(double julianEpoch)
+        => new(Constants.DJM0 + (Constants.DJM00 + (julianEpoch - 2000.0) * 365.25));
+
 }
