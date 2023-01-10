@@ -56,6 +56,22 @@ internal class CalendarsModuleTest
         Assert.That(julianDate.Date, Is.EqualTo(2400000.5 + 50375.7).Within(1e-9));
     }
 
+    [Test]
+    public void JulianDateToGregorianCalendar_Test()
+    {
+        JulianDate julianDate = new(2400000.5 + 50123.9999);
+
+        DateTime dateTime = CalendarsModule.JulianDateToGregorianCalendar(julianDate);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(dateTime.Year, Is.EqualTo(1996));
+            Assert.That(dateTime.Month, Is.EqualTo(2));
+            Assert.That(dateTime.Day, Is.EqualTo(10));
+            Assert.That(dateTime.TimeOfDay.TotalDays, Is.EqualTo(0.9999).Within(1e-7));
+        });
+    }
+
     #endregion
 
 }
