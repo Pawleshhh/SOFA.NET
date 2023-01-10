@@ -56,6 +56,15 @@ public readonly struct JulianDate : IComparable, IComparable<JulianDate>, IEquat
 
     #region Methods
 
+    public double JulianYear(double epoch = Constants.DJ00)
+        => ((DayNumber - epoch) + FractionOfDay) / Constants.DJY;
+
+    public double JulianCentury(double epoch = Constants.DJ00)
+        => ((DayNumber - epoch) + FractionOfDay) / Constants.DJC;
+
+    public double JulianMillenium(double epoch = Constants.DJ00)
+        => ((DayNumber - epoch) + FractionOfDay) / Constants.DJM;
+
     public double ToBesselianEpoch()
         => CalendarsModule.JulianDateToBesselianEpoch(this);
 

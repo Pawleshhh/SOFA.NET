@@ -62,7 +62,7 @@ public static class Constants
     /// <summary>
     /// Days per Julian century
     /// </summary>
-    public const double JDC = 36_525.0;
+    public const double DJC = 36_525.0;
 
     /// <summary>
     /// Days per Julian millenium
