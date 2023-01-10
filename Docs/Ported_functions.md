@@ -1,8 +1,8 @@
 #### Astronomy/Calendars
-- [ ] int iauCal2jd(int iy, int im, int id, double *djm0, double *djm);
-- [ ] double iauEpb(double dj1, double dj2);
-- [ ] void iauEpb2jd(double epb, double *djm0, double *djm);
-- [ ] double iauEpj(double dj1, double dj2);
+- [x] int iauCal2jd(int iy, int im, int id, double *djm0, double *djm);
+- [x] double iauEpb(double dj1, double dj2);
+- [x] void iauEpb2jd(double epb, double *djm0, double *djm);
+- [x] double iauEpj(double dj1, double dj2);
 - [ ] void iauEpj2jd(double epj, double *djm0, double *djm);
 - [ ] int iauJd2cal(double dj1, double dj2,
 - [ ] int *iy, int *im, int *id, double *fd);
