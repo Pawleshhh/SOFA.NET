@@ -50,4 +50,7 @@ internal static class TimeSpanExtension
 
     #endregion
 
+    public static double FractionOfDay(this TimeSpan timeSpan)
+        => timeSpan.Hours / 24.0;
+
 }

@@ -49,11 +49,13 @@ public interface ICoordinateSystem2D<T> : ICoordinateSystem<T>
         y = Y;
     }
 
-    public static ICoordinateSystem2D<T> Create<T>(T x, T y)
-        where T : struct => new CoordinateSystem2D<T>(x, y);
+    public static ICoordinateSystem2D<T> Create(T x, T y)
+        => new CoordinateSystem2D<T> { X = x, Y = y };
 }
 
-internal record CoordinateSystem2D<T>(T X, T Y) : CoordinateSystem<T>, ICoordinateSystem2D<T>
+internal record CoordinateSystem2D<T>() : CoordinateSystem<T>, ICoordinateSystem2D<T>
     where T : struct
 {
+    public required T X { get => Get(0); set => Set(0, value); }
+    public required T Y { get => Get(1); set => Set(1, value); }
 }

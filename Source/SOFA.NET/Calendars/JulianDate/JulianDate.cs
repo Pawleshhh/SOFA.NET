@@ -11,6 +11,8 @@ public readonly struct JulianDate : IComparable, IComparable<JulianDate>, IEquat
 
     public double FractionOfDay { get; }
 
+    public JulianDateKind Kind { get; } = JulianDateKind.Unspecified;
+
     #endregion
 
     #region Constructors
@@ -40,6 +42,18 @@ public readonly struct JulianDate : IComparable, IComparable<JulianDate>, IEquat
         FractionOfDay = fractionOfDay;
 
         ThrowIfDateIsNotValid(Date);
+    }
+
+    public JulianDate(double julianDate, JulianDateKind kind)
+        : this(julianDate)
+    {
+        Kind = kind;
+    }
+
+    public JulianDate(double dayNumber, double fractionOfDay, JulianDateKind kind)
+        : this(dayNumber, fractionOfDay)
+    {
+        Kind = kind;
     }
 
     #endregion
@@ -73,37 +87,6 @@ public readonly struct JulianDate : IComparable, IComparable<JulianDate>, IEquat
 
     public DateTime ToDateTime()
         => CalendarsModule.JulianDateToGregorianCalendar(this);
-
-    #endregion
-
-    #region Private methods
-
-    private double RetrieveDayNumber(double date)
-    {
-        return Math.Truncate(date - 0.5) + 0.5;
-    }
-
-    private double RetrieveFractionOfDay(double date)
-    {
-        var fraction = date - Math.Truncate(date) + 0.5;
-
-        if (fraction >= 1.0)
-        {
-            return fraction - 1.0;
-        }
-        else
-        {
-            return fraction;
-        }
-    }
-
-    private void ThrowIfDateIsNotValid(double date)
-    {
-        if (date < minValue || date > maxValue)
-        {
-            throw new ArgumentOutOfRangeException(null, date, "Julian date is out of range");
-        }
-    }
 
     #endregion
 
@@ -142,6 +125,33 @@ public readonly struct JulianDate : IComparable, IComparable<JulianDate>, IEquat
 
     public static JulianDate FromBesselianEpoch(double besselianEpoch)
         => CalendarsModule.BesselianEpochToJulianDate(besselianEpoch);
+
+    private static double RetrieveDayNumber(double date)
+    {
+        return Math.Truncate(date - 0.5) + 0.5;
+    }
+
+    private static double RetrieveFractionOfDay(double date)
+    {
+        var fraction = date - Math.Truncate(date) + 0.5;
+
+        if (fraction >= 1.0)
+        {
+            return fraction - 1.0;
+        }
+        else
+        {
+            return fraction;
+        }
+    }
+
+    private static void ThrowIfDateIsNotValid(double date)
+    {
+        if (date < minValue || date > maxValue)
+        {
+            throw new ArgumentOutOfRangeException(null, date, "Julian date is out of range");
+        }
+    }
 
     #endregion
 
@@ -215,22 +225,22 @@ public readonly struct JulianDate : IComparable, IComparable<JulianDate>, IEquat
 
     public static JulianDate operator +(JulianDate left, JulianDate right)
     {
-        return new JulianDate(left.Date + right.Date);
+        return new JulianDate(left.Date + right.Date, OperatorHelper(left, right));
     }
 
     public static JulianDate operator -(JulianDate left, JulianDate right)
     {
-        return new JulianDate(left.Date - right.Date);
+        return new JulianDate(left.Date - right.Date, OperatorHelper(left, right));
     }
 
     public static JulianDate operator *(JulianDate left, JulianDate right)
     {
-        return new JulianDate(left.Date * right.Date);
+        return new JulianDate(left.Date * right.Date, OperatorHelper(left, right));
     }
 
     public static JulianDate operator /(JulianDate left, JulianDate right)
     {
-        return new JulianDate(left.Date / right.Date);
+        return new JulianDate(left.Date / right.Date, OperatorHelper(left, right));
     }
     
     public static implicit operator double(JulianDate julianDate)
@@ -242,6 +252,9 @@ public readonly struct JulianDate : IComparable, IComparable<JulianDate>, IEquat
     {
         return new JulianDate(date);
     }
+
+    private static JulianDateKind OperatorHelper(JulianDate left, JulianDate right)
+        => left.Kind == right.Kind ? left.Kind : JulianDateKind.Unspecified;
 
     #endregion
 

@@ -12,6 +12,12 @@ internal static class DateTimeExtension
         day = dateTime.Day;
     }
 
+    public static void Deconstruct(this DateTime dateTime, out int year, out int month, out int day, out double fractionOfDay)
+    {
+        Deconstruct(dateTime, out year, out month, out day);
+        fractionOfDay = dateTime.TimeOfDay.FractionOfDay();
+    }
+
     public static void Deconstruct(this DateTime dateTime, out int year, out int month, out int day, out int hour, out int minute, out int second)
     {
         Deconstruct(dateTime, out year, out month, out day);
