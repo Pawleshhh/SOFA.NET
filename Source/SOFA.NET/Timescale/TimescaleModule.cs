@@ -30,6 +30,7 @@ public static class TimescaleModule
     #region Public
 
     /// <summary>
+    /// For a given UTC date, calculate Delta(AT) = TAI - UTC
     /// SOFA name: iauDat
     /// </summary>
     /// <param name="dateTime"></param>
@@ -41,6 +42,8 @@ public static class TimescaleModule
     }
 
     /// <summary>
+    /// An approximation to TDB-TT, the difference between barycentric
+    /// dynamical time and terrestrial time, for an observer on the Earth
     /// SOFA name: iauDtdb
     /// </summary>
     /// <param name="tdbJulianDate"></param>
@@ -146,14 +149,15 @@ public static class TimescaleModule
     }
 
     /// <summary>
+    /// International Atomic Time, TAI, to Terrestrial Time, TT
     /// SOFA name: iauTaitt
     /// </summary>
     /// <param name="taiJulianDate"></param>
     /// <returns></returns>
-    public static JulianDate InternationalAtomicTimeToTerrestrialTime(JulianDate taiJulianDate)
-        => InternationalAtomicTimeToTerrestrialTime(taiJulianDate, false);
+    public static JulianDate TaiToTt(JulianDate taiJulianDate)
+        => TaiToTt(taiJulianDate, false);
 
-    internal static JulianDate InternationalAtomicTimeToTerrestrialTime(JulianDate taiJulianDate, bool ignoreKind)
+    internal static JulianDate TaiToTt(JulianDate taiJulianDate, bool ignoreKind)
     {
         ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tai, taiJulianDate, ignoreKind);
         var (dayNumber, fractionOfDay) = taiJulianDate;
@@ -162,15 +166,16 @@ public static class TimescaleModule
     }
 
     /// <summary>
+    /// International Atomic Time, TAI, to Universal Time, UT1
     /// SOFA name: iauTaiut1
     /// </summary>
     /// <param name="taiJulianDate"></param>
     /// <param name="ut1TaiDelta"></param>
     /// <returns></returns>
-    public static JulianDate InternationalAtomicTimeToUniversalTime(JulianDate taiJulianDate, double ut1TaiDelta)
-        => InternationalAtomicTimeToUniversalTime(taiJulianDate, ut1TaiDelta, false);
+    public static JulianDate TaiToUt1(JulianDate taiJulianDate, double ut1TaiDelta)
+        => TaiToUt1(taiJulianDate, ut1TaiDelta, false);
 
-    internal static JulianDate InternationalAtomicTimeToUniversalTime(JulianDate taiJulianDate, double ut1TaiDelta, bool ignoreKind)
+    internal static JulianDate TaiToUt1(JulianDate taiJulianDate, double ut1TaiDelta, bool ignoreKind)
     {
         ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tai, taiJulianDate, ignoreKind);
         var (dayNumber, fractionOfDay) = taiJulianDate;
@@ -180,14 +185,15 @@ public static class TimescaleModule
     }
 
     /// <summary>
+    /// International Atomic Time, TAI, to Coordinated Universal Time, UTC
     /// SOFA name: iauTaiutc
     /// </summary>
     /// <param name="taiJulianDate"></param>
     /// <returns></returns>
-    public static JulianDate InternationalAtomicTimeToCoordinatedUniversalTime(JulianDate taiJulianDate)
-        => InternationalAtomicTimeToCoordinatedUniversalTime(taiJulianDate, false);
+    public static JulianDate TaiToUtc(JulianDate taiJulianDate)
+        => TaiToUtc(taiJulianDate, false);
 
-    internal static JulianDate InternationalAtomicTimeToCoordinatedUniversalTime(JulianDate taiJulianDate, bool ignoreKind)
+    internal static JulianDate TaiToUtc(JulianDate taiJulianDate, bool ignoreKind)
     {
         ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tai, taiJulianDate, ignoreKind);
         var (taiDayNumber, taiFractionOfDay) = taiJulianDate;
@@ -211,7 +217,7 @@ public static class TimescaleModule
 
         for (int i = 0; i < 3; i++)
         {
-            var (g1, g2) = CoordinatedUniversalTimeToInternationalAtomicTime(new(u1, u2), true);
+            var (g1, g2) = UtcToTai(new(u1, u2), true);
 
             u2 += a1 - g1;
             u2 += a2 - g2;
@@ -219,29 +225,30 @@ public static class TimescaleModule
 
         if (bigFirstOrder)
         {
-            return new(u1, u2);
+            return new(u1, u2, JulianDateKind.Utc);
         }
         else
         {
-            return new(u2, u1);
+            return new(u2, u1, JulianDateKind.Utc);
         }
     }
 
     /// <summary>
+    /// Coordinated Universal Time, UTC, to International Atomic Time, TAI
     /// SOFA name: iauUtctai
     /// </summary>
     /// <param name="utcJulianDate"></param>
     /// <returns></returns>
-    public static JulianDate CoordinatedUniversalTimeToInternationalAtomicTime(JulianDate utcJulianDate)
-        => CoordinatedUniversalTimeToInternationalAtomicTime(utcJulianDate, false);
+    public static JulianDate UtcToTai(JulianDate utcJulianDate)
+        => UtcToTai(utcJulianDate, false);
 
-    internal static JulianDate CoordinatedUniversalTimeToInternationalAtomicTime(JulianDate utcJulianDate, bool ignoreKind)
+    internal static JulianDate UtcToTai(JulianDate utcJulianDate, bool ignoreKind)
     {
         ThrowIfNotExpectedJulianDateKind(JulianDateKind.Utc, utcJulianDate, ignoreKind);
         var (utcDayNumber, utcFractionOfDay) = utcJulianDate;
 
         double u1, u2;
-        var bigFirstOrder = (Abs(utcDayNumber) >= Abs(utcFractionOfDay));
+        var bigFirstOrder = Abs(utcDayNumber) >= Abs(utcFractionOfDay);
         if (bigFirstOrder)
         {
             u1 = utcDayNumber;
@@ -253,12 +260,11 @@ public static class TimescaleModule
             u2 = utcDayNumber;
         }
 
-        var (yearToday, monthToday, dayToday, fractionOfDay) = CalendarsModule.JulianDateToGregorianCalendar(new JulianDate(u1 + u2));
+        var (yearToday, monthToday, dayToday, fractionOfDay) = CalendarsModule.JulianDateToGregorianCalendar(u1, u2);
         double dat0 = DeltaAT(yearToday, monthToday, dayToday, 0.0);
         double dat12 = DeltaAT(yearToday, monthToday, dayToday, 0.5);
 
-        var (tomorrowYear, tomorrowMonth, tomorrowDay, _) = CalendarsModule.JulianDateToGregorianCalendar(
-            new JulianDate((u1 + 1.5) + (u2 - fractionOfDay)));
+        var (tomorrowYear, tomorrowMonth, tomorrowDay, _) = CalendarsModule.JulianDateToGregorianCalendar(u1 + 1.5, u2 - fractionOfDay);
         double dat24 = DeltaAT(tomorrowYear, tomorrowMonth, tomorrowDay, 0.0);
 
         double perDay = 2.0 * (dat12 - dat0);
@@ -273,79 +279,84 @@ public static class TimescaleModule
         a2 += fractionOfDay + dat0 / Constants.DAYSEC;
         if (bigFirstOrder)
         {
-            return new(u1, a2);
+            return new(u1, a2, JulianDateKind.Tai);
         }
         else
         {
-            return new(a2, u1);
+            return new(a2, u1, JulianDateKind.Tai);
         }
     }
 
     /// <summary>
+    /// Barycentric Coordinate Time, TCB, to Barycentric Dynamical Time, TDB
     /// SOFA name: iauTcbtdb
     /// </summary>
     /// <param name="tcbJulianDate"></param>
     /// <returns></returns>
-    public static JulianDate BarycentricCoordinateTimeToBarycentricDynamicalTime(JulianDate tcbJulianDate)
-        => BarycentricCoordinateTimeToBarycentricDynamicalTime(tcbJulianDate, false);
+    public static JulianDate TcbToTdb(JulianDate tcbJulianDate)
+        => TcbToTdb(tcbJulianDate, false);
 
-    internal static JulianDate BarycentricCoordinateTimeToBarycentricDynamicalTime(JulianDate tcbJulianDate, bool ignoreKind)
+    internal static JulianDate TcbToTdb(JulianDate tcbJulianDate, bool ignoreKind)
     {
         ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tcb, tcbJulianDate, ignoreKind);
         var (dayNumber, fractionOfDay) = tcbJulianDate;
 
         return SafeguardingPrecision(tcbJulianDate,
             fractionOfDay + tdbDaysAtTAI77 - ((dayNumber - jd77dayNumber) + (fractionOfDay - ttMinusTaiInDays)) * Constants.ELB,
-            dayNumber + tdbDaysAtTAI77 - ((fractionOfDay - jd77dayNumber) + (dayNumber - ttMinusTaiInDays)) * Constants.ELB);
+            dayNumber + tdbDaysAtTAI77 - ((fractionOfDay - jd77dayNumber) + (dayNumber - ttMinusTaiInDays)) * Constants.ELB,
+            JulianDateKind.Tdb);
     }
 
     /// <summary>
+    /// Geocentric Coordinate Time, TCG, to Terrestrial Time, TT
     /// SOFA name: iauTcgtt
     /// </summary>
     /// <param name="tcgJulianDate"></param>
     /// <returns></returns>
-    public static JulianDate GeocentricCoordinateTimeToTerrestrialTime(JulianDate tcgJulianDate)
-        => GeocentricCoordinateTimeToTerrestrialTime(tcgJulianDate, false);
+    public static JulianDate TcgToTt(JulianDate tcgJulianDate)
+        => TcgToTt(tcgJulianDate, false);
 
-    internal static JulianDate GeocentricCoordinateTimeToTerrestrialTime(JulianDate tcgJulianDate, bool ignoreKind)
+    internal static JulianDate TcgToTt(JulianDate tcgJulianDate, bool ignoreKind)
     {
         ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tcg, tcgJulianDate, ignoreKind);
         var (dayNumber, fractionOfDay) = tcgJulianDate;
 
         if (Abs(dayNumber) > Abs(fractionOfDay))
         {
-            return new(dayNumber, fractionOfDay - ((dayNumber - Constants.DJM0) + (fractionOfDay - mjd77)) * Constants.ELG);
+            return new(dayNumber, fractionOfDay - ((dayNumber - Constants.DJM0) + (fractionOfDay - mjd77)) * Constants.ELG, JulianDateKind.Tt);
         }
         else
         {
-            return new(dayNumber - ((fractionOfDay - Constants.DJM0) + (dayNumber - mjd77)) * Constants.ELG, fractionOfDay);
+            return new(dayNumber - ((fractionOfDay - Constants.DJM0) + (dayNumber - mjd77)) * Constants.ELG, fractionOfDay, JulianDateKind.Tt);
         }
     }
 
     /// <summary>
+    /// Terrestrial Time, TT, to International Atomic Time, TAI
     /// SOFA name: iauTttai
     /// </summary>
     /// <param name="ttJulianDate"></param>
     /// <returns></returns>
-    public static JulianDate TerrestrialTimeToInternationalAtomicTime(JulianDate ttJulianDate)
-        => TerrestrialTimeToInternationalAtomicTime(ttJulianDate, false);
+    public static JulianDate TtToTai(JulianDate ttJulianDate)
+        => TtToTai(ttJulianDate, false);
 
-    internal static JulianDate TerrestrialTimeToInternationalAtomicTime(JulianDate ttJulianDate, bool ignoreKind)
+    internal static JulianDate TtToTai(JulianDate ttJulianDate, bool ignoreKind)
     {
         ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate, ignoreKind);
         var (dayNumber, fractionOfDay) = ttJulianDate;
-        return SafeguardingPrecision(ttJulianDate, fractionOfDay - ttMinusTaiInDays, dayNumber - ttMinusTaiInDays);
+        return SafeguardingPrecision(ttJulianDate, fractionOfDay - ttMinusTaiInDays, dayNumber - ttMinusTaiInDays, JulianDateKind.Tai);
     }
 
     /// <summary>
+    /// Barycentric Dynamical Time, TDB, to Barycentric Coordinate Time, TCB
     /// SOFA name: iauTdbtcb
     /// </summary>
     /// <param name="tdbJulianDate"></param>
     /// <returns></returns>
-    public static JulianDate BarycentricDynamicalTimeToBarycentricCoordinateTime(JulianDate tdbJulianDate)
-        => BarycentricDynamicalTimeToBarycentricCoordinateTime(tdbJulianDate, false);
+    public static JulianDate TdbToTcb(JulianDate tdbJulianDate)
+        => TdbToTcb(tdbJulianDate, false);
 
-    internal static JulianDate BarycentricDynamicalTimeToBarycentricCoordinateTime(JulianDate tdbJulianDate, bool ignoreKind)
+    internal static JulianDate TdbToTcb(JulianDate tdbJulianDate, bool ignoreKind)
     {
         ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tdb, tdbJulianDate, ignoreKind);
         var (dayNumber, fractionOfDay) = tdbJulianDate;
@@ -356,19 +367,21 @@ public static class TimescaleModule
 
         return SafeguardingPrecision(tdbJulianDate,
             f1 - (d1 - (f1 - ttMinusTaiInDays)) * tdbToTcbRate,
-            f2 - (d2 - (f2 - ttMinusTaiInDays)) * tdbToTcbRate);
+            f2 - (d2 - (f2 - ttMinusTaiInDays)) * tdbToTcbRate,
+            JulianDateKind.Tcb);
     }
 
     /// <summary>
+    /// Barycentric Dynamical Time, TDB, to Terrestrial Time, TT
     /// SOFA name: iauTdbtt
     /// </summary>
     /// <param name="tdbJulianDate"></param>
     /// <param name="tdbMinusTtDelta"></param>
     /// <returns></returns>
-    public static JulianDate BarycentricDynamicalTimeToTerrestrialTime(JulianDate tdbJulianDate, double tdbMinusTtDelta)
-        => BarycentricDynamicalTimeToTerrestrialTime(tdbJulianDate, tdbMinusTtDelta, false);
+    public static JulianDate TdbToTt(JulianDate tdbJulianDate, double tdbMinusTtDelta)
+        => TdbToTt(tdbJulianDate, tdbMinusTtDelta, false);
 
-    internal static JulianDate BarycentricDynamicalTimeToTerrestrialTime(JulianDate tdbJulianDate, double tdbMinusTtDelta, bool ignoreKind)
+    internal static JulianDate TdbToTt(JulianDate tdbJulianDate, double tdbMinusTtDelta, bool ignoreKind)
     {
         ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tdb, tdbJulianDate, ignoreKind);
         var (dayNumber, fractionOfDay) = tdbJulianDate;
@@ -376,37 +389,41 @@ public static class TimescaleModule
         double tdbMinusTtDeltaInDays = tdbMinusTtDelta / Constants.DAYSEC;
         return SafeguardingPrecision(tdbJulianDate,
             fractionOfDay - tdbMinusTtDeltaInDays,
-            dayNumber - tdbMinusTtDeltaInDays);
+            dayNumber - tdbMinusTtDeltaInDays,
+            JulianDateKind.Tt);
     }
 
     /// <summary>
+    /// Terrestrial Time, TT, to Geocentric Coordinate Time, TCG
     /// SOFA name: iauTttcg
     /// </summary>
     /// <param name="ttJulianDate"></param>
     /// <returns></returns>
-    public static JulianDate TerrestrialTimeToGeocentricCoordinateTime(JulianDate ttJulianDate)
-        => TerrestrialTimeToGeocentricCoordinateTime(ttJulianDate, false);
+    public static JulianDate TtToTcg(JulianDate ttJulianDate)
+        => TtToTcg(ttJulianDate, false);
 
-    internal static JulianDate TerrestrialTimeToGeocentricCoordinateTime(JulianDate ttJulianDate, bool ignoreKind)
+    internal static JulianDate TtToTcg(JulianDate ttJulianDate, bool ignoreKind)
     {
         ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate, ignoreKind);
         var (dayNumber, fractionOfDay) = ttJulianDate;
 
         return SafeguardingPrecision(ttJulianDate,
             fractionOfDay + ((dayNumber - Constants.DJM0) + (fractionOfDay - mjd77)) * tdbToTcgRate,
-            dayNumber + ((fractionOfDay - Constants.DJM0) + (dayNumber - mjd77)) * tdbToTcgRate);
+            dayNumber + ((fractionOfDay - Constants.DJM0) + (dayNumber - mjd77)) * tdbToTcgRate,
+            JulianDateKind.Tcg);
     }
 
     /// <summary>
+    /// Terrestrial Time, TT, to Barycentric Dynamical Time, TDB
     /// SOFA name: iauTttdb
     /// </summary>
     /// <param name="ttJulianDate"></param>
     /// <param name="tdbMinusTtDelta"></param>
     /// <returns></returns>
-    public static JulianDate TerrestrialTimeToBarycentricDynamicalTime(JulianDate ttJulianDate, double tdbMinusTtDelta)
-        => TerrestrialTimeToBarycentricDynamicalTime(ttJulianDate, tdbMinusTtDelta, false);
+    public static JulianDate TtToTdb(JulianDate ttJulianDate, double tdbMinusTtDelta)
+        => TtToTdb(ttJulianDate, tdbMinusTtDelta, false);
 
-    internal static JulianDate TerrestrialTimeToBarycentricDynamicalTime(JulianDate ttJulianDate, double tdbMinusTtDelta, bool ignoreKind)
+    internal static JulianDate TtToTdb(JulianDate ttJulianDate, double tdbMinusTtDelta, bool ignoreKind)
     {
         ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate, ignoreKind);
         var (dayNumber, fractionOfDay) = ttJulianDate;
@@ -415,19 +432,21 @@ public static class TimescaleModule
 
         return SafeguardingPrecision(ttJulianDate,
             fractionOfDay + tdbMinusTtDeltaInDays,
-            dayNumber + tdbMinusTtDeltaInDays);
+            dayNumber + tdbMinusTtDeltaInDays,
+            JulianDateKind.Tdb);
     }
 
     /// <summary>
+    /// Terrestrial Time, TT, to Universal Time, UT1
     /// SOFA name: iauTtut1
     /// </summary>
     /// <param name="ttJulianDate"></param>
     /// <param name="ttMinusUt1Delta"></param>
     /// <returns></returns>
-    public static JulianDate TerrestrialTimeToUniversalTime(JulianDate ttJulianDate, double ttMinusUt1Delta)
-        => TerrestrialTimeToUniversalTime(ttJulianDate, ttMinusUt1Delta, false);
+    public static JulianDate TtToUt1(JulianDate ttJulianDate, double ttMinusUt1Delta)
+        => TtToUt1(ttJulianDate, ttMinusUt1Delta, false);
 
-    internal static JulianDate TerrestrialTimeToUniversalTime(JulianDate ttJulianDate, double ttMinusUt1Delta, bool ignoreKind)
+    internal static JulianDate TtToUt1(JulianDate ttJulianDate, double ttMinusUt1Delta, bool ignoreKind)
     {
         ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate, ignoreKind);
         var (dayNumber, fractionOfDay) = ttJulianDate;
@@ -436,19 +455,21 @@ public static class TimescaleModule
 
         return SafeguardingPrecision(ttJulianDate,
             fractionOfDay - ttMinusUt1InDays,
-            dayNumber - ttMinusUt1InDays);
+            dayNumber - ttMinusUt1InDays,
+            JulianDateKind.Ut1);
     }
 
     /// <summary>
+    /// Universal Time, UT1, to International Atomic Time, TAI
     /// SOFA name: iauUt1tai
     /// </summary>
     /// <param name="ut1JulianDate"></param>
     /// <param name="ut1MinusTaiDelta"></param>
     /// <returns></returns>
-    public static JulianDate UniversalTimeToInternationalAtomicTime(JulianDate ut1JulianDate, double ut1MinusTaiDelta)
-        => UniversalTimeToInternationalAtomicTime(ut1JulianDate, ut1MinusTaiDelta, false);
+    public static JulianDate Ut1ToTai(JulianDate ut1JulianDate, double ut1MinusTaiDelta)
+        => Ut1ToTai(ut1JulianDate, ut1MinusTaiDelta, false);
 
-    internal static JulianDate UniversalTimeToInternationalAtomicTime(JulianDate ut1JulianDate, double ut1MinusTaiDelta, bool ignoreKind)
+    internal static JulianDate Ut1ToTai(JulianDate ut1JulianDate, double ut1MinusTaiDelta, bool ignoreKind)
     {
         ThrowIfNotExpectedJulianDateKind(JulianDateKind.Ut1, ut1JulianDate, ignoreKind);
         var (dayNumber, fractionOfDay) = ut1JulianDate;
@@ -457,19 +478,21 @@ public static class TimescaleModule
 
         return SafeguardingPrecision(ut1JulianDate,
             fractionOfDay - ut1MinusTaiInDays,
-            dayNumber - ut1MinusTaiInDays);
+            dayNumber - ut1MinusTaiInDays,
+            JulianDateKind.Tai);
     }
 
     /// <summary>
+    /// Universal Time, UT1, to Terrestrial Time, TT
     /// SOFA name: iauUt1tt
     /// </summary>
     /// <param name="ut1JulianDate"></param>
     /// <param name="ttMinusUt1Delta"></param>
     /// <returns></returns>
-    public static JulianDate UniversalTimeToTerrestrialTime(JulianDate ut1JulianDate, double ttMinusUt1Delta)
-        => UniversalTimeToTerrestrialTime(ut1JulianDate, ttMinusUt1Delta, false);
+    public static JulianDate Ut1ToTt(JulianDate ut1JulianDate, double ttMinusUt1Delta)
+        => Ut1ToTt(ut1JulianDate, ttMinusUt1Delta, false);
 
-    internal static JulianDate UniversalTimeToTerrestrialTime(JulianDate ut1JulianDate, double ttMinusUt1Delta, bool ignoreKind)
+    internal static JulianDate Ut1ToTt(JulianDate ut1JulianDate, double ttMinusUt1Delta, bool ignoreKind)
     {
         ThrowIfNotExpectedJulianDateKind(JulianDateKind.Ut1, ut1JulianDate, ignoreKind);
         var (dayNumber, fractionOfDay) = ut1JulianDate;
@@ -478,19 +501,21 @@ public static class TimescaleModule
 
         return SafeguardingPrecision(ut1JulianDate,
             fractionOfDay + ttMinusUt1DeltaInDays,
-            dayNumber + ttMinusUt1DeltaInDays);
+            dayNumber + ttMinusUt1DeltaInDays,
+            JulianDateKind.Tt);
     }
 
     /// <summary>
+    /// Universal Time, UT1, to Coordinated Universal Time, UTC
     /// SOFA name: iauUt1utc
     /// </summary>
     /// <param name="ut1JulianDate"></param>
     /// <param name="ut1MinusUtcDelta"></param>
     /// <returns></returns>
-    public static JulianDate UniversalTimeToCoordinatedUniversalTime(JulianDate ut1JulianDate, double ut1MinusUtcDelta)
-        => UniversalTimeToCoordinatedUniversalTime(ut1JulianDate, ut1MinusUtcDelta);
+    public static JulianDate Ut1ToUtc(JulianDate ut1JulianDate, double ut1MinusUtcDelta)
+        => Ut1ToUtc(ut1JulianDate, ut1MinusUtcDelta, false);
 
-    internal static JulianDate UniversalTimeToCoordinatedUniversalTime(JulianDate ut1JulianDate, double ut1MinusUtcDelta, bool ignoreKind)
+    internal static JulianDate Ut1ToUtc(JulianDate ut1JulianDate, double ut1MinusUtcDelta, bool ignoreKind)
     {
         ThrowIfNotExpectedJulianDateKind(JulianDateKind.Ut1, ut1JulianDate, ignoreKind);
         double u1, u2, dayNumberTemp, fractionOfDayTemp, dats, deltaAT, deltaDats, us1, us2, du;
@@ -554,24 +579,25 @@ public static class TimescaleModule
 
         if (bigFirstOrder)
         {
-            return new(u1, u2);
+            return new(u1, u2, JulianDateKind.Utc);
         }
         else
         {
-            return new(u2, u1);
+            return new(u2, u1, JulianDateKind.Utc);
         }
     }
 
     /// <summary>
+    /// Coordinated Universal Time, UTC, to Universal Time, UT1
     /// SOFA name: iauUtcut1
     /// </summary>
     /// <param name="utcJulianDate"></param>
     /// <param name="ut1MinusUtcDelta"></param>
     /// <returns></returns>
-    public static JulianDate CoordinatedUniversalTimeToUniversalTime(JulianDate utcJulianDate, double ut1MinusUtcDelta)
-        => CoordinatedUniversalTimeToUniversalTime(utcJulianDate, ut1MinusUtcDelta, false);
+    public static JulianDate UtcToUt1(JulianDate utcJulianDate, double ut1MinusUtcDelta)
+        => UtcToUt1(utcJulianDate, ut1MinusUtcDelta, false);
 
-    internal static JulianDate CoordinatedUniversalTimeToUniversalTime(JulianDate utcJulianDate, double ut1MinusUtcDelta, bool ignoreKind)
+    internal static JulianDate UtcToUt1(JulianDate utcJulianDate, double ut1MinusUtcDelta, bool ignoreKind)
     {
         ThrowIfNotExpectedJulianDateKind(JulianDateKind.Utc, utcJulianDate, ignoreKind);
         var (dayNumber, fractionOfDay) = utcJulianDate;
@@ -581,9 +607,9 @@ public static class TimescaleModule
         double deltaAT = DeltaAT(year, month, day, 0.0);
         double ut1TaiDelta = ut1MinusUtcDelta - deltaAT;
 
-        var taiJulianDate = CoordinatedUniversalTimeToInternationalAtomicTime(utcJulianDate, true);
+        var taiJulianDate = UtcToTai(utcJulianDate, true);
 
-        return InternationalAtomicTimeToUniversalTime(taiJulianDate, ut1TaiDelta, true);
+        return TaiToUt1(taiJulianDate, ut1TaiDelta, true);
     }
 
     #endregion

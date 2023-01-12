@@ -2,14 +2,41 @@
 
 public enum JulianDateKind
 {
+    /// <summary>
+    /// Unspecified kind of time
+    /// </summary>
     Unspecified,
+    /// <summary>
+    /// Local time
+    /// </summary>
     Local,
+    /// <summary>
+    /// Coordinated Universal Time
+    /// </summary>
     Utc,
+    /// <summary>
+    /// Universal Time
+    /// </summary>
     Ut1,
+    /// <summary>
+    /// Terrestrial Time
+    /// </summary>
     Tt,
+    /// <summary>
+    /// Barycentric Coordinate Time
+    /// </summary>
     Tcb,
+    /// <summary>
+    /// Barycentric Dynamical Time
+    /// </summary>
     Tdb,
+    /// <summary>
+    /// Geocentric Coordinate Time
+    /// </summary>
     Tcg,
+    /// <summary>
+    /// International Atomic Time
+    /// </summary>
     Tai,
 }
 

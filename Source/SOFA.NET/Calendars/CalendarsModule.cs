@@ -11,6 +11,10 @@ public static class CalendarsModule
     /// <param name="dateTime">Date time as gregorian calendar</param>
     /// <returns>Returns Modified Julian Date for 0 hours</returns>
     public static JulianDate GregorianCalendarToJulianDate(DateTime dateTime)
+        => GregorianCalendarToModifiedJulianDate(dateTime)
+        .Into(mjd => new JulianDate(mjd.MjdZeroPoint + mjd.MjdZeroHours));
+
+    internal static (double MjdZeroPoint, double MjdZeroHours) GregorianCalendarToModifiedJulianDate(DateTime dateTime)
     {
         int my;
         long iypmy;
@@ -18,15 +22,14 @@ public static class CalendarsModule
             im = dateTime.Month,
             id = dateTime.Day;
 
-        // Return result
         my = (im - 14) / 12;
         iypmy = iy + my;
-        double result = ((1461L * (iypmy + 4800L)) / 4L
+        double mjd0 = ((1461L * (iypmy + 4800L)) / 4L
                 + (367L * (im - 2 - 12 * my)) / 12L
                 - (3L * ((iypmy + 4900L) / 100L)) / 4L
                 + id - 2432076L);
 
-        return new(result + Constants.DJM0);
+        return (Constants.DJM0, mjd0);
     }
 
     /// <summary>
@@ -36,18 +39,21 @@ public static class CalendarsModule
     /// <param name="julianDate">Julian date</param>
     /// <returns>Returns date time as gregorian calendar</returns>
     public static DateTime JulianDateToGregorianCalendar(JulianDate julianDate)
+        => JulianDateToGregorianCalendar(julianDate.DayNumber, julianDate.FractionOfDay)
+        .Into(x => new DateTime(x.Year, x.Month, x.Day).AddDays(x.FractionOfDay));
+
+    internal static (int Year, int Month, int Day, double FractionOfDay) JulianDateToGregorianCalendar(double dayNumber, double fractionOfDay)
     {
         long jd, i, l, n, k;
         double f1, f2, d, s, cs, x, t, f;
         double[] v = new double[2];
-        var (dj1, dj2) = julianDate;
 
         // Separate day and fraction (where -0.5 <= fraction < 0.5).
-        d = Math.Round(dj1);
-        f1 = dj1 - d;
+        d = Math.Round(dayNumber);
+        f1 = dayNumber - d;
         jd = (long)d;
-        d = Math.Round(dj2);
-        f2 = dj2 - d;
+        d = Math.Round(fractionOfDay);
+        f2 = fractionOfDay - d;
         jd += (long)d;
 
         // Compute f1+f2+0.5 using compensated summation (Klein 2006).
@@ -90,7 +96,7 @@ public static class CalendarsModule
             cs += (s - t) - 1.0;
             s = t;
             f = s + cs;
-            if (-double.Epsilon / 2.0 < f)
+            if (double.Epsilon / 2.0 < f)
             {
                 jd++;
                 f = Math.Max(f, 0.0);
@@ -104,12 +110,13 @@ public static class CalendarsModule
         i = (4000L * (l + 1L)) / 1461001L;
         l -= (1461L * i) / 4L - 31L;
         k = (80L * l) / 2447L;
-        int id = (int)(l - (2447L * k) / 80L);
+        var day = (int)(l - (2447L * k) / 80L);
         l = k / 11L;
-        int im = (int)(k + 2L - 12L * l);
-        int iy = (int)(100L * (n - 49L) + i + l);
+        var month = (int)(k + 2L - 12L * l);
+        var year = (int)(100L * (n - 49L) + i + l);
+        var fraction = f;
 
-        return new DateTime(iy, im, id).AddDays(f);
+        return (year, month, day, fraction);
     }
 
     /// <summary>
