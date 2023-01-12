@@ -27,7 +27,7 @@ public static class TimescaleModule
 
     #endregion
 
-    #region Public
+    #region SOFA
 
     /// <summary>
     /// For a given UTC date, calculate Delta(AT) = TAI - UTC
@@ -610,6 +610,146 @@ public static class TimescaleModule
         var taiJulianDate = UtcToTai(utcJulianDate, true);
 
         return TaiToUt1(taiJulianDate, ut1TaiDelta, true);
+    }
+
+    #endregion
+
+    #region Additional transformations (not from SOFA)
+
+    internal static JulianDate UtcToTt(JulianDate utcJulianDate, bool ignoreKind)
+        => ThrowIfWrongKind(JulianDateKind.Utc, utcJulianDate, ignoreKind)
+        .Into(_ => UtcToTai(utcJulianDate))
+        .Into(x => TaiToTt(x, ignoreKind));
+
+    internal static JulianDate UtcToTcb(JulianDate utcJulianDate, double tdbMinusTtDelta, bool ignoreKind)
+        => ThrowIfWrongKind(JulianDateKind.Utc, utcJulianDate, ignoreKind)
+        .Into(_ => UtcToTdb(utcJulianDate, tdbMinusTtDelta, ignoreKind))
+        .Into(x => TdbToTcb(x, ignoreKind));
+
+    internal static JulianDate UtcToTdb(JulianDate utcJulianDate, double tdbMinusTtDelta, bool ignoreKind)
+        => ThrowIfWrongKind(JulianDateKind.Utc, utcJulianDate, ignoreKind)
+        .Into(_ => UtcToTt(utcJulianDate, ignoreKind))
+        .Into(x => TtToTdb(x, tdbMinusTtDelta, ignoreKind));
+
+    internal static JulianDate UtcToTcg(JulianDate utcJulianDate, bool ignoreKind)
+        => ThrowIfWrongKind(JulianDateKind.Utc, utcJulianDate, ignoreKind)
+        .Into(_ => UtcToTt(utcJulianDate, ignoreKind))
+        .Into(x => TtToTcg(x, ignoreKind));
+
+    internal static JulianDate Ut1ToTcb(JulianDate ut1JulianDate, double ttMinusUt1Delta, double tdbMinusTtDelta,, bool ignoreKind)
+        => ThrowIfWrongKind(JulianDateKind.Ut1, ut1JulianDate, ignoreKind)
+        .Into(_ => Ut1ToTdb(ut1JulianDate, ttMinusUt1Delta, tdbMinusTtDelta, ignoreKind))
+        .Into(x => TdbToTcb(x, ignoreKind));
+
+    internal static JulianDate Ut1ToTdb(JulianDate ut1JulianDate, double ttMinusUt1Delta, double tdbMinusTtDelta, bool ignoreKind)
+        => ThrowIfWrongKind(JulianDateKind.Ut1, ut1JulianDate, ignoreKind)
+        .Into(_ => Ut1ToTt(ut1JulianDate, ttMinusUt1Delta, ignoreKind))
+        .Into(x => TtToTdb(x, tdbMinusTtDelta, ignoreKind));
+
+    internal static JulianDate Ut1ToTcg(JulianDate ut1JulianDate, double ttMinusUt1Delta, bool ignoreKind)
+        => ThrowIfWrongKind(JulianDateKind.Ut1, ut1JulianDate, ignoreKind)
+        .Into(_ => Ut1ToTt(ut1JulianDate, ttMinusUt1Delta, ignoreKind))
+        .Into(x => TtToTcg(x, ignoreKind));
+
+    internal static JulianDate TtToUtc(JulianDate ttJulianDate, bool ignoreKind)
+        => ThrowIfWrongKind(JulianDateKind.Tt, ttJulianDate, ignoreKind)
+        .Into(_ => TtToTai(ttJulianDate, ignoreKind))
+        .Into(x => TaiToUtc(x, ignoreKind));
+
+    internal static JulianDate TtToTcb(JulianDate ttJulianDate, double tdbMinusTtDelta, bool ignoreKind)
+        => ThrowIfWrongKind(JulianDateKind.Tt, ttJulianDate, ignoreKind)
+        .Into(_ => TtToTdb(ttJulianDate, tdbMinusTtDelta, ignoreKind))
+        .Into(x => TdbToTcb(x, ignoreKind));
+
+    internal static JulianDate TcbToTt(JulianDate tcbJulianDate, double tdbMinusTtDelta, bool ignoreKind)
+        => ThrowIfWrongKind(JulianDateKind.Tcb, tcbJulianDate, ignoreKind)
+        .Into(_ => TcbToTdb(tcbJulianDate, ignoreKind))
+        .Into(x => TdbToTt(x, tdbMinusTtDelta, ignoreKind));
+
+    internal static JulianDate TcbToUt1(JulianDate tcbJulianDate, double tdbMinusTtDelta, double ttMinusUt1Delta, bool ignoreKind)
+        => ThrowIfWrongKind(JulianDateKind.Tcb, tcbJulianDate, ignoreKind)
+        .Into(_ => TcbToTt(tcbJulianDate, tdbMinusTtDelta, ignoreKind))
+        .Into(x => TtToUt1(x, ttMinusUt1Delta, ignoreKind));
+
+    internal static JulianDate TcbToTai(JulianDate tcbJulianDate, double tdbMinusTtDelta, bool ignoreKind)
+        => ThrowIfWrongKind(JulianDateKind.Tcb, tcbJulianDate, ignoreKind)
+        .Into(_ => TcbToTt(tcbJulianDate, tdbMinusTtDelta, ignoreKind))
+        .Into(x => TtToTai(x, ignoreKind));
+
+    internal static JulianDate TcbToUtc(JulianDate tcbJulianDate, double tdbMinusTtDelta, bool ignoreKind)
+        => ThrowIfWrongKind(JulianDateKind.Tcb, tcbJulianDate, ignoreKind)
+        .Into(_ => TcbToTai(tcbJulianDate, tdbMinusTtDelta, ignoreKind))
+        .Into(x => TaiToUtc(x, ignoreKind));
+
+    internal static JulianDate TcbToTcg(JulianDate tcbJulianDate, double tdbMinusTtDelta, bool ignoreKind)
+        => ThrowIfWrongKind(JulianDateKind.Tcb, tcbJulianDate, ignoreKind)
+        .Into(_ => TcbToTt(tcbJulianDate, tdbMinusTtDelta, ignoreKind))
+        .Into(x => TtToTcg(x, ignoreKind));
+
+    internal static JulianDate TdbToUt1(JulianDate tdbJulianDate, double tdbMinusTtDelta, double ttMinusUt1Delta, bool ignoreKind)
+        => ThrowIfWrongKind(JulianDateKind.Tdb, tdbJulianDate, ignoreKind)
+        .Into(_ => TdbToTt(tdbJulianDate, tdbMinusTtDelta, ignoreKind))
+        .Into(x => TtToUt1(x, ttMinusUt1Delta, ignoreKind));
+
+    internal static JulianDate TdbToTai(JulianDate tdbJulianDate, double tdbMinusTtDelta, bool ignoreKind)
+        => ThrowIfWrongKind(JulianDateKind.Tdb, tdbJulianDate, ignoreKind)
+        .Into(_ => TdbToTt(tdbJulianDate, tdbMinusTtDelta, ignoreKind))
+        .Into(x => TtToTai(x, ignoreKind));
+
+    internal static JulianDate TdbToUtc(JulianDate tdbJulianDate, double tdbMinusTtDelta, bool ignoreKind)
+        => ThrowIfWrongKind(JulianDateKind.Tdb, tdbJulianDate, ignoreKind)
+        .Into(_ => TdbToTai(tdbJulianDate, tdbMinusTtDelta, ignoreKind))
+        .Into(x => TaiToUtc(x, ignoreKind));
+
+    internal static JulianDate TdbToTcg(JulianDate tdbJulianDate, double tdbMinusTtDelta, bool ignoreKind)
+        => ThrowIfWrongKind(JulianDateKind.Tdb, tdbJulianDate, ignoreKind)
+        .Into(_ => TdbToTt(tdbJulianDate, tdbMinusTtDelta, ignoreKind))
+        .Into(x => TtToTai(x, ignoreKind));
+
+    internal static JulianDate TcgToUt1(JulianDate tcgJulianDate, double ttMinusUt1Delta, bool ignoreKind)
+        => ThrowIfWrongKind(JulianDateKind.Tcg, tcgJulianDate, ignoreKind)
+        .Into(_ => TcgToTt(tcgJulianDate, ignoreKind))
+        .Into(x => TtToUt1(x, ttMinusUt1Delta, ignoreKind));
+
+    internal static JulianDate TcgToTai(JulianDate tcgJulianDate, bool ignoreKind)
+        => ThrowIfWrongKind(JulianDateKind.Tcg, tcgJulianDate, ignoreKind)
+        .Into(_ => TcgToTt(tcgJulianDate, ignoreKind))
+        .Into(x => TtToTai(x, ignoreKind));
+
+    internal static JulianDate TcgToUtc(JulianDate tcgJulianDate, bool ignoreKind)
+        => ThrowIfWrongKind(JulianDateKind.Tcg, tcgJulianDate, ignoreKind)
+        .Into(_ => TcgToTai(tcgJulianDate, ignoreKind))
+        .Into(x => TaiToUtc(x, ignoreKind));
+
+    internal static JulianDate TcgToTdb(JulianDate tcgJulianDate, double tdbMinusTtDelta, bool ignoreKind)
+        => ThrowIfWrongKind(JulianDateKind.Tcg, tcgJulianDate, ignoreKind)
+        .Into(_ => TcgToTt(tcgJulianDate, ignoreKind))
+        .Into(x => TtToTdb(x, tdbMinusTtDelta, ignoreKind));
+
+    internal static JulianDate TcgToTcb(JulianDate tcgJulianDate, double tdbMinusTtDelta, bool ignoreKind)
+        => ThrowIfWrongKind(JulianDateKind.Tcg, tcgJulianDate, ignoreKind)
+        .Into(_ => TcgToTdb(tcgJulianDate, tdbMinusTtDelta, ignoreKind))
+        .Into(x => TdbToTcb(x, ignoreKind));
+
+    internal static JulianDate TaiToTdb(JulianDate taiJulianDate, double tdbMinusTtDelta, bool ignoreKind)
+        => ThrowIfWrongKind(JulianDateKind.Tai, taiJulianDate, ignoreKind)
+        .Into(_ => TaiToTt(taiJulianDate, ignoreKind))
+        .Into(x => TtToTdb(x, tdbMinusTtDelta, ignoreKind));
+
+    internal static JulianDate TaiToTcb(JulianDate taiJulianDate, double tdbMinusTtDelta, bool ignoreKind)
+        => ThrowIfWrongKind(JulianDateKind.Tai, taiJulianDate, ignoreKind)
+        .Into(_ => TaiToTdb(taiJulianDate, tdbMinusTtDelta, ignoreKind))
+        .Into(x => TdbToTcb(x, ignoreKind));
+
+    internal static JulianDate TaiToTcg(JulianDate taiJulianDate, bool ignoreKind)
+        => ThrowIfWrongKind(JulianDateKind.Tai, taiJulianDate, ignoreKind)
+        .Into(_ => TaiToTt(taiJulianDate, ignoreKind))
+        .Into(x => TtToTcg(x, ignoreKind));
+
+    private static Unit ThrowIfWrongKind(JulianDateKind expectedKind, JulianDate julianDate, bool ignoreKind)
+    {
+        ThrowIfNotExpectedJulianDateKind(expectedKind, julianDate, ignoreKind);
+        return UnitValue;
     }
 
     #endregion
