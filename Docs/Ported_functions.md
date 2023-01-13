@@ -338,36 +338,36 @@
               double elong, double phi, double height, double xyz[3]);
 
 #### Astronomy/Timescales
-- [ ] int iauD2dtf(const char *scale, int ndp, double d1, double d2,
-             int *iy, int *im, int *id, int ihmsf[4]);
-- [ ] int iauDat(int iy, int im, int id, double fd, double *deltat);
-- [ ] double iauDtdb(double date1, double date2,
+- [ ] ~~int iauD2dtf(const char *scale, int ndp, double d1, double d2,~~
+             ~~int *iy, int *im, int *id, int ihmsf[4]);~~
+- [x] int iauDat(int iy, int im, int id, double fd, double *deltat);
+- [x] double iauDtdb(double date1, double date2,
                double ut, double elong, double u, double v);
-- [ ] int iauDtf2d(const char *scale, int iy, int im, int id,
-             int ihr, int imn, double sec, double *d1, double *d2);
-- [ ] int iauTaitt(double tai1, double tai2, double *tt1, double *tt2);
-- [ ] int iauTaiut1(double tai1, double tai2, double dta,
+- [ ] ~~int iauDtf2d(const char *scale, int iy, int im, int id,~~
+             ~~int ihr, int imn, double sec, double *d1, double *d2);~~
+- [x] int iauTaitt(double tai1, double tai2, double *tt1, double *tt2);
+- [x] int iauTaiut1(double tai1, double tai2, double dta,
               double *ut11, double *ut12);
-- [ ] int iauTaiutc(double tai1, double tai2, double *utc1, double *utc2);
-- [ ] int iauTcbtdb(double tcb1, double tcb2, double *tdb1, double *tdb2);
-- [ ] int iauTcgtt(double tcg1, double tcg2, double *tt1, double *tt2);
-- [ ] int iauTdbtcb(double tdb1, double tdb2, double *tcb1, double *tcb2);
-- [ ] int iauTdbtt(double tdb1, double tdb2, double dtr,
+- [x] int iauTaiutc(double tai1, double tai2, double *utc1, double *utc2);
+- [x] int iauTcbtdb(double tcb1, double tcb2, double *tdb1, double *tdb2);
+- [x] int iauTcgtt(double tcg1, double tcg2, double *tt1, double *tt2);
+- [x] int iauTdbtcb(double tdb1, double tdb2, double *tcb1, double *tcb2);
+- [x] int iauTdbtt(double tdb1, double tdb2, double dtr,
              double *tt1, double *tt2);
-- [ ] int iauTttai(double tt1, double tt2, double *tai1, double *tai2);
-- [ ] int iauTttcg(double tt1, double tt2, double *tcg1, double *tcg2);
-- [ ] int iauTttdb(double tt1, double tt2, double dtr,
+- [x] int iauTttai(double tt1, double tt2, double *tai1, double *tai2);
+- [x] int iauTttcg(double tt1, double tt2, double *tcg1, double *tcg2);
+- [x] int iauTttdb(double tt1, double tt2, double dtr,
              double *tdb1, double *tdb2);
-- [ ] int iauTtut1(double tt1, double tt2, double dt,
+- [x] int iauTtut1(double tt1, double tt2, double dt,
              double *ut11, double *ut12);
-- [ ] int iauUt1tai(double ut11, double ut12, double dta,
+- [x] int iauUt1tai(double ut11, double ut12, double dta,
               double *tai1, double *tai2);
-- [ ] int iauUt1tt(double ut11, double ut12, double dt,
+- [x] int iauUt1tt(double ut11, double ut12, double dt,
              double *tt1, double *tt2);
-- [ ] int iauUt1utc(double ut11, double ut12, double dut1,
+- [x] int iauUt1utc(double ut11, double ut12, double dut1,
               double *utc1, double *utc2);
-- [ ] int iauUtctai(double utc1, double utc2, double *tai1, double *tai2);
-- [ ] int iauUtcut1(double utc1, double utc2, double dut1,
+- [x] int iauUtctai(double utc1, double utc2, double *tai1, double *tai2);
+- [x] int iauUtcut1(double utc1, double utc2, double dut1,
               double *ut11, double *ut12);
 
 #### Astronomy/HorizonEquatorial
