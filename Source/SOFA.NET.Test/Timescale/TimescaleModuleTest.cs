@@ -356,6 +356,162 @@ internal class TimescaleModuleTest
             JulianDateKind.Utc);
     }
 
+    [Test]
+    public void UtcToTt_Test()
+    {
+        TestKindOnly(TimescaleModule.UtcToTt, JulianDateKind.Utc, JulianDateKind.Tt);
+    }
+
+    [Test]
+    public void UtcToTcb_Test()
+    {
+        TestKindOnly(TimescaleModule.UtcToTcb, JulianDateKind.Utc, JulianDateKind.Tcb);
+    }
+
+    [Test]
+    public void UtcToTdb_Test()
+    {
+        TestKindOnly(TimescaleModule.UtcToTdb, JulianDateKind.Utc, JulianDateKind.Tdb);
+    }
+
+    [Test]
+    public void UtcToTcg_Test()
+    {
+        TestKindOnly(TimescaleModule.UtcToTcg, JulianDateKind.Utc, JulianDateKind.Tcg);
+    }
+
+    [Test]
+    public void Ut1ToTcb_Test()
+    {
+        TestKindOnly(TimescaleModule.Ut1ToTcb, JulianDateKind.Ut1, JulianDateKind.Tcb);
+    }
+
+    [Test]
+    public void Ut1ToTdb_Test()
+    {
+        TestKindOnly(TimescaleModule.Ut1ToTdb, JulianDateKind.Ut1, JulianDateKind.Tdb);
+    }
+
+    [Test]
+    public void Ut1ToTcg_Test()
+    {
+        TestKindOnly(TimescaleModule.Ut1ToTcg, JulianDateKind.Ut1, JulianDateKind.Tcg);
+    }
+
+    [Test]
+    public void TtToUtc_Test()
+    {
+        TestKindOnly(TimescaleModule.TtToUtc, JulianDateKind.Tt, JulianDateKind.Utc);
+    }
+
+    [Test]
+    public void TtToTcb_Test()
+    {
+        TestKindOnly(TimescaleModule.TtToTcb, JulianDateKind.Tt, JulianDateKind.Tcb);
+    }
+
+    [Test]
+    public void TcbToTt_Test()
+    {
+        TestKindOnly(TimescaleModule.TcbToTt, JulianDateKind.Tcb, JulianDateKind.Tt);
+    }
+
+    [Test]
+    public void TcbToUt1_Test()
+    {
+        TestKindOnly(TimescaleModule.TcbToUt1, JulianDateKind.Tcb, JulianDateKind.Ut1);
+    }
+
+    [Test]
+    public void TcbToTai_Test()
+    {
+        TestKindOnly(TimescaleModule.TcbToTai, JulianDateKind.Tcb, JulianDateKind.Tai);
+    }
+
+    [Test]
+    public void TcbToUtc_Test()
+    {
+        TestKindOnly(TimescaleModule.TcbToUtc, JulianDateKind.Tcb, JulianDateKind.Utc);
+    }
+
+    [Test]
+    public void TcbToTcg_Test()
+    {
+        TestKindOnly(TimescaleModule.TcbToTcg, JulianDateKind.Tcb, JulianDateKind.Tcg);
+    }
+
+    [Test]
+    public void TdbToUt1_Test()
+    {
+        TestKindOnly(TimescaleModule.TdbToUt1, JulianDateKind.Tdb, JulianDateKind.Ut1);
+    }
+
+    [Test]
+    public void TdbToTai_Test()
+    {
+        TestKindOnly(TimescaleModule.TdbToTai, JulianDateKind.Tdb, JulianDateKind.Tai);
+    }
+
+    [Test]
+    public void TdbToUtc_Test()
+    {
+        TestKindOnly(TimescaleModule.TdbToUtc, JulianDateKind.Tdb, JulianDateKind.Utc);
+    }
+
+    [Test]
+    public void TdbToTcg_Test()
+    {
+        TestKindOnly(TimescaleModule.TdbToTcg, JulianDateKind.Tdb, JulianDateKind.Tcg);
+    }
+
+    [Test]
+    public void TcgToUt1_Test()
+    {
+        TestKindOnly(TimescaleModule.TcgToUt1, JulianDateKind.Tcg, JulianDateKind.Ut1);
+    }
+
+    [Test]
+    public void TcgToTai_Test()
+    {
+        TestKindOnly(TimescaleModule.TcgToTai, JulianDateKind.Tcg, JulianDateKind.Tai);
+    }
+
+    [Test]
+    public void TcgToUtc_Test()
+    {
+        TestKindOnly(TimescaleModule.TcgToUtc, JulianDateKind.Tcg, JulianDateKind.Utc);
+    }
+
+    [Test]
+    public void TcgToTdb_Test()
+    {
+        TestKindOnly(TimescaleModule.TcgToTdb, JulianDateKind.Tcg, JulianDateKind.Tdb);
+    }
+
+    [Test]
+    public void TcgToTcb_Test()
+    {
+        TestKindOnly(TimescaleModule.TcgToTcb, JulianDateKind.Tcg, JulianDateKind.Tcb);
+    }
+
+    [Test]
+    public void TaiToTdb_Test()
+    {
+        TestKindOnly(TimescaleModule.TaiToTdb, JulianDateKind.Tai, JulianDateKind.Tdb);
+    }
+
+    [Test]
+    public void TaiToTcb_Test()
+    {
+        TestKindOnly(TimescaleModule.TaiToTcb, JulianDateKind.Tai, JulianDateKind.Tcb);
+    }
+
+    [Test]
+    public void TaiToTcg_Test()
+    {
+        TestKindOnly(TimescaleModule.TaiToTcg, JulianDateKind.Tai, JulianDateKind.Tcg);
+    }
+
     #endregion
 
     #region Helpers
@@ -371,10 +527,51 @@ internal class TimescaleModuleTest
         });
     }
 
+    private void TestKindOnly(Func<JulianDate, JulianDate> methodUnderTest, JulianDateKind inputKind, JulianDateKind expectedKind)
+    {
+        var jd = 2_451_545.0;
+        var julianDate = new JulianDate(jd, inputKind);
+        var result = methodUnderTest(julianDate);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Kind, Is.EqualTo(expectedKind));
+            Assert.Throws<JulianDateKindException>(() => methodUnderTest(new JulianDate(jd, inputKind + 1)));
+            Assert.Throws<JulianDateKindException>(() => methodUnderTest(new JulianDate(jd, inputKind - 1)));
+        });
+    }
+
+    private void TestKindOnly(Func<JulianDate, double, JulianDate> methodUnderTest, JulianDateKind inputKind, JulianDateKind expectedKind)
+    {
+        var jd = 2_451_545.0;
+        var julianDate = new JulianDate(jd, inputKind);
+        var result = methodUnderTest(julianDate, 10);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Kind, Is.EqualTo(expectedKind));
+            Assert.Throws<JulianDateKindException>(() => methodUnderTest(new JulianDate(jd, inputKind + 1), 10));
+            Assert.Throws<JulianDateKindException>(() => methodUnderTest(new JulianDate(jd, inputKind - 1), 10));
+        });
+    }
+
+    private void TestKindOnly(Func<JulianDate, double, double, JulianDate> methodUnderTest, JulianDateKind inputKind, JulianDateKind expectedKind)
+    {
+        var jd = 2_451_545.0;
+        var julianDate = new JulianDate(jd, inputKind);
+        var result = methodUnderTest(julianDate, 10, 10);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Kind, Is.EqualTo(expectedKind));
+            Assert.Throws<JulianDateKindException>(() => methodUnderTest(new JulianDate(jd, inputKind + 1), 10, 10));
+            Assert.Throws<JulianDateKindException>(() => methodUnderTest(new JulianDate(jd, inputKind - 1), 10, 10));
+        });
+    }
     private void TestTimeScaleMethodWrongKind(Func<JulianDate, JulianDate> methodUnderTest, JulianDateKind validKind)
     {
-        Assert.Throws<JulianDateKindException>(() => methodUnderTest(new JulianDate(10.5, 0.0, validKind + 1)));
-        Assert.Throws<JulianDateKindException>(() => methodUnderTest(new JulianDate(10.5, 0.0, validKind - 1)));
+        Assert.Multiple(() =>
+        {
+            Assert.Throws<JulianDateKindException>(() => methodUnderTest(new JulianDate(10.5, 0.0, validKind + 1)));
+            Assert.Throws<JulianDateKindException>(() => methodUnderTest(new JulianDate(10.5, 0.0, validKind - 1)));
+        });
     }
 
     #endregion
