@@ -443,7 +443,7 @@
 - [ ] void iauPv2s(double pv[2][3],
              double *theta, double *phi, double *r,
              double *td, double *pd, double *rd);
-- [ ] void iauS2c(double theta, double phi, double c[3]);
+- [x] void iauS2c(double theta, double phi, double c[3]);
 - [ ] void iauS2p(double theta, double phi, double r, double p[3]);
 - [ ] void iauS2pv(double theta, double phi, double r,
              double td, double pd, double rd,
