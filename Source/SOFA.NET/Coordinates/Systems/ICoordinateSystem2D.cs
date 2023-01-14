@@ -13,8 +13,14 @@ public interface ICoordinateSystem2D<T> : ICoordinateSystem<T>
     }
 
     public static ICoordinateSystem2D<T> Create(T x, T y)
-        => new CoordinateSystem2D<T>(x, y);
+        => new CoordinateSystemBase2D<T>(x, y);
 }
 
-internal record CoordinateSystem2D<T>(T X, T Y) 
-    : CoordinateSystemBase<T>(X, Y), ICoordinateSystem2D<T> where T : struct;
+public record CoordinateSystemBase2D<T>
+    : CoordinateSystemBase<T>, ICoordinateSystem2D<T> where T : struct
+{
+    internal CoordinateSystemBase2D(T x, T y)
+        : base(x, y)
+    {
+    }
+}
