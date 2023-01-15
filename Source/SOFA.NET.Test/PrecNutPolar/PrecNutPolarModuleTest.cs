@@ -32,4 +32,31 @@ internal class PrecNutPolarModuleTest
         });
     }
 
+    [Test]
+    public static void FormRotationMatrix_Test()
+    {
+        FukushimaWilliamsAngles angles = new(
+            -0.2243387670997992368e-5,
+            0.4091014602391312982,
+            -0.9501954178013015092e-3,
+            0.4091014316587367472);
+
+        var result = PrecNutPolarModule
+            .FormRotationMatrix(angles);
+
+        Assert.Multiple(() =>
+        {
+            double delta = 1e-12;
+            Assert.That(result[0, 0], Is.EqualTo(0.9999995505176007047).Within(delta));
+            Assert.That(result[0, 1], Is.EqualTo(0.8695404617348192957e-3).Within(delta));
+            Assert.That(result[0, 2], Is.EqualTo(0.3779735201865582571e-3).Within(delta));
+            Assert.That(result[1, 0], Is.EqualTo(-0.8695404723772016038e-3).Within(delta));
+            Assert.That(result[1, 1], Is.EqualTo(0.9999996219496027161).Within(delta));
+            Assert.That(result[1, 2], Is.EqualTo(-0.1361752496887100026e-6).Within(delta));
+            Assert.That(result[2, 0], Is.EqualTo(-0.3779734957034082790e-3).Within(delta));
+            Assert.That(result[2, 1], Is.EqualTo(-0.1924880848087615651e-6).Within(delta));
+            Assert.That(result[2, 2], Is.EqualTo(0.9999999285679971958).Within(delta));
+        });
+    }
+
 }

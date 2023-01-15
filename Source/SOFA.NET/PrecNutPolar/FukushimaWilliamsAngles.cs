@@ -18,6 +18,14 @@ public readonly struct FukushimaWilliamsAngles : IEquatable<FukushimaWilliamsAng
         Gamma = gamma; Phi = phi; Psi = psi; Epsilion = epsilion;
     }
 
+    public void Deconstruct(out double gamma, out double phi, out double psi, out double epsilion)
+    {
+        gamma = Gamma;
+        phi = Phi;
+        psi = Psi;
+        epsilion = Epsilion;
+    }
+
     public bool Equals(FukushimaWilliamsAngles other)
     {
         return Gamma == other.Gamma

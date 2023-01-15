@@ -69,4 +69,23 @@ public static class PrecNutPolarModule
         return new(gamb, phib, psib, epsa);
     }
 
+    /// <summary>
+    /// Form rotation matrix given the Fukushima-Williams angles
+    /// SOFA name: iauFw2m
+    /// </summary>
+    /// <param name="angles"></param>
+    /// <returns></returns>
+    public static double[,] FormRotationMatrix(FukushimaWilliamsAngles angles)
+    {
+        double[,] matrix = MatrixHelper.IdentityMatrix();
+        var (gamma, phi, psi, eps) = angles;
+
+        MatrixHelper.RotateZ(matrix, gamma);
+        MatrixHelper.RotateX(matrix, phi);
+        MatrixHelper.RotateZ(matrix, -psi);
+        MatrixHelper.RotateX(matrix, -eps);
+
+        return matrix;
+    }
+
 }

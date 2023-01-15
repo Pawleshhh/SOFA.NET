@@ -174,7 +174,7 @@
               double rc2t[3][3]);
 - [ ] double iauEo06a(double date1, double date2);
 - [ ] double iauEors(double rnpb[3][3], double s);
-- [ ] void iauFw2m(double gamb, double phib, double psi, double eps,
+- [x] void iauFw2m(double gamb, double phib, double psi, double eps,
              double r[3][3]);
 - [ ] void iauFw2xy(double gamb, double phib, double psi, double eps,
               double *x, double *y);
@@ -400,9 +400,9 @@
 - [ ] int iauTf2d(char s, int ihour, int imin, double sec, double *days);
 
 #### VectorMatrix/BuildRotations
-- [ ] void iauRx(double phi, double r[3][3]);
-- [ ] void iauRy(double theta, double r[3][3]);
-- [ ] void iauRz(double psi, double r[3][3]);
+- [x] void iauRx(double phi, double r[3][3]);
+- [x] void iauRy(double theta, double r[3][3]);
+- [x] void iauRz(double psi, double r[3][3]);
 
 #### VectorMatrix/CopyExtendExtract
 - [ ] void iauCp(double p[3], double c[3]);
@@ -412,7 +412,7 @@
 - [ ] void iauPv2p(double pv[2][3], double p[3]);
 
 #### VectorMatrix/Initialization
-- [ ] void iauIr(double r[3][3]);
+- [x] void iauIr(double r[3][3]);
 - [ ] void iauZp(double p[3]);
 - [ ] void iauZpv(double pv[2][3]);
 - [ ] void iauZr(double r[3][3]);
