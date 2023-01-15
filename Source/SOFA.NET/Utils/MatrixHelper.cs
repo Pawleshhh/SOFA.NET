@@ -134,4 +134,62 @@ internal static class MatrixHelper
         return wm;
     }
 
+    /// <summary>
+    /// SOFA name: iauRxp
+    /// </summary>
+    /// <param name="r"></param>
+    /// <param name="p"></param>
+    /// <returns></returns>
+    public static double[] Multiply(this double[,] r, double[] p)
+    {
+        double w;
+        double[] wrp = new double[3];
+        int i, j;
+
+        /* Matrix r * vector p. */
+        for (j = 0; j < 3; j++)
+        {
+            w = 0.0;
+            for (i = 0; i < 3; i++)
+            {
+                w += r[j, i] * p[i];
+            }
+            wrp[j] = w;
+        }
+
+        return wrp;
+    }
+
+    /// <summary>
+    /// SOFA name: iauTr
+    /// </summary>
+    /// <param name="r"></param>
+    /// <returns></returns>
+    public static double[,] Transpose(this double[,] r)
+    {
+        double[,] wm = new double[3, 3];
+        int i, j;
+
+        for (i = 0; i < 3; i++)
+        {
+            for (j = 0; j < 3; j++)
+            {
+                wm[i, j] = r[j, i];
+            }
+        }
+
+        return wm;
+    }
+    
+    /// <summary>
+    /// SOFA name: iauTrxp
+    /// </summary>
+    /// <param name="r"></param>
+    /// <param name="p"></param>
+    /// <returns></returns>
+    public static double[] TransposeMultiply(this double[,] r, double[] p)
+    {
+        return r.Transpose().Multiply(p);
+    }
+
 }

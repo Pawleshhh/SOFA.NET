@@ -315,7 +315,7 @@
 #### Astronomy/EclipticCoordinates
 - [ ] void iauEceq06(double date1, double date2, double dl, double db,
                double *dr, double *dd);
-- [ ] void iauEcm06(double date1, double date2, double rm[3][3]);
+- [x] void iauEcm06(double date1, double date2, double rm[3][3]);
 - [ ] void iauEqec06(double date1, double date2, double dr, double dd,
                double *dl, double *db);
 - [ ] void iauLteceq(double epj, double dl, double db, double *dr, double *dd);

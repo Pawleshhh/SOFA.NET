@@ -11,10 +11,9 @@ public static class CoordinatesModule
     //{
     //    ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
 
-    //    //iauS2c
-
-    //    //iauEcm06
-
+    //    var v1 = SphericalToCartesian(eclipticCoordinates);
+    //    var rm = RotationMatrixOfEquatorialToEclipticIAU06(ttJulianDate);
+    //    var v2 = rm.TransposeMultiply(v1);
     //    //iauTrxp
 
     //    //iauC2s
