@@ -313,7 +313,7 @@
               double *pmr2, double *pmd2, double *px2, double *rv2);
 
 #### Astronomy/EclipticCoordinates
-- [ ] void iauEceq06(double date1, double date2, double dl, double db,
+- [x] void iauEceq06(double date1, double date2, double dl, double db,
                double *dr, double *dd);
 - [x] void iauEcm06(double date1, double date2, double rm[3][3]);
 - [ ] void iauEqec06(double date1, double date2, double dr, double dd,

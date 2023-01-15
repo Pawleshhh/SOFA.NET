@@ -7,6 +7,21 @@ internal class CoordinatesModuleTest
 {
 
     [Test]
+    public void EclipticToEquatorialIAU06_Test()
+    {
+        var julianDate = new JulianDate(2456165.5 + 0.401182685);
+        var eclipticCoords = new EclipticCoordinates(5.1, -0.9);
+
+        var result = CoordinatesModule.EclipticToEquatorialIAU06(julianDate, eclipticCoords);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.RightAscension, Is.EqualTo(5.533459733613627767).Within(1e-14));
+            Assert.That(result.Declination, Is.EqualTo(-1.246542932554480576).Within(1e-14));
+        });
+    }
+
+    [Test]
     public void SphericalToCartesian_Test()
     {
         var spherical = ICoordinateSystem2D<double>.Create(3.0123, -0.999);

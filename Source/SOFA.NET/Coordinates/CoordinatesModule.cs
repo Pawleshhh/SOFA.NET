@@ -5,23 +5,30 @@ namespace SOFA.NET;
 public static class CoordinatesModule
 {
 
-    //public static EquatorialCoordinates EclipticToEquatorialIAU06(
-    //    JulianDate ttJulianDate,
-    //    EclipticCoordinates eclipticCoordinates)
-    //{
-    //    ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
+    /// <summary>
+    /// Transformation from ecliptic coordinates (mean equinox and ecliptic of date)
+    /// to ICRS RA,Dec, using the IAU 2006 precession model
+    /// SOFA name: iauEceq06
+    /// </summary>
+    /// <param name="ttJulianDate"></param>
+    /// <param name="eclipticCoordinates"></param>
+    /// <returns></returns>
+    public static EquatorialCoordinates EclipticToEquatorialIAU06(
+        JulianDate ttJulianDate,
+        EclipticCoordinates eclipticCoordinates)
+    {
+        ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
 
-    //    var v1 = SphericalToCartesian(eclipticCoordinates);
-    //    var rm = RotationMatrixOfEquatorialToEclipticIAU06(ttJulianDate);
-    //    var v2 = rm.TransposeMultiply(v1);
-    //    //iauTrxp
+        var v1 = SphericalToCartesian(eclipticCoordinates);
+        var rm = RotationMatrixOfEquatorialToEclipticIAU06(ttJulianDate);
+        var v2 = rm.TransposeMultiply(v1);
+        var p = VectorToSphericalCoordinates(v2);
 
-    //    //iauC2s
+        double ra = MathHelper.NormalizeAngleIntoZero2PI(p.X);
+        double dec = MathHelper.NormalizeAngleIntoMinusOnePIToPlusOnePI(p.Y);
 
-    //    //ra = iauAnp
-    //    //dec = iauAnpm
-
-    //}
+        return new(dec, ra);
+    }
 
     /// <summary>
     /// Convert spherical coordinates to cartesian.
