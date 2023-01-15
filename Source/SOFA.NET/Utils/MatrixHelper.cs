@@ -106,4 +106,32 @@ internal static class MatrixHelper
             { 0, 0, 1 }
         };
 
+    /// <summary>
+    /// SOFA name: iauRxr
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public static double[,] Multiply(this double[,] a, double[,] b)
+    {
+        int i, j, k;
+        double w;
+        double[,] wm = new double[3, 3];
+
+        for (i = 0; i < 3; i++)
+        {
+            for (j = 0; j < 3; j++)
+            {
+                w = 0.0;
+                for (k = 0; k < 3; k++)
+                {
+                    w += a[i, k] * b[k, j];
+                }
+                wm[i, j] = w;
+            }
+        }
+
+        return wm;
+    }
+
 }

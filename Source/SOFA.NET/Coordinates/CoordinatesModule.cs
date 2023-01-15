@@ -42,16 +42,22 @@ public static class CoordinatesModule
         return result;
     }
 
-    ///// <summary>
-    ///// ICRS equatorial to ecliptic rotation matrix, IAU 2006
-    ///// SOFA name: iauEcm06
-    ///// </summary>
-    ///// <param name="ttJulianDate"></param>
-    ///// <returns></returns>
-    //public static double[,] RotationMatrixOfEquatorialToEclipticIAU06(JulianDate ttJulianDate)
-    //{
-    //    ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
-    //    
-    //}
+    /// <summary>
+    /// ICRS equatorial to ecliptic rotation matrix, IAU 2006
+    /// SOFA name: iauEcm06
+    /// </summary>
+    /// <param name="ttJulianDate"></param>
+    /// <returns></returns>
+    public static double[,] RotationMatrixOfEquatorialToEclipticIAU06(JulianDate ttJulianDate)
+    {
+        ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
+
+        var ob = PrecNutPolarModule.MeanObliquityOfTheEclipticIAU06(ttJulianDate);
+        var bp = PrecNutPolarModule.PrecessionMatrixFromGcrsToDateIAU06(ttJulianDate);
+        var e = MatrixHelper.IdentityMatrix().RotateX(ob);
+        var rm = e.Multiply(bp);
+
+        return rm;
+    }
 
 }
