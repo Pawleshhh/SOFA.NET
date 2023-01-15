@@ -31,6 +31,32 @@ public static class CoordinatesModule
     }
 
     /// <summary>
+    /// Transformation from ICRS equatorial coordinates to ecliptic 
+    /// coordinates (mean equinox and ecliptic of date) using IAU 2006 precession model.
+    /// SOFA name: iauEqec06
+    /// </summary>
+    /// <param name="ttJulianDate"></param>
+    /// <param name="equatorialCoordinates"></param>
+    /// <returns></returns>
+    public static EclipticCoordinates EquatorialToEclipticIAU06(
+        JulianDate ttJulianDate,
+        EquatorialCoordinates equatorialCoordinates)
+    {
+        ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
+
+        var v1 = SphericalToCartesian(ICoordinateSystem2D<double>
+            .Create(equatorialCoordinates.RightAscension, equatorialCoordinates.Declination));
+        var rm = RotationMatrixOfEquatorialToEclipticIAU06(ttJulianDate);
+        var v2 = rm.Multiply(v1);
+        var p = VectorToSphericalCoordinates(v2);
+
+        double lon = MathHelper.NormalizeAngleIntoZero2PI(p.X);
+        double lat = MathHelper.NormalizeAngleIntoMinusOnePIToPlusOnePI(p.Y);
+
+        return new(lon, lat);
+    }
+
+    /// <summary>
     /// Convert spherical coordinates to cartesian.
     /// SOFA name: iauS2c
     /// </summary>
