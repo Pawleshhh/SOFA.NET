@@ -422,9 +422,9 @@
 - [ ] void iauTr(double r[3][3], double rt[3][3]);
 
 #### VectorMatrix/MatrixVectorProducts
-- [ ] void iauRxp(double r[3][3], double p[3], double rp[3]);
+- [x] void iauRxp(double r[3][3], double p[3], double rp[3]);
 - [ ] void iauRxpv(double r[3][3], double pv[2][3], double rpv[2][3]);
-- [ ] void iauTrxp(double r[3][3], double p[3], double trp[3]);
+- [x] void iauTrxp(double r[3][3], double p[3], double trp[3]);
 - [ ] void iauTrxpv(double r[3][3], double pv[2][3], double trpv[2][3]);
 
 #### VectorMatrix/RotationVectors
@@ -438,7 +438,7 @@
 - [ ] double iauSeps(double al, double ap, double bl, double bp);
 
 #### VectorMatrix/SphericalCartesian
-- [ ] void iauC2s(double p[3], double *theta, double *phi);
+- [x] void iauC2s(double p[3], double *theta, double *phi);
 - [ ] void iauP2s(double p[3], double *theta, double *phi, double *r);
 - [ ] void iauPv2s(double pv[2][3],
              double *theta, double *phi, double *r,

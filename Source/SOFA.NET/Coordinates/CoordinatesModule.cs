@@ -42,6 +42,26 @@ public static class CoordinatesModule
     }
 
     /// <summary>
+    /// SOFA name: iauC2s
+    /// </summary>
+    /// <param name="vector"></param>
+    /// <returns></returns>
+    public static ICoordinateSystem2D<double> VectorToSphericalCoordinates(double[] vector)
+    {
+        double x, y, z, d2;
+
+        x = vector[0];
+        y = vector[1];
+        z = vector[2];
+        d2 = x * x + y * y;
+
+        double theta = (d2 == 0.0) ? 0.0 : Math.Atan2(y, x);
+        double phi = (z == 0.0) ? 0.0 : Math.Atan2(z, Math.Sqrt(d2));
+
+        return ICoordinateSystem2D<double>.Create(theta, phi);
+    }
+
+    /// <summary>
     /// ICRS equatorial to ecliptic rotation matrix, IAU 2006
     /// SOFA name: iauEcm06
     /// </summary>

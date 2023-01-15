@@ -23,6 +23,21 @@ internal class CoordinatesModuleTest
     }
 
     [Test]
+    public void VectorToSphericalCoordinates_Test()
+    {
+        var vector = new double[] { 100.0, -50.0, 25.0 };
+
+        var result = CoordinatesModule.VectorToSphericalCoordinates(vector);
+
+        Assert.Multiple(() =>
+        {
+            double delta = 1e-14;
+            Assert.That(result.X, Is.EqualTo(-0.4636476090008061162).Within(delta));
+            Assert.That(result.Y, Is.EqualTo(0.2199879773954594463).Within(delta));
+        });
+    }
+
+    [Test]
     public void RotationMatrixOfEquatorialToEclipticIAU06_Test()
     {
         var julianDate = new JulianDate(2456165.5 + 0.401182685);
