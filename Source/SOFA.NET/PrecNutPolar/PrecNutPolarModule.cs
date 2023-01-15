@@ -26,10 +26,21 @@ public static class PrecNutPolarModule
         return eps0;
     }
 
-    //public static double[,] PrecessionMatrixFromGcrsToDateIAU06(JulianDate ttJulianDate)
-    //{
-    //    ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
-    //}
+    /// <summary>
+    /// Precession matrix (including frame bias) from GCRS to a specified date, IAU 2006 model
+    /// SOFA name: iauPmat06
+    /// </summary>
+    /// <param name="ttJulianDate"></param>
+    /// <returns></returns>
+    public static double[,] PrecessionMatrixFromGcrsToDateIAU06(JulianDate ttJulianDate)
+    {
+        ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
+
+        var angles = PrecessionAnglesIAU06(ttJulianDate);
+        var matrix = FormRotationMatrix(angles);
+
+        return matrix;
+    }
 
     /// <summary>
     /// Precession angles, IAU 2006 (Fukushima-Williams 4-angle formulation)

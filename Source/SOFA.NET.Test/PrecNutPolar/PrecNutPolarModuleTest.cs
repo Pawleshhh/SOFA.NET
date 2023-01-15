@@ -59,4 +59,28 @@ internal class PrecNutPolarModuleTest
         });
     }
 
+    [Test]
+    public static void PrecessionMatrixFromGcrsToDateIAU06_Test()
+    {
+        var julianDate = new JulianDate(2400000.5 + 50123.9999);
+
+        var result = PrecNutPolarModule
+            .PrecessionMatrixFromGcrsToDateIAU06(julianDate);
+
+        Assert.Multiple(() =>
+        {
+            double delta14 = 1e-14;
+            double delta12 = 1e-12; 
+            Assert.That(result[0, 0], Is.EqualTo(0.9999995505176007047).Within(delta12));
+            Assert.That(result[0, 1], Is.EqualTo(0.8695404617348208406e-3).Within(delta14));
+            Assert.That(result[0, 2], Is.EqualTo(0.3779735201865589104e-3).Within(delta14));
+            Assert.That(result[1, 0], Is.EqualTo(-0.8695404723772031414e-3).Within(delta14));
+            Assert.That(result[1, 1], Is.EqualTo(0.9999996219496027161).Within(delta12));
+            Assert.That(result[1, 2], Is.EqualTo(-0.1361752497080270143e-6).Within(delta14));
+            Assert.That(result[2, 0], Is.EqualTo(-0.3779734957034089490e-3).Within(delta14));
+            Assert.That(result[2, 1], Is.EqualTo(-0.1924880847894457113e-6).Within(delta14));
+            Assert.That(result[2, 2], Is.EqualTo(0.9999999285679971958).Within(delta12));
+        });
+    }
+
 }

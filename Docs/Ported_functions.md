@@ -204,7 +204,7 @@
 - [x] void iauPfw06(double date1, double date2,
               double *gamb, double *phib, double *psib, double *epsa);
 - [ ] void iauPmat00(double date1, double date2, double rbp[3][3]);
-- [ ] void iauPmat06(double date1, double date2, double rbp[3][3]);
+- [x] void iauPmat06(double date1, double date2, double rbp[3][3]);
 - [ ] void iauPmat76(double date1, double date2, double rmatp[3][3]);
 - [ ] void iauPn00(double date1, double date2, double dpsi, double deps,
              double *epsa,
