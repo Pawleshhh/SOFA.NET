@@ -191,7 +191,7 @@
 - [ ] void iauNut06a(double date1, double date2, double *dpsi, double *deps);
 - [ ] void iauNut80(double date1, double date2, double *dpsi, double *deps);
 - [ ] void iauNutm80(double date1, double date2, double rmatn[3][3]);
-- [ ] double iauObl06(double date1, double date2);
+- [x] double iauObl06(double date1, double date2);
 - [ ] double iauObl80(double date1, double date2);
 - [ ] void iauP06e(double date1, double date2,
              double *eps0, double *psia, double *oma, double *bpa,
