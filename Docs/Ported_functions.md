@@ -201,7 +201,7 @@
              double *gam, double *phi, double *psi);
 - [ ] void iauPb06(double date1, double date2,
              double *bzeta, double *bz, double *btheta);
-- [ ] void iauPfw06(double date1, double date2,
+- [x] void iauPfw06(double date1, double date2,
               double *gamb, double *phib, double *psib, double *epsa);
 - [ ] void iauPmat00(double date1, double date2, double rbp[3][3]);
 - [ ] void iauPmat06(double date1, double date2, double rbp[3][3]);

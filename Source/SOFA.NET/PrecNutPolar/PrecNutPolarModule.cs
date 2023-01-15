@@ -1,4 +1,6 @@
-﻿namespace SOFA.NET;
+﻿using static SOFA.NET.ThrowHelper;
+
+namespace SOFA.NET;
 
 public static class PrecNutPolarModule
 {
@@ -11,7 +13,7 @@ public static class PrecNutPolarModule
     /// <returns></returns>
     public static double MeanObliquityOfTheEclipticIAU06(JulianDate ttJulianDate)
     {
-        ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
+        ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
 
         var t = ttJulianDate.JulianCentury();
         double eps0 = (84381.406 +
@@ -22,6 +24,49 @@ public static class PrecNutPolarModule
           (-0.0000000434) * t) * t) * t) * t) * t) * Constants.DAS2R;
 
         return eps0;
+    }
+
+    //public static double[,] PrecessionMatrixFromGcrsToDateIAU06(JulianDate ttJulianDate)
+    //{
+    //    ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
+    //}
+
+    /// <summary>
+    /// Precession angles, IAU 2006 (Fukushima-Williams 4-angle formulation)
+    /// SOFA name: iauPfw06
+    /// </summary>
+    /// <param name="ttJulianDate"></param>
+    /// <returns></returns>
+    public static FukushimaWilliamsAngles PrecessionAnglesIAU06(JulianDate ttJulianDate)
+    {
+        ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
+        double gamb, phib, psib, epsa;
+
+        var t = ttJulianDate.JulianCentury();
+        gamb = (-0.052928 +
+            (10.556378 +
+            (0.4932044 +
+            (-0.00031238 +
+            (-0.000002788 +
+            (0.0000000260)
+            * t) * t) * t) * t) * t) * Constants.DAS2R;
+        phib = (84381.412819 +
+            (-46.811016 +
+            (0.0511268 +
+            (0.00053289 +
+            (-0.000000440 +
+            (-0.0000000176)
+            * t) * t) * t) * t) * t) * Constants.DAS2R;
+        psib = (-0.041775 +
+            (5038.481484 +
+            (1.5584175 +
+            (-0.00018522 +
+            (-0.000026452 +
+            (-0.0000000148)
+            * t) * t) * t) * t) * t) * Constants.DAS2R;
+        epsa = MeanObliquityOfTheEclipticIAU06(ttJulianDate);
+
+        return new(gamb, phib, psib, epsa);
     }
 
 }
