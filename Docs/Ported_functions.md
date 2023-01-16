@@ -180,7 +180,7 @@
               double *x, double *y);
 - [ ] void iauLtp(double epj, double rp[3][3]);
 - [ ] void iauLtpb(double epj, double rpb[3][3]);
-- [ ] void iauLtpecl(double epj, double vec[3]);
+- [x] void iauLtpecl(double epj, double vec[3]);
 - [x] void iauLtpequ(double epj, double veq[3]);
 - [ ] void iauNum00a(double date1, double date2, double rmatn[3][3]);
 - [ ] void iauNum00b(double date1, double date2, double rmatn[3][3]);

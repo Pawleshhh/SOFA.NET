@@ -100,4 +100,21 @@ internal class PrecNutPolarModuleTest
         });
     }
 
+    [Test]
+    public static void LongTermPrecessionOfTheEcliptic_Test()
+    {
+        var julianEpoch = -1500.0;
+
+        var result = PrecNutPolarModule
+            .LongTermPrecessionOfTheEcliptic(julianEpoch);
+
+        Assert.Multiple(() =>
+        {
+            double delta = 1e-14;
+            Assert.That(result[0], Is.EqualTo(0.4768625676477096525e-3).Within(delta));
+            Assert.That(result[1], Is.EqualTo(-0.4052259533091875112).Within(delta));
+            Assert.That(result[2], Is.EqualTo(0.9142164401096448012).Within(delta));
+        });
+    }
+
 }
