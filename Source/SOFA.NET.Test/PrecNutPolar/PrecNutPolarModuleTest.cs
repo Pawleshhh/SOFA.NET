@@ -83,4 +83,21 @@ internal class PrecNutPolarModuleTest
         });
     }
 
+    [Test]
+    public static void LongTermPrecessionOfTheEquator_Test()
+    {
+        var julianEpoch = -2500.0;
+
+        var result = PrecNutPolarModule
+            .LongTermPrecessionOfTheEquator(julianEpoch);
+
+        Assert.Multiple(() =>
+        {
+            double delta = 1e-14;
+            Assert.That(result[0], Is.EqualTo(-0.3586652560237326659).Within(delta));
+            Assert.That(result[1], Is.EqualTo(-0.1996978910771128475).Within(delta));
+            Assert.That(result[2], Is.EqualTo(0.9118552442250819624).Within(delta));
+        });
+    }
+
 }

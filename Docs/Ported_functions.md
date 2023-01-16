@@ -181,7 +181,7 @@
 - [ ] void iauLtp(double epj, double rp[3][3]);
 - [ ] void iauLtpb(double epj, double rpb[3][3]);
 - [ ] void iauLtpecl(double epj, double vec[3]);
-- [ ] void iauLtpequ(double epj, double veq[3]);
+- [x] void iauLtpequ(double epj, double veq[3]);
 - [ ] void iauNum00a(double date1, double date2, double rmatn[3][3]);
 - [ ] void iauNum00b(double date1, double date2, double rmatn[3][3]);
 - [ ] void iauNum06a(double date1, double date2, double rmatn[3][3]);
@@ -316,7 +316,7 @@
 - [x] void iauEceq06(double date1, double date2, double dl, double db,
                double *dr, double *dd);
 - [x] void iauEcm06(double date1, double date2, double rm[3][3]);
-- [ ] void iauEqec06(double date1, double date2, double dr, double dd,
+- [x] void iauEqec06(double date1, double date2, double dr, double dd,
                double *dl, double *db);
 - [ ] void iauLteceq(double epj, double dl, double db, double *dr, double *dd);
 - [ ] void iauLtecm(double epj, double rm[3][3]);
