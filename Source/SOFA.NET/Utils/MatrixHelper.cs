@@ -161,6 +161,21 @@ internal static class MatrixHelper
     }
 
     /// <summary>
+    /// SOFA name: iauSxp
+    /// </summary>
+    /// <param name="p"></param>
+    /// <param name="s"></param>
+    /// <returns></returns>
+    public static double[] Multiply(this double[] p, double s)
+    {
+        var sp = new double[3];
+        sp[0] = s * p[0];
+        sp[1] = s * p[1];
+        sp[2] = s * p[2];
+        return sp;
+    }
+
+    /// <summary>
     /// SOFA name: iauTr
     /// </summary>
     /// <param name="r"></param>
@@ -190,6 +205,59 @@ internal static class MatrixHelper
     public static double[] TransposeMultiply(this double[,] r, double[] p)
     {
         return r.Transpose().Multiply(p);
+    }
+
+    /// <summary>
+    /// SOFA name: iauPxp
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public static double[] VectorOuterProduct(double[] a, double[] b)
+    {
+        double xa, ya, za, xb, yb, zb;
+
+        xa = a[0];
+        ya = a[1];
+        za = a[2];
+        xb = b[0];
+        yb = b[1];
+        zb = b[2];
+        double[] axb = new double[3];
+        axb[0] = ya * zb - za * yb;
+        axb[1] = za * xb - xa * zb;
+        axb[2] = xa * yb - ya * xb;
+
+        return axb;
+    }
+
+    /// <summary>
+    /// SOFA name: iauPm
+    /// </summary>
+    /// <param name="p"></param>
+    /// <returns></returns>
+    public static double ModulusOfVector(double[] p)
+        => Math.Sqrt(p[0] * p[0] + p[1] * p[1] + p[2] * p[2]);
+
+    /// <summary>
+    /// SOFA name: iauPn
+    /// </summary>
+    /// <param name="p"></param>
+    /// <returns></returns>
+    public static (double[] UnitVector, double Modulus) VectorToModulusAndUnitVector(double[] p)
+    {
+        double[] unitVector;
+        double w = ModulusOfVector(p);
+        if (w == 0.0)
+        {
+            unitVector = new double[3];
+        }
+        else
+        {
+            unitVector = p.Multiply(1.0 / w);
+        }
+
+        return (unitVector, w);
     }
 
 }

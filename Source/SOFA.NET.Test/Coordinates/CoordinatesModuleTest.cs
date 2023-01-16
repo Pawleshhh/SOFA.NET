@@ -37,6 +37,27 @@ internal class CoordinatesModuleTest
     }
 
     [Test]
+    public void RotationMatrixOfEquatorialToEclipticIAU06_Test()
+    {
+        var julianDate = new JulianDate(2456165.5 + 0.401182685);
+
+        var result = CoordinatesModule.RotationMatrixOfEquatorialToEclipticIAU06(julianDate);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result[0, 0], IsEqualTo(0.9999952427708701137));
+            Assert.That(result[0, 1], IsEqualTo(-0.2829062057663042347e-2));
+            Assert.That(result[0, 2], IsEqualTo(-0.1229163741100017629e-2));
+            Assert.That(result[1, 0], IsEqualTo(0.3084546876908653562e-2));
+            Assert.That(result[1, 1], IsEqualTo(0.9174891871550392514));
+            Assert.That(result[1, 2], IsEqualTo(0.3977487611849338124));
+            Assert.That(result[2, 0], IsEqualTo(0.2488512951527405928e-5));
+            Assert.That(result[2, 1], IsEqualTo(-0.3977506604161195467));
+            Assert.That(result[2, 2], IsEqualTo(0.9174935488232863071));
+        });
+    }
+
+    [Test]
     public void SphericalToCartesian_Test()
     {
         var spherical = ICoordinateSystem2D<double>.Create(3.0123, -0.999);
@@ -68,27 +89,27 @@ internal class CoordinatesModuleTest
     }
 
     [Test]
-    public void RotationMatrixOfEquatorialToEclipticIAU06_Test()
+    public void RotationMatrixOfEquatorialToEclipticLongTerm_Test()
     {
-        var julianDate = new JulianDate(2456165.5 + 0.401182685);
+        var julianEpoch = -3000.0;
 
-        var result = CoordinatesModule.RotationMatrixOfEquatorialToEclipticIAU06(julianDate);
+        var result = CoordinatesModule.RotationMatrixOfEquatorialToEclipticLongTerm(julianEpoch);
 
         Assert.Multiple(() =>
         {
-            Assert.That(result[0, 0], IsEqualTo(0.9999952427708701137));
-            Assert.That(result[0, 1], IsEqualTo(-0.2829062057663042347e-2));
-            Assert.That(result[0, 2], IsEqualTo(-0.1229163741100017629e-2));
-            Assert.That(result[1, 0], IsEqualTo(0.3084546876908653562e-2));
-            Assert.That(result[1, 1], IsEqualTo(0.9174891871550392514));
-            Assert.That(result[1, 2], IsEqualTo(0.3977487611849338124));
-            Assert.That(result[2, 0], IsEqualTo(0.2488512951527405928e-5));
-            Assert.That(result[2, 1], IsEqualTo(-0.3977506604161195467));
-            Assert.That(result[2, 2], IsEqualTo(0.9174935488232863071));
+            Assert.That(result[0, 0], IsEqualTo(0.3564105644859788825));
+            Assert.That(result[0, 1], IsEqualTo(0.8530575738617682284));
+            Assert.That(result[0, 2], IsEqualTo(0.3811355207795060435));
+            Assert.That(result[1, 0], IsEqualTo(-0.9343283469640709942));
+            Assert.That(result[1, 1], IsEqualTo(0.3247830597681745976));
+            Assert.That(result[1, 2], IsEqualTo(0.1467872751535940865));
+            Assert.That(result[2, 0], IsEqualTo(0.1431636191201167793e-2));
+            Assert.That(result[2, 1], IsEqualTo(-0.4084222566960599342));
+            Assert.That(result[2, 2], IsEqualTo(0.9127919865189030899));
         });
-
-        static EqualConstraint IsEqualTo(double x)
-            => Is.EqualTo(x).Within(1e-14);
     }
+
+    private static EqualConstraint IsEqualTo(double x)
+        => Is.EqualTo(x).Within(1e-14);
 
 }
