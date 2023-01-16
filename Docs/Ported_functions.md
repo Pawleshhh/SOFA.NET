@@ -318,7 +318,7 @@
 - [x] void iauEcm06(double date1, double date2, double rm[3][3]);
 - [x] void iauEqec06(double date1, double date2, double dr, double dd,
                double *dl, double *db);
-- [ ] void iauLteceq(double epj, double dl, double db, double *dr, double *dd);
+- [x] void iauLteceq(double epj, double dl, double db, double *dr, double *dd);
 - [x] void iauLtecm(double epj, double rm[3][3]);
 - [ ] void iauLteqec(double epj, double dr, double dd, double *dl, double *db);
 

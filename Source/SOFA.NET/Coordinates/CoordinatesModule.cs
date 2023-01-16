@@ -81,6 +81,29 @@ public static class CoordinatesModule
     #region Ecliptic <-> Equatorial Long term
 
     /// <summary>
+    /// Transformation from ecliptic coordinates (mean equinox and ecliptic of date) 
+    /// to ICRS RA,Dec, using a long-term precession model
+    /// SOFA name: iauLteceq
+    /// </summary>
+    /// <param name="ttJulianEpoch"></param>
+    /// <param name="eclipticCoordinates"></param>
+    /// <returns></returns>
+    public static EquatorialCoordinates EclipticToEquatorialLongTerm(
+        double ttJulianEpoch,
+        EclipticCoordinates eclipticCoordinates)
+    {
+        var v1 = SphericalToCartesian(eclipticCoordinates);
+        var rm = RotationMatrixOfEquatorialToEclipticLongTerm(ttJulianEpoch);
+        var v2 = rm.TransposeMultiply(v1);
+        var p = VectorToSphericalCoordinates(v2);
+
+        double ra = MathHelper.NormalizeAngleIntoZero2PI(p.X);
+        double dec = MathHelper.NormalizeAngleIntoMinusOnePIToPlusOnePI(p.Y);
+
+        return new(dec, ra);
+    }
+
+    /// <summary>
     /// ICRS equatorial to ecliptic rotation matrix, long-term
     /// SOFA name: iauLtecm
     /// </summary>
