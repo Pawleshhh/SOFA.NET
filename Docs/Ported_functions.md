@@ -320,7 +320,7 @@
                double *dl, double *db);
 - [x] void iauLteceq(double epj, double dl, double db, double *dr, double *dd);
 - [x] void iauLtecm(double epj, double rm[3][3]);
-- [ ] void iauLteqec(double epj, double dr, double dd, double *dl, double *db);
+- [x] void iauLteqec(double epj, double dr, double dd, double *dl, double *db);
 
 #### Astronomy/GalacticCoordinates
 - [ ] void iauG2icrs(double dl, double db, double *dr, double *dd);

@@ -104,6 +104,30 @@ public static class CoordinatesModule
     }
 
     /// <summary>
+    /// Transformation from ICRS equatorial coordinates to ecliptic coordinates (mean equinox and ecliptic of date) 
+    /// using a long-termprecession model
+    /// SOFA name: iauLteqec
+    /// </summary>
+    /// <param name="ttJulianEpoch"></param>
+    /// <param name="equatorialCoordinates"></param>
+    /// <returns></returns>
+    public static EclipticCoordinates EquatorialToEclipticLongTerm(
+        double ttJulianEpoch,
+        EquatorialCoordinates equatorialCoordinates)
+    {
+        var v1 = SphericalToCartesian(ICoordinateSystem2D<double>
+            .Create(equatorialCoordinates.RightAscension, equatorialCoordinates.Declination));
+        var rm = RotationMatrixOfEquatorialToEclipticLongTerm(ttJulianEpoch);
+        var v2 = rm.Multiply(v1);
+        var p = VectorToSphericalCoordinates(v2);
+
+        double lon = MathHelper.NormalizeAngleIntoZero2PI(p.X);
+        double lat = MathHelper.NormalizeAngleIntoMinusOnePIToPlusOnePI(p.Y);
+
+        return new(lon, lat);
+    }
+
+    /// <summary>
     /// ICRS equatorial to ecliptic rotation matrix, long-term
     /// SOFA name: iauLtecm
     /// </summary>

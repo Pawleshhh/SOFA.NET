@@ -104,6 +104,21 @@ internal class CoordinatesModuleTest
     }
 
     [Test]
+    public void EquatorialToEclipticLongTerm_Test()
+    {
+        var julianEpoch = -1500.0;
+        var equatorialCoords = new EquatorialCoordinates(0.987, 1.234);
+
+        var result = CoordinatesModule.EquatorialToEclipticLongTerm(julianEpoch, equatorialCoords);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Longitude, Is.EqualTo(0.5039483649047114859).Within(1e-14));
+            Assert.That(result.Latitude, Is.EqualTo(0.5848534459726224882).Within(1e-14));
+        });
+    }
+
+    [Test]
     public void RotationMatrixOfEquatorialToEclipticLongTerm_Test()
     {
         var julianEpoch = -3000.0;
