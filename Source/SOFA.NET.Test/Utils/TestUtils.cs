@@ -10,8 +10,8 @@ internal static class TestUtils
     {
         Assert.Multiple(() =>
         {
-            Assert.That(actual.X, Is.EqualTo(expected.X).Within(xDelta), $"Expected X = {expected.X} but was {actual.X}");
-            Assert.That(actual.Y, Is.EqualTo(expected.Y).Within(yDelta), $"Expected Y = {expected.Y} but was {actual.Y}");
+            Assert.That(actual.X, Is.EqualTo(expected.X).Within(xDelta), $"X failed");
+            Assert.That(actual.Y, Is.EqualTo(expected.Y).Within(yDelta), $"Y failed");
         });
     }
 

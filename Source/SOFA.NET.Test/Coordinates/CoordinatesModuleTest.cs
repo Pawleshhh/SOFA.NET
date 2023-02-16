@@ -141,6 +141,19 @@ internal class CoordinatesModuleTest
             1e-14);
     }
 
+    [Test]
+    public void EquatorialToGalacticCoordinatesICRS_Test()
+    {
+        var equatorialCoords =
+            new EquatorialCoordinates(-1.1784870613579944551540570, 5.9338074302227188048671087);
+
+        var result = CoordinatesModule.EquatorialToGalacticCoordinatesICRS(equatorialCoords);
+
+        AssertCoordinateSystem2D(ICoordinateSystem2D<double>.Create(5.5850536063818546461558, -0.7853981633974483096157),
+            result,
+            1e-14);
+    }
+
     private static EqualConstraint IsEqualTo(double x)
         => Is.EqualTo(x).Within(1e-14);
 

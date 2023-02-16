@@ -32,4 +32,21 @@ public static partial class CoordinatesModule
             MathHelper.NormalizeAngleIntoZero2PI(eq.X));
     }
 
+    /// <summary>
+    /// Transformation from ICRS to Galactic Coordinates.
+    /// SOFA name: iauIcrs2g
+    /// </summary>
+    /// <param name="equatorialCoordinates"></param>
+    /// <returns></returns>
+    public static GalacticCoordinates EquatorialToGalacticCoordinatesICRS(EquatorialCoordinates equatorialCoordinates)
+    {
+        var v1 = SphericalToCartesian(
+            ICoordinateSystem2D<double>.Create(equatorialCoordinates.RightAscension, equatorialCoordinates.Declination));
+        var v2 = MatrixHelper.Multiply(galacticRotationMatrix, v1);
+        var galactic = VectorToSphericalCoordinates(v2);
+
+        return new(MathHelper.NormalizeAngleIntoZero2PI(galactic.X),
+            MathHelper.NormalizeAngleIntoMinusOnePIToPlusOnePI(galactic.Y));
+    }
+
 }

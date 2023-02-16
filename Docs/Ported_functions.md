@@ -324,7 +324,7 @@
 
 #### Astronomy/GalacticCoordinates
 - [x] void iauG2icrs(double dl, double db, double *dr, double *dd);
-- [ ] void iauIcrs2g(double dr, double dd, double *dl, double *db);
+- [x] void iauIcrs2g(double dr, double dd, double *dl, double *db);
 
 #### Astronomy/GeodeticGeocentric
 - [ ] int iauEform(int n, double *a, double *f);
