@@ -323,7 +323,7 @@
 - [x] void iauLteqec(double epj, double dr, double dd, double *dl, double *db);
 
 #### Astronomy/GalacticCoordinates
-- [ ] void iauG2icrs(double dl, double db, double *dr, double *dd);
+- [x] void iauG2icrs(double dl, double db, double *dr, double *dd);
 - [ ] void iauIcrs2g(double dr, double dd, double *dl, double *db);
 
 #### Astronomy/GeodeticGeocentric

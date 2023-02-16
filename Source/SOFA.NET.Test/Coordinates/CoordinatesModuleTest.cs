@@ -14,11 +14,9 @@ internal class CoordinatesModuleTest
 
         var result = CoordinatesModule.EclipticToEquatorialIAU06(julianDate, eclipticCoords);
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.RightAscension, Is.EqualTo(5.533459733613627767).Within(1e-14));
-            Assert.That(result.Declination, Is.EqualTo(-1.246542932554480576).Within(1e-14));
-        });
+        AssertCoordinateSystem2D(ICoordinateSystem2D<double>.Create(-1.246542932554480576, 5.533459733613627767),
+            result,
+            1e-14);
     }
 
     [Test]
@@ -29,11 +27,9 @@ internal class CoordinatesModuleTest
 
         var result = CoordinatesModule.EquatorialToEclipticIAU06(julianDate, equatorialCoords);
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.Longitude, Is.EqualTo(1.342509918994654619).Within(1e-14));
-            Assert.That(result.Latitude, Is.EqualTo(0.5926215259704608132).Within(1e-14));
-        });
+        AssertCoordinateSystem2D(ICoordinateSystem2D<double>.Create(1.342509918994654619, 0.5926215259704608132),
+            result,
+            1e-14);
     }
 
     [Test]
@@ -80,12 +76,9 @@ internal class CoordinatesModuleTest
 
         var result = CoordinatesModule.VectorToSphericalCoordinates(vector);
 
-        Assert.Multiple(() =>
-        {
-            double delta = 1e-14;
-            Assert.That(result.X, Is.EqualTo(-0.4636476090008061162).Within(delta));
-            Assert.That(result.Y, Is.EqualTo(0.2199879773954594463).Within(delta));
-        });
+        AssertCoordinateSystem2D(ICoordinateSystem2D<double>.Create(-0.4636476090008061162, 0.2199879773954594463),
+            result,
+            1e-14);
     }
 
     [Test]
@@ -96,11 +89,9 @@ internal class CoordinatesModuleTest
 
         var result = CoordinatesModule.EclipticToEquatorialLongTerm(julianEpoch, eclipticCoords);
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.RightAscension, Is.EqualTo(1.275156021861921167).Within(1e-14));
-            Assert.That(result.Declination, Is.EqualTo(0.9966573543519204791).Within(1e-14));
-        });
+        AssertCoordinateSystem2D(ICoordinateSystem2D<double>.Create(0.9966573543519204791, 1.275156021861921167),
+            result,
+            1e-14);
     }
 
     [Test]
@@ -111,11 +102,9 @@ internal class CoordinatesModuleTest
 
         var result = CoordinatesModule.EquatorialToEclipticLongTerm(julianEpoch, equatorialCoords);
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.Longitude, Is.EqualTo(0.5039483649047114859).Within(1e-14));
-            Assert.That(result.Latitude, Is.EqualTo(0.5848534459726224882).Within(1e-14));
-        });
+        AssertCoordinateSystem2D(ICoordinateSystem2D<double>.Create(0.5039483649047114859, 0.5848534459726224882),
+            result,
+            1e-14);
     }
 
     [Test]
@@ -137,6 +126,19 @@ internal class CoordinatesModuleTest
             Assert.That(result[2, 1], IsEqualTo(-0.4084222566960599342));
             Assert.That(result[2, 2], IsEqualTo(0.9127919865189030899));
         });
+    }
+
+    [Test]
+    public void GalacticToEquatorialCoordinatesICRS_Test()
+    {
+        var galacticCoords = 
+            new GalacticCoordinates(5.5850536063818546461558105, -0.7853981633974483096156608);
+
+        var result = CoordinatesModule.GalacticToEquatorialCoordinatesICRS(galacticCoords);
+
+        AssertCoordinateSystem2D(ICoordinateSystem2D<double>.Create(-1.1784870613579944551541, 5.9338074302227188048671),
+            result,
+            1e-14);
     }
 
     private static EqualConstraint IsEqualTo(double x)
