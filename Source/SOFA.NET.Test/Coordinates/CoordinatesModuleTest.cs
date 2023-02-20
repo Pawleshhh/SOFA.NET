@@ -154,6 +154,19 @@ internal class CoordinatesModuleTest
             1e-14);
     }
 
+    [Test]
+    public void HorizonToHourAngleCoordinates_Test()
+    {
+        var horizonCoords = new HorizonCoordinates(1.1, 5.5);
+        double siteLatitude = 0.7;
+
+        var result = CoordinatesModule.HorizonToHourAngleCoordinates(horizonCoords, siteLatitude);
+
+        AssertCoordinateSystem2D(ICoordinateSystem2D<double>.Create(0.9613934761647817620, 0.5933291115507309663),
+            result,
+            1e-14);
+    }
+
     private static EqualConstraint IsEqualTo(double x)
         => Is.EqualTo(x).Within(1e-14);
 

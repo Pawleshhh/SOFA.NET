@@ -9,6 +9,9 @@ public record HorizonCoordinates(double Altitude, double Azimuth)
 public record EquatorialCoordinates(double Declination, double RightAscension)
     : CoordinateSystemBase2D<double>(Declination, RightAscension);
 
+public record HourAngleCoordinates(double Declination, double HourAngle)
+    : CoordinateSystemBase2D<double>(Declination, HourAngle);
+
 public record EclipticCoordinates(double Longitude, double Latitude)
     : CoordinateSystemBase2D<double>(Longitude, Latitude);
 
