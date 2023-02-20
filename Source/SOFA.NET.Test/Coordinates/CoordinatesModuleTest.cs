@@ -180,6 +180,18 @@ internal class CoordinatesModuleTest
             1e-14);
     }
 
+    [Test]
+    public void ParallacticAngle_Test()
+    {
+        double ha = 1.1,
+            dec = 1.2,
+            phi = 0.3;
+
+        var result = CoordinatesModule.ParallacticAngle(ha, dec, phi);
+
+        Assert.That(result, Is.EqualTo(1.906227428001995580).Within(1e-13));
+    }
+
     private static EqualConstraint IsEqualTo(double x)
         => Is.EqualTo(x).Within(1e-14);
 

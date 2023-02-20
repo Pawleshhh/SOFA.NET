@@ -6,6 +6,7 @@ public static partial class CoordinatesModule
     /// <summary>
     /// Horizon to equatorial coordinates:  transform azimuth and altitude
     /// to hour angle and declination.
+    /// SOFA name: iauAe2hd
     /// </summary>
     /// <param name="horizonCoordinates"></param>
     /// <param name="siteLatitude"></param>
@@ -38,6 +39,14 @@ public static partial class CoordinatesModule
         return new(dec, ha);
     }
 
+    /// <summary>
+    /// Equatorial to horizon coordinates:  transform hour angle and
+    /// declination to azimuth and altitude.
+    /// SOFA name: iauHd2ae
+    /// </summary>
+    /// <param name="hourAngleCoordinates"></param>
+    /// <param name="siteLatitude"></param>
+    /// <returns></returns>
     public static HorizonCoordinates HourAngleToHorizonCoordinates(
         HourAngleCoordinates hourAngleCoordinates,
         double siteLatitude)
@@ -64,6 +73,28 @@ public static partial class CoordinatesModule
         var el = Math.Atan2(z, r);
 
         return new(el, az);
+    }
+
+    /// <summary>
+    /// Parallactic angle for a given hour angle and declination.
+    /// SOFA name: iauHd2pa
+    /// </summary>
+    /// <param name="hourAngle"></param>
+    /// <param name="declination"></param>
+    /// <param name="siteLatitude"></param>
+    /// <returns></returns>
+    public static double ParallacticAngle(
+        double hourAngle,
+        double declination,
+        double siteLatitude)
+    {
+        double cp, cqsz, sqsz;
+
+        cp = Math.Cos(siteLatitude);
+        sqsz = cp * Math.Sin(hourAngle);
+        cqsz = Math.Sin(siteLatitude) * Math.Cos(declination) - cp * Math.Sin(declination) * Math.Cos(hourAngle);
+
+        return ((sqsz != 0.0 || cqsz != 0.0) ? Math.Atan2(sqsz, cqsz) : 0.0);
     }
 
 }
