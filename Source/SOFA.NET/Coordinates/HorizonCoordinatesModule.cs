@@ -38,4 +38,32 @@ public static partial class CoordinatesModule
         return new(dec, ha);
     }
 
+    public static HorizonCoordinates HourAngleToHorizonCoordinates(
+        HourAngleCoordinates hourAngleCoordinates,
+        double siteLatitude)
+    {
+        double sh, ch, sd, cd, sp, cp, x, y, z, r;
+        var (dec, ha) = hourAngleCoordinates;
+
+        sh = Math.Sin(ha);
+        ch = Math.Cos(ha);
+        sd = Math.Sin(dec);
+        cd = Math.Cos(dec);
+        sp = Math.Sin(siteLatitude);
+        cp = Math.Cos(siteLatitude);
+
+        /* Az,Alt unit vector. */
+        x = -ch * cd * sp + sd * cp;
+        y = -sh * cd;
+        z = ch * cd * cp + sd * sp;
+
+        /* To spherical. */
+        r = Math.Sqrt(x * x + y * y);
+        double a = (r != 0.0) ? Math.Atan2(y, x) : 0.0;
+        var az = (a < 0.0) ? a + Constants.PI2 : a;
+        var el = Math.Atan2(z, r);
+
+        return new(el, az);
+    }
+
 }

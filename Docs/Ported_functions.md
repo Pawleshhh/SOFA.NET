@@ -373,7 +373,7 @@
 #### Astronomy/HorizonEquatorial
 - [x] void iauAe2hd(double az, double el, double phi,
               double *ha, double *dec);
-- [ ] void iauHd2ae(double ha, double dec, double phi,
+- [x] void iauHd2ae(double ha, double dec, double phi,
               double *az, double *el);
 - [ ] double iauHd2pa(double ha, double dec, double phi);
 
