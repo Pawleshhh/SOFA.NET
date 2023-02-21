@@ -54,6 +54,12 @@ public static partial class CoordinatesModule
         return ICoordinateSystem3D<double>.Create(sphericalCoords.X, sphericalCoords.Y, r);
     }
 
+    /// <summary>
+    /// Convert position/velocity from Cartesian to spherical coordinates.
+    /// SOFA name: iauPv2s
+    /// </summary>
+    /// <param name="pvVector"></param>
+    /// <returns></returns>
     public static ICoordinateSystem3D<SphericalCoordinate> CartesianToSphericalPositionAndVelocityCoordinates(double[,] pvVector)
     {
         double x, y, z, xd, yd, zd, rxy2, rxy, r2, rtrue, rw, xyp, theta, phi, r, td, pd, rd;
