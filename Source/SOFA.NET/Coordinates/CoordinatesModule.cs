@@ -47,7 +47,7 @@ public static partial class CoordinatesModule
     /// </summary>
     /// <param name="vector"></param>
     /// <returns></returns>
-    public static ICoordinateSystem3D<double> VectorToSphericalPolarCoordinates(double[] vector)
+    public static ICoordinateSystem3D<double> PositionVectorToSphericalPolarCoordinates(double[] vector)
     {
         var sphericalCoords = VectorToSphericalCoordinates(vector);
         var r = MatrixHelper.ModulusOfVector(vector);
@@ -115,6 +115,22 @@ public static partial class CoordinatesModule
 
         return ICoordinateSystem3D<SphericalCoordinate>.Create(
             new(theta, td), new(phi, pd), new(r, rd));
+    }
+
+    /// <summary>
+    /// Convert spherical polar coordinates to p-vector.
+    /// SOFA name: iauS2p
+    /// </summary>
+    /// <param name="sphericalPolarCoordinates"></param>
+    /// <returns></returns>
+    public static double[] SphericalPolarCoordinatesToPositionVector(ICoordinateSystem3D<double> sphericalPolarCoordinates)
+    {
+        var (theta, phi, r) = sphericalPolarCoordinates;
+
+        var cartesian = SphericalToCartesian(ICoordinateSystem2D<double>.Create(theta, phi));
+        var p = cartesian.Multiply(r);
+
+        return p;
     }
 
 }

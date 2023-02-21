@@ -193,11 +193,11 @@ internal class CoordinatesModuleTest
     }
 
     [Test]
-    public void VectorToSphericalPolarCoordinates_Test()
+    public void PositionVectorToSphericalPolarCoordinates_Test()
     {
         var vector = new double[] { 100.0, -50.0, 25.0 };
 
-        var result = CoordinatesModule.VectorToSphericalPolarCoordinates(vector);
+        var result = CoordinatesModule.PositionVectorToSphericalPolarCoordinates(vector);
 
         AssertCoordinateSystem3D(ICoordinateSystem3D<double>
             .Create(-0.4636476090008061162, 0.2199879773954594463, 114.5643923738960002),
@@ -233,6 +233,29 @@ internal class CoordinatesModuleTest
 
             Assert.That(result.Z.Value, Is.EqualTo(expectedZ.Value).Within(1e-12));
             Assert.That(result.Z.RateOfChange, Is.EqualTo(expectedZ.RateOfChange).Within(1e-16));
+        });
+    }
+
+    [Test]
+    public void SphericalPolarCoordinatesToPositionVector_Test()
+    {
+        var sphericalPolarCoords = ICoordinateSystem3D<double>
+            .Create(-3.21, 0.123, 0.456);
+
+        var result = CoordinatesModule.SphericalPolarCoordinatesToPositionVector(sphericalPolarCoords);
+
+        var expected = new double[]
+        {
+            -0.4514964673880165228,
+            0.0309339427734258688,
+            0.0559466810510877933
+        };
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result[0], Is.EqualTo(expected[0]).Within(1e-12));
+            Assert.That(result[1], Is.EqualTo(expected[1]).Within(1e-12));
+            Assert.That(result[2], Is.EqualTo(expected[2]).Within(1e-12));
         });
     }
 
