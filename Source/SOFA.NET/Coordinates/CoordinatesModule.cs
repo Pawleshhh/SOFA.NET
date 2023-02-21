@@ -133,4 +133,38 @@ public static partial class CoordinatesModule
         return p;
     }
 
+    /// <summary>
+    /// Convert position/velocity from spherical to Cartesian coordinates.
+    /// SOFA name: iauS2pv
+    /// </summary>
+    /// <param name="sphericalCoords"></param>
+    /// <returns></returns>
+    public static double[,] SphericalToCartesianPositionAndVelocityCoordinates(ICoordinateSystem3D<SphericalCoordinate> sphericalCoords)
+    {
+        double st, ct, sp, cp, rcp, x, y, rpd, w;
+
+        var (theta, phi, r) = sphericalCoords;
+
+        st = Math.Sin(theta.Value);
+        ct = Math.Cos(theta.Value);
+        sp = Math.Sin(phi.Value);
+        cp = Math.Cos(phi.Value);
+        rcp = r.Value * cp;
+        x = rcp * ct;
+        y = rcp * st;
+        rpd = r.Value * phi.RateOfChange;
+        w = rpd * sp - cp * r.RateOfChange;
+
+        double[,] pv = new double[2, 3];
+
+        pv[0, 0] = x;
+        pv[0, 1] = y;
+        pv[0, 2] = r.Value * sp;
+        pv[1, 0] = -y * theta.RateOfChange - w * ct;
+        pv[1, 1] = x * theta.RateOfChange - w * st;
+        pv[1, 2] = rpd * cp + sp * r.RateOfChange;
+
+        return pv;
+    }
+
 }

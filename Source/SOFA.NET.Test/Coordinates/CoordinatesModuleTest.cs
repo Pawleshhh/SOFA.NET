@@ -259,6 +259,32 @@ internal class CoordinatesModuleTest
         });
     }
 
+    [Test]
+    public void SphericalToCartesianPositionAndVelocityCoordinates_Test()
+    {
+        var sphericalPolarCoords = ICoordinateSystem3D<SphericalCoordinate>
+            .Create(new(-3.21, -7.8e-6), new(0.123, 9.01e-6), new(0.456, -1.23e-5));
+
+        var result = CoordinatesModule.SphericalToCartesianPositionAndVelocityCoordinates(sphericalPolarCoords);
+
+        var expected = new double[,]
+        {
+            { -0.4514964673880165228,0.0309339427734258688, 0.0559466810510877933 },
+            {  0.1292270850663260170e-4, 0.2652814182060691422e-5, 0.2568431853930292259e-5 },
+        };
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result[0, 0], Is.EqualTo(expected[0, 0]).Within(1e-12));
+            Assert.That(result[0, 1], Is.EqualTo(expected[0, 1]).Within(1e-12));
+            Assert.That(result[0, 2], Is.EqualTo(expected[0, 2]).Within(1e-12));
+
+            Assert.That(result[1, 0], Is.EqualTo(expected[1, 0]).Within(1e-16));
+            Assert.That(result[1, 1], Is.EqualTo(expected[1, 1]).Within(1e-16));
+            Assert.That(result[1, 2], Is.EqualTo(expected[1, 2]).Within(1e-16));
+        });
+    }
+
     private static EqualConstraint IsEqualTo(double x)
         => Is.EqualTo(x).Within(1e-14);
 
