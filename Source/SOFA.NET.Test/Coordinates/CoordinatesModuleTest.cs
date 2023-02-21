@@ -207,6 +207,35 @@ internal class CoordinatesModuleTest
             1e-9);
     }
 
+    [Test]
+    public void CartesianToSphericalPositionAndVelocityCoordinates_Test()
+    {
+        double[,] pv = new double[2, 3];
+        pv[0, 0] = -0.4514964673880165;
+        pv[0, 1] = 0.03093394277342585;
+        pv[0, 2] = 0.05594668105108779;
+        pv[1, 0] = 1.292270850663260e-5;
+        pv[1, 1] = 2.652814182060692e-6;
+        pv[1, 2] = 2.568431853930293e-6;
+
+        var result = CoordinatesModule.CartesianToSphericalPositionAndVelocityCoordinates(pv);
+
+        var expectedX = new SphericalCoordinate(3.073185307179586515, -0.7800000000000000364e-5);
+        var expectedY = new SphericalCoordinate(0.1229999999999999992, 0.9010000000000001639e-5);
+        var expectedZ = new SphericalCoordinate(0.4559999999999999757, -0.1229999999999999832e-4);
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.X.Value, Is.EqualTo(expectedX.Value).Within(1e-12));
+            Assert.That(result.X.RateOfChange, Is.EqualTo(expectedX.RateOfChange).Within(1e-16));
+
+            Assert.That(result.Y.Value, Is.EqualTo(expectedY.Value).Within(1e-12));
+            Assert.That(result.Y.RateOfChange, Is.EqualTo(expectedY.RateOfChange).Within(1e-16));
+
+            Assert.That(result.Z.Value, Is.EqualTo(expectedZ.Value).Within(1e-12));
+            Assert.That(result.Z.RateOfChange, Is.EqualTo(expectedZ.RateOfChange).Within(1e-16));
+        });
+    }
+
     private static EqualConstraint IsEqualTo(double x)
         => Is.EqualTo(x).Within(1e-14);
 

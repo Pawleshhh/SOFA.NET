@@ -440,7 +440,7 @@
 #### VectorMatrix/SphericalCartesian
 - [x] void iauC2s(double p[3], double *theta, double *phi);
 - [x] void iauP2s(double p[3], double *theta, double *phi, double *r);
-- [ ] void iauPv2s(double pv[2][3],
+- [x] void iauPv2s(double pv[2][3],
              double *theta, double *phi, double *r,
              double *td, double *pd, double *rd);
 - [x] void iauS2c(double theta, double phi, double c[3]);
