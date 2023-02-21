@@ -41,4 +41,17 @@ public static partial class CoordinatesModule
         return ICoordinateSystem2D<double>.Create(theta, phi);
     }
 
+    /// <summary>
+    /// P-vector to spherical polar coordinates.
+    /// SOFA name: iauP2s
+    /// </summary>
+    /// <param name="vector"></param>
+    /// <returns></returns>
+    public static ICoordinateSystem3D<double> VectorToSphericalPolarCoordinates(double[] vector)
+    {
+        var sphericalCoords = VectorToSphericalCoordinates(vector);
+        var r = MatrixHelper.ModulusOfVector(vector);
+        return ICoordinateSystem3D<double>.Create(sphericalCoords.X, sphericalCoords.Y, r);
+    }
+
 }

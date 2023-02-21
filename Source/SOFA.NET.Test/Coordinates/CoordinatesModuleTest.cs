@@ -192,6 +192,21 @@ internal class CoordinatesModuleTest
         Assert.That(result, Is.EqualTo(1.906227428001995580).Within(1e-13));
     }
 
+    [Test]
+    public void VectorToSphericalPolarCoordinates_Test()
+    {
+        var vector = new double[] { 100.0, -50.0, 25.0 };
+
+        var result = CoordinatesModule.VectorToSphericalPolarCoordinates(vector);
+
+        AssertCoordinateSystem3D(ICoordinateSystem3D<double>
+            .Create(-0.4636476090008061162, 0.2199879773954594463, 114.5643923738960002),
+            result,
+            1e-12,
+            1e-12,
+            1e-9);
+    }
+
     private static EqualConstraint IsEqualTo(double x)
         => Is.EqualTo(x).Within(1e-14);
 
