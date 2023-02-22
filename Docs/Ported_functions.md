@@ -327,7 +327,7 @@
 - [x] void iauIcrs2g(double dr, double dd, double *dl, double *db);
 
 #### Astronomy/GeodeticGeocentric
-- [ ] int iauEform(int n, double *a, double *f);
+- [x] int iauEform(int n, double *a, double *f);
 - [ ] int iauGc2gd(int n, double xyz[3],
              double *elong, double *phi, double *height);
 - [ ] int iauGc2gde(double a, double f, double xyz[3],
