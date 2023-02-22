@@ -327,6 +327,48 @@ internal class CoordinatesModuleTest
         Assert.Throws<ArgumentException>(() => CoordinatesModule.GeocentricToGeodeticCoordinates(geocentricCoords, re));
     }
 
+    [Test]
+    public void GeodeticToGeocentricCoordinates_EllipsoidParameter_Test()
+    {
+        var geodeticCoords = new GeodeticCoordinates(-0.5, 3.1, 2500.0);
+        var ellipsoidParam = new EllipsoidParameter(6378136.0, 0.0033528);
+
+        var result = CoordinatesModule.GeodeticToGeocentricCoordinates(geodeticCoords, ellipsoidParam);
+
+        AssertCoordinateSystem3D(
+            ICoordinateSystem3D<double>.Create(-5598999.6665116328, 233011.6351463057189, -3040909.0517314132),
+            result,
+            1e-7,
+            1e-7,
+            1e-7);
+    }
+
+    [TestCase(ReferenceEllipsoid.WGS84, new double[] { -5599000.5577049947, 233011.67223479203, -3040909.4706983363 })]
+    [TestCase(ReferenceEllipsoid.GRS80, new double[] { -5599000.5577260984, 233011.6722356702949, -3040909.4706095476 })]
+    [TestCase(ReferenceEllipsoid.WGS72, new double[] { -5598998.7626301490, 233011.5975297822211, -3040908.6861467111 })]
+    public void GeodeticToGeocentricCoordinates_ReferenceEllipsoid_Test(ReferenceEllipsoid re, double[] xyz)
+    {
+        var geodeticCoords = new GeodeticCoordinates(-0.5, 3.1, 2500.0);
+
+        var result = CoordinatesModule.GeodeticToGeocentricCoordinates(geodeticCoords, re);
+
+        AssertCoordinateSystem3D(
+            ICoordinateSystem3D<double>.Create(xyz[0], xyz[1], xyz[2]),
+            result,
+            1e-7,
+            1e-7,
+            1e-7);
+    }
+
+    [TestCase(0)]
+    [TestCase(4)]
+    public void GeodeticToGeocentricCoordinates_InvalidReferenceEllipsoidThrowException_Test(ReferenceEllipsoid re)
+    {
+        var geodeticCoords = new GeodeticCoordinates(-0.5, 3.1, 2500.0);
+
+        Assert.Throws<ArgumentException>(() => CoordinatesModule.GeodeticToGeocentricCoordinates(geodeticCoords, re));
+    }
+
     private static EqualConstraint IsEqualTo(double x)
         => Is.EqualTo(x).Within(1e-14);
 

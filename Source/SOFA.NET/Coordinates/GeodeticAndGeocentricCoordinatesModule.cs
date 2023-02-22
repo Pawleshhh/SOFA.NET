@@ -129,4 +129,54 @@ public static partial class CoordinatesModule
         return new(phi, elong, height);
     }
 
+    public static GeocentricCoordinates GeodeticToGeocentricCoordinates(
+        GeodeticCoordinates geodeticCoordinates,
+        ReferenceEllipsoid referenceEllipsoid)
+    {
+        var referenceEllipsoidParams = referenceEllipsoid.EarthReferenceEllipsoids();
+        var geocentricCoords = GeodeticToGeocentricCoordinates(geodeticCoordinates, referenceEllipsoidParams);
+
+        return geocentricCoords;
+    }
+
+    private static readonly GeocentricCoordinates geocentricArithmeticException = new(double.NaN, double.NaN, double.NaN);
+
+    /// <summary>
+    /// Transform geodetic coordinates to geocentric for a reference
+    /// ellipsoid of specified form.
+    /// SOFA name: iauGd2gce
+    /// </summary>
+    /// <param name="geodeticCoordinates"></param>
+    /// <param name="ellipsoidParameter"></param>
+    /// <returns></returns>
+    public static GeocentricCoordinates GeodeticToGeocentricCoordinates(
+        GeodeticCoordinates geodeticCoordinates,
+        EllipsoidParameter ellipsoidParameter)
+    {
+        double sp, cp, w, d, ac, @as, r;
+        var (phi, elong, height) = geodeticCoordinates;
+        var (a, f) = ellipsoidParameter;
+
+        /* Functions of geodetic latitude. */
+        sp = Math.Sin(phi);
+        cp = Math.Cos(phi);
+        w = 1.0 - f;
+        w = w * w;
+        d = cp * cp + w * sp * sp;
+        if (d <= 0.0)
+        {
+            return geocentricArithmeticException;
+        }
+        ac = a / Math.Sqrt(d);
+        @as = w * ac;
+
+        /* Geocentric vector. */
+        r = (ac + height) * cp;
+        var x = r * Math.Cos(elong);
+        var y = r * Math.Sin(elong);
+        var z = (@as + height) * sp;
+
+        return new(x, y, z);
+    }
+
 }

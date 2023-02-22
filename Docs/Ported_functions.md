@@ -332,9 +332,9 @@
              double *elong, double *phi, double *height);
 - [x] int iauGc2gde(double a, double f, double xyz[3],
               double *elong, double *phi, double *height);
-- [ ] int iauGd2gc(int n, double elong, double phi, double height,
+- [x] int iauGd2gc(int n, double elong, double phi, double height,
              double xyz[3]);
-- [ ] int iauGd2gce(double a, double f,
+- [x] int iauGd2gce(double a, double f,
               double elong, double phi, double height, double xyz[3]);
 
 #### Astronomy/Timescales
