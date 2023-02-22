@@ -3,6 +3,12 @@
 public record GeographicCoordinates(double Latitude, double Longitude)
     : CoordinateSystemBase2D<double>(Latitude, Longitude);
 
+public record GeocentricCoordinates(double X, double Y, double Z)
+    : CoordinateSystemBase3D<double>(X, Y, Z);
+
+public record GeodeticCoordinates(double Latitude, double Longitude, double Height)
+    : CoordinateSystemBase3D<double>(Latitude, Longitude, Height);
+
 public record HorizonCoordinates(double Altitude, double Azimuth)
     : CoordinateSystemBase2D<double>(Altitude, Azimuth);
 
@@ -17,7 +23,6 @@ public record EclipticCoordinates(double Longitude, double Latitude)
 
 public record GalacticCoordinates(double Longitude, double Latitude)
     : CoordinateSystemBase2D<double>(Longitude, Latitude);
-
 
 /// <summary>
 /// Contains single spherical coordinate (longitude angle, latitude angle or radial distance)

@@ -285,6 +285,48 @@ internal class CoordinatesModuleTest
         });
     }
 
+    [Test]
+    public void GeocentricToGeodeticCoordinates_EllipsoidParameter_Test()
+    {
+        var geocentricCoords = new GeocentricCoordinates(2e6, 3e6, 5.244e6);
+        var ellipsoidParam = new EllipsoidParameter(6378136.0, 0.0033528);
+
+        var result = CoordinatesModule.GeocentricToGeodeticCoordinates(geocentricCoords, ellipsoidParam);
+
+        AssertCoordinateSystem3D(
+            ICoordinateSystem3D<double>.Create(0.9716018377570411532, 0.9827937232473290680, 332.36862495764397),
+            result,
+            1e-14,
+            1e-14,
+            1e-8);
+    }
+
+    [TestCase(ReferenceEllipsoid.WGS84, new double[] { 0.97160184819075459, 0.9827937232473290680, 331.4172461426059892 })]
+    [TestCase(ReferenceEllipsoid.GRS80, new double[] { 0.97160184820607853, 0.9827937232473290680, 331.41731754844348 })]
+    [TestCase(ReferenceEllipsoid.WGS72, new double[] { 0.9716018181101511937, 0.9827937232473290680, 333.2770726130318123 })]
+    public void GeocentricToGeodeticCoordinates_ReferenceEllipsoid_Test(ReferenceEllipsoid re, double[] peh)
+    {
+        var geocentricCoords = new GeocentricCoordinates(2e6, 3e6, 5.244e6);
+
+        var result = CoordinatesModule.GeocentricToGeodeticCoordinates(geocentricCoords, re);
+
+        AssertCoordinateSystem3D(
+            ICoordinateSystem3D<double>.Create(peh[0], peh[1], peh[2]),
+            result,
+            1e-14,
+            1e-14,
+            1e-8);
+    }
+
+    [TestCase(0)]
+    [TestCase(4)]
+    public void GeocentricToGeodeticCoordinates_InvalidReferenceEllipsoidThrowException_Test(ReferenceEllipsoid re)
+    {
+        var geocentricCoords = new GeocentricCoordinates(2e6, 3e6, 5.244e6);
+
+        Assert.Throws<ArgumentException>(() => CoordinatesModule.GeocentricToGeodeticCoordinates(geocentricCoords, re));
+    }
+
     private static EqualConstraint IsEqualTo(double x)
         => Is.EqualTo(x).Within(1e-14);
 
