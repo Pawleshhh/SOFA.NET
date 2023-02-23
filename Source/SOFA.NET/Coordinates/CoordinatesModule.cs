@@ -22,6 +22,7 @@ public static partial class CoordinatesModule
     }
 
     /// <summary>
+    /// P-vector to spherical coordinates.
     /// SOFA name: iauC2s
     /// </summary>
     /// <param name="vector"></param>
