@@ -1,19 +1,65 @@
 ﻿namespace SOFA.NET;
 
-public record GeographicCoordinates : CoordinateSystem<double>, ICoordinateSystem2D<double>
-{
+public record GeographicCoordinates(double Latitude, double Longitude)
+    : CoordinateSystemBase2D<double>(Latitude, Longitude);
 
-    public GeographicCoordinates(double latitude, double longitude)
-        : base(latitude, longitude)
+public record GeocentricCoordinates(double X, double Y, double Z)
+    : CoordinateSystemBase3D<double>(X, Y, Z);
+
+public record GeodeticCoordinates(double Latitude, double Longitude, double Height)
+    : CoordinateSystemBase3D<double>(Latitude, Longitude, Height);
+
+public record HorizonCoordinates(double Altitude, double Azimuth)
+    : CoordinateSystemBase2D<double>(Altitude, Azimuth);
+
+public record EquatorialCoordinates(double Declination, double RightAscension)
+    : CoordinateSystemBase2D<double>(Declination, RightAscension);
+
+public record HourAngleCoordinates(double Declination, double HourAngle)
+    : CoordinateSystemBase2D<double>(Declination, HourAngle);
+
+public record EclipticCoordinates(double Longitude, double Latitude)
+    : CoordinateSystemBase2D<double>(Longitude, Latitude);
+
+public record GalacticCoordinates(double Longitude, double Latitude)
+    : CoordinateSystemBase2D<double>(Longitude, Latitude);
+
+/// <summary>
+/// Contains single spherical coordinate (longitude angle, latitude angle or radial distance)
+/// </summary>
+public readonly struct SphericalCoordinate : ICoordinateSystem<double>
+{
+    public double Value { get; }
+    public double RateOfChange { get; }
+
+    public int Axes => 1;
+
+    public SphericalCoordinate(double value, double rateOfChange)
     {
-        Latitude = latitude;
-        Longitude = longitude;
+        Value = value;
+        RateOfChange = rateOfChange;
     }
 
-    double ICoordinateSystem2D<double>.X { get => Get(0); set => Set(0, value); }
-    double ICoordinateSystem2D<double>.Y { get => Get(1); set => Set(1, value); }
+    public void Deconstruct(out double value, out double rate)
+        => (value, rate) = (Value, RateOfChange);
 
-    public double Latitude { get => Get(0); set => Set(0, value); }
-    public double Longitude { get => Get(1); set => Set(1, value); }
+    public double Get(int axis)
+        => axis == 0 
+        ? Value 
+        : throw new ArgumentOutOfRangeException("Spherical coordinate has only one defined coordiante value that can be accessed under 0 index");
 
+    public bool Equals(ICoordinateSystem<double>? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+
+        if (other is SphericalCoordinate spherical)
+        {
+            return Value == spherical.Value && RateOfChange == spherical.RateOfChange;
+        }
+        
+        return Value == other.Get(0);
+    }
 }

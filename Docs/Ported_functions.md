@@ -174,14 +174,14 @@
               double rc2t[3][3]);
 - [ ] double iauEo06a(double date1, double date2);
 - [ ] double iauEors(double rnpb[3][3], double s);
-- [ ] void iauFw2m(double gamb, double phib, double psi, double eps,
+- [x] void iauFw2m(double gamb, double phib, double psi, double eps,
              double r[3][3]);
 - [ ] void iauFw2xy(double gamb, double phib, double psi, double eps,
               double *x, double *y);
 - [ ] void iauLtp(double epj, double rp[3][3]);
 - [ ] void iauLtpb(double epj, double rpb[3][3]);
-- [ ] void iauLtpecl(double epj, double vec[3]);
-- [ ] void iauLtpequ(double epj, double veq[3]);
+- [x] void iauLtpecl(double epj, double vec[3]);
+- [x] void iauLtpequ(double epj, double veq[3]);
 - [ ] void iauNum00a(double date1, double date2, double rmatn[3][3]);
 - [ ] void iauNum00b(double date1, double date2, double rmatn[3][3]);
 - [ ] void iauNum06a(double date1, double date2, double rmatn[3][3]);
@@ -191,7 +191,7 @@
 - [ ] void iauNut06a(double date1, double date2, double *dpsi, double *deps);
 - [ ] void iauNut80(double date1, double date2, double *dpsi, double *deps);
 - [ ] void iauNutm80(double date1, double date2, double rmatn[3][3]);
-- [ ] double iauObl06(double date1, double date2);
+- [x] double iauObl06(double date1, double date2);
 - [ ] double iauObl80(double date1, double date2);
 - [ ] void iauP06e(double date1, double date2,
              double *eps0, double *psia, double *oma, double *bpa,
@@ -201,10 +201,10 @@
              double *gam, double *phi, double *psi);
 - [ ] void iauPb06(double date1, double date2,
              double *bzeta, double *bz, double *btheta);
-- [ ] void iauPfw06(double date1, double date2,
+- [x] void iauPfw06(double date1, double date2,
               double *gamb, double *phib, double *psib, double *epsa);
 - [ ] void iauPmat00(double date1, double date2, double rbp[3][3]);
-- [ ] void iauPmat06(double date1, double date2, double rbp[3][3]);
+- [x] void iauPmat06(double date1, double date2, double rbp[3][3]);
 - [ ] void iauPmat76(double date1, double date2, double rmatp[3][3]);
 - [ ] void iauPn00(double date1, double date2, double dpsi, double deps,
              double *epsa,
@@ -313,28 +313,28 @@
               double *pmr2, double *pmd2, double *px2, double *rv2);
 
 #### Astronomy/EclipticCoordinates
-- [ ] void iauEceq06(double date1, double date2, double dl, double db,
+- [x] void iauEceq06(double date1, double date2, double dl, double db,
                double *dr, double *dd);
-- [ ] void iauEcm06(double date1, double date2, double rm[3][3]);
-- [ ] void iauEqec06(double date1, double date2, double dr, double dd,
+- [x] void iauEcm06(double date1, double date2, double rm[3][3]);
+- [x] void iauEqec06(double date1, double date2, double dr, double dd,
                double *dl, double *db);
-- [ ] void iauLteceq(double epj, double dl, double db, double *dr, double *dd);
-- [ ] void iauLtecm(double epj, double rm[3][3]);
-- [ ] void iauLteqec(double epj, double dr, double dd, double *dl, double *db);
+- [x] void iauLteceq(double epj, double dl, double db, double *dr, double *dd);
+- [x] void iauLtecm(double epj, double rm[3][3]);
+- [x] void iauLteqec(double epj, double dr, double dd, double *dl, double *db);
 
 #### Astronomy/GalacticCoordinates
-- [ ] void iauG2icrs(double dl, double db, double *dr, double *dd);
-- [ ] void iauIcrs2g(double dr, double dd, double *dl, double *db);
+- [x] void iauG2icrs(double dl, double db, double *dr, double *dd);
+- [x] void iauIcrs2g(double dr, double dd, double *dl, double *db);
 
 #### Astronomy/GeodeticGeocentric
-- [ ] int iauEform(int n, double *a, double *f);
-- [ ] int iauGc2gd(int n, double xyz[3],
+- [x] int iauEform(int n, double *a, double *f);
+- [x] int iauGc2gd(int n, double xyz[3],
              double *elong, double *phi, double *height);
-- [ ] int iauGc2gde(double a, double f, double xyz[3],
+- [x] int iauGc2gde(double a, double f, double xyz[3],
               double *elong, double *phi, double *height);
-- [ ] int iauGd2gc(int n, double elong, double phi, double height,
+- [x] int iauGd2gc(int n, double elong, double phi, double height,
              double xyz[3]);
-- [ ] int iauGd2gce(double a, double f,
+- [x] int iauGd2gce(double a, double f,
               double elong, double phi, double height, double xyz[3]);
 
 #### Astronomy/Timescales
@@ -371,11 +371,11 @@
               double *ut11, double *ut12);
 
 #### Astronomy/HorizonEquatorial
-- [ ] void iauAe2hd(double az, double el, double phi,
+- [x] void iauAe2hd(double az, double el, double phi,
               double *ha, double *dec);
-- [ ] void iauHd2ae(double ha, double dec, double phi,
+- [x] void iauHd2ae(double ha, double dec, double phi,
               double *az, double *el);
-- [ ] double iauHd2pa(double ha, double dec, double phi);
+- [x] double iauHd2pa(double ha, double dec, double phi);
 
 #### Astronomy/Gnomonic
 - [ ] int iauTpors(double xi, double eta, double a, double b,
@@ -400,9 +400,9 @@
 - [ ] int iauTf2d(char s, int ihour, int imin, double sec, double *days);
 
 #### VectorMatrix/BuildRotations
-- [ ] void iauRx(double phi, double r[3][3]);
-- [ ] void iauRy(double theta, double r[3][3]);
-- [ ] void iauRz(double psi, double r[3][3]);
+- [x] void iauRx(double phi, double r[3][3]);
+- [x] void iauRy(double theta, double r[3][3]);
+- [x] void iauRz(double psi, double r[3][3]);
 
 #### VectorMatrix/CopyExtendExtract
 - [ ] void iauCp(double p[3], double c[3]);
@@ -412,7 +412,7 @@
 - [ ] void iauPv2p(double pv[2][3], double p[3]);
 
 #### VectorMatrix/Initialization
-- [ ] void iauIr(double r[3][3]);
+- [x] void iauIr(double r[3][3]);
 - [ ] void iauZp(double p[3]);
 - [ ] void iauZpv(double pv[2][3]);
 - [ ] void iauZr(double r[3][3]);
@@ -422,9 +422,9 @@
 - [ ] void iauTr(double r[3][3], double rt[3][3]);
 
 #### VectorMatrix/MatrixVectorProducts
-- [ ] void iauRxp(double r[3][3], double p[3], double rp[3]);
+- [x] void iauRxp(double r[3][3], double p[3], double rp[3]);
 - [ ] void iauRxpv(double r[3][3], double pv[2][3], double rpv[2][3]);
-- [ ] void iauTrxp(double r[3][3], double p[3], double trp[3]);
+- [x] void iauTrxp(double r[3][3], double p[3], double trp[3]);
 - [ ] void iauTrxpv(double r[3][3], double pv[2][3], double trpv[2][3]);
 
 #### VectorMatrix/RotationVectors
@@ -438,14 +438,14 @@
 - [ ] double iauSeps(double al, double ap, double bl, double bp);
 
 #### VectorMatrix/SphericalCartesian
-- [ ] void iauC2s(double p[3], double *theta, double *phi);
-- [ ] void iauP2s(double p[3], double *theta, double *phi, double *r);
-- [ ] void iauPv2s(double pv[2][3],
+- [x] void iauC2s(double p[3], double *theta, double *phi);
+- [x] void iauP2s(double p[3], double *theta, double *phi, double *r);
+- [x] void iauPv2s(double pv[2][3],
              double *theta, double *phi, double *r,
              double *td, double *pd, double *rd);
-- [ ] void iauS2c(double theta, double phi, double c[3]);
-- [ ] void iauS2p(double theta, double phi, double r, double p[3]);
-- [ ] void iauS2pv(double theta, double phi, double r,
+- [x] void iauS2c(double theta, double phi, double c[3]);
+- [x] void iauS2p(double theta, double phi, double r, double p[3]);
+- [x] void iauS2pv(double theta, double phi, double r,
              double td, double pd, double rd,
              double pv[2][3]);
 
