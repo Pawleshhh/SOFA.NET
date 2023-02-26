@@ -15,6 +15,7 @@ internal class FundamentalArgsModuleTest
     }
 
     [TestCase(PlanetaryObject.Earth, 1.744713738913081846)]
+    [TestCase(PlanetaryObject.Moon, 5.132369751108684150)]
     [TestCase(PlanetaryObject.Jupiter, 5.275711665202481138)]
     public void MeanLongitudeIERS03Of_Test(PlanetaryObject planetaryObject, double expected)
     {

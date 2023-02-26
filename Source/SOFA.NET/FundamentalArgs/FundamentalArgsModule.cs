@@ -31,6 +31,7 @@ public static class FundamentalArgsModule
         => planetaryObject switch
         {
             PlanetaryObject.Earth => MeanLongitudeOfEarth(t),
+            PlanetaryObject.Moon => MeanLongitudeOfMoon(t),
             PlanetaryObject.Jupiter => MeanLongitudeOfJupiter(t),
             _ => throw new ArgumentException($"Cannot calculate mean longitude of given planetary object")
         };
@@ -45,6 +46,22 @@ public static class FundamentalArgsModule
     internal static double MeanLongitudeOfEarth(double t)
     {
         return (1.753470314 + 628.3075849991 * t) % Constants.PI2;
+    }
+
+    /// <summary>
+    /// Fundamental argument, IERS Conventions (2003):
+    /// mean anomaly of the Moon.
+    /// SOFA name: iauFal03
+    /// </summary>
+    /// <param name="t"></param>
+    /// <returns></returns>
+    internal static double MeanLongitudeOfMoon(double t)
+    {
+        return ((485868.249036 +
+             t * (1717915923.2178 +
+             t * (31.8792 +
+             t * (0.051635 +
+             t * (-0.00024470))))) % Constants.TURNAS) * Constants.DAS2R;
     }
 
     /// <summary>
