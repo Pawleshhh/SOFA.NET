@@ -13,7 +13,7 @@ public static class EquinoxModule
     {
         ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tdb, tdbJulianDate);
 
-        double t, om, dpsi, deps, eps0, ee;
+        double t, om, eps0, ee;
 
         t = tdbJulianDate.JulianCentury();
 
@@ -21,7 +21,13 @@ public static class EquinoxModule
            + (7.455 + 0.008 * t) * t) * t) * Constants.DAS2R
            + ((-5.0 * t) % 1.0) * Constants.PI2);
 
-        throw new NotImplementedException();
+        var ttJulianDate = new JulianDate(tdbJulianDate.DayNumber, tdbJulianDate.FractionOfDay, JulianDateKind.Tt);
+        var (dpsi, deps) = PrecNutPolarModule.NutationIAU80(ttJulianDate);
+        eps0 = PrecNutPolarModule.MeanObliquityOfTheEclipticIAU80(ttJulianDate);
+
+        ee = dpsi * Math.Cos(eps0) + Constants.DAS2R * (0.00264 * Math.Sin(om) + 0.000063 * Math.Sin(om + om));
+
+        return ee;
     }
 
 }

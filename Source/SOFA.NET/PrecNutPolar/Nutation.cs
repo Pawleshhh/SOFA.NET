@@ -11,6 +11,9 @@ public readonly struct Nutation : IEquatable<Nutation>
     public Nutation(double longitude, double obliquity)
         => (Longitude, Obliquity) = (longitude, obliquity);
 
+    public void Deconstruct(out double longitude, out double obliquity)
+        => (longitude, obliquity) = (Longitude, Obliquity);
+
     public bool Equals(Nutation other)
     {
         return Longitude == other.Longitude && Obliquity == other.Obliquity;
