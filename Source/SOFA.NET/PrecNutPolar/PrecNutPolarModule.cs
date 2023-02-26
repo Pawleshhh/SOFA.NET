@@ -272,4 +272,85 @@ public static class PrecNutPolarModule
 
     #endregion
 
+    #region Nutation
+
+    /// <summary>
+    /// Nutation, IAU 1980 model.
+    /// SOFA name: iauNut80
+    /// </summary>
+    /// <param name="ttJulianDate"></param>
+    /// <returns></returns>
+    public static Nutation NutationIAU80(JulianDate ttJulianDate)
+    {
+        ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
+
+        const double U2R = Constants.DAS2R / 1e4;
+        double t, el, elp, f, d, om, dp, de, arg, s, c;
+
+        t = ttJulianDate.JulianCentury();
+
+        /* --------------------- */
+        /* Fundamental arguments */
+        /* --------------------- */
+
+        /* Mean longitude of Moon minus mean longitude of Moon's perigee. */
+        el = MathHelper.NormalizeAngleIntoMinusOnePIToPlusOnePI(
+             (485866.733 + (715922.633 + (31.310 + 0.064 * t) * t) * t)
+             * Constants.DAS2R + ((1325.0 * t) % 1.0) * Constants.PI2);
+
+        /* Mean longitude of Sun minus mean longitude of Sun's perigee. */
+        elp = MathHelper.NormalizeAngleIntoMinusOnePIToPlusOnePI(
+              (1287099.804 + (1292581.224 + (-0.577 - 0.012 * t) * t) * t)
+              * Constants.DAS2R + ((99.0 * t) % 1.0) * Constants.PI2);
+
+        /* Mean longitude of Moon minus mean longitude of Moon's node. */
+        f = MathHelper.NormalizeAngleIntoMinusOnePIToPlusOnePI(
+            (335778.877 + (295263.137 + (-13.257 + 0.011 * t) * t) * t)
+            * Constants.DAS2R + ((1342.0 * t) % 1.0) * Constants.PI2);
+
+        /* Mean elongation of Moon from Sun. */
+        d = MathHelper.NormalizeAngleIntoMinusOnePIToPlusOnePI(
+            (1072261.307 + (1105601.328 + (-6.891 + 0.019 * t) * t) * t) 
+            * Constants.DAS2R + ((1236.0 * t) % 1.0) * Constants.PI2);
+
+        /* Longitude of the mean ascending node of the lunar orbit on the */
+        /* ecliptic, measured from the mean equinox of date. */
+        om = MathHelper.NormalizeAngleIntoMinusOnePIToPlusOnePI(
+             (450160.280 + (-482890.539 + (7.455 + 0.008 * t) * t) * t)
+             * Constants.DAS2R + ((-5.0 * t) % 1.0) * Constants.PI2);
+
+        /* --------------- */
+        /* Nutation series */
+        /* --------------- */
+
+        /* Initialize nutation components. */
+        dp = 0.0;
+        de = 0.0;
+
+        var x = NutationIAU80Coefficients.Coefficients;
+
+        /* Sum the nutation terms, ending with the biggest. */
+        for (int j = x.Length - 1; j >= 0; j--)
+        {
+
+            /* Form argument for current term. */
+            arg = (double)x[j].nl * el
+                + (double)x[j].nlp * elp
+                + (double)x[j].nf * f
+                + (double)x[j].nd * d
+                + (double)x[j].nom * om;
+
+            /* Accumulate current nutation term. */
+            s = x[j].sp + x[j].spt * t;
+            c = x[j].ce + x[j].cet * t;
+            if (s != 0.0) dp += s * Math.Sin(arg);
+            if (c != 0.0) de += c * Math.Cos(arg);
+        }
+
+        /* Convert results from 0.1 mas units to radians. */
+        return new(dp * U2R, de * U2R);
+    }
+
+    #endregion
+
 }
