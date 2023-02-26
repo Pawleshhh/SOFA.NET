@@ -16,6 +16,17 @@ internal class PrecNutPolarModuleTest
     }
 
     [Test]
+    public static void MeanObliquityOfTheEclipticIAU80_Test()
+    {
+        var julianDate = new JulianDate(2400000.5 + 54388.0);
+
+        var result = PrecNutPolarModule
+            .MeanObliquityOfTheEclipticIAU80(julianDate);
+
+        Assert.That(result, Is.EqualTo(0.4090751347643816218).Within(1e-14));
+    }
+
+    [Test]
     public static void PrecessionAnglesIAU06_Test()
     {
         var julianDate = new JulianDate(2400000.5 + 50123.9999);

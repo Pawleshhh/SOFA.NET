@@ -27,6 +27,28 @@ public static class PrecNutPolarModule
     }
 
     /// <summary>
+    /// Mean obliquity of the ecliptic, IAU 1980 model.
+    /// SOFA name: iauObl80
+    /// </summary>
+    /// <param name="ttJulianDate"></param>
+    /// <returns></returns>
+    public static double MeanObliquityOfTheEclipticIAU80(JulianDate ttJulianDate)
+    {
+        ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
+
+        double t, eps0;
+
+        t = ttJulianDate.JulianCentury();
+
+        eps0 = Constants.DAS2R * (84381.448 +
+                  (-46.8150 +
+                  (-0.00059 +
+                  (0.001813) * t) * t) * t);
+
+        return eps0;
+    }
+
+    /// <summary>
     /// Precession matrix (including frame bias) from GCRS to a specified date, IAU 2006 model
     /// SOFA name: iauPmat06
     /// </summary>
