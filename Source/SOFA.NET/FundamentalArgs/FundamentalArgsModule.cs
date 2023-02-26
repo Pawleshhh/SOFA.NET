@@ -5,6 +5,18 @@ public static class FundamentalArgsModule
 
     /// <summary>
     /// Fundamental argument, IERS Conventions (2003):
+    /// general accumulated precession in longitude.
+    /// SOFA name: iauFapa03
+    /// </summary>
+    /// <param name="t"></param>
+    /// <returns></returns>
+    public static double GeneralAccumulatedPrecessionInLongitudeIERS03(double t)
+    {
+        return (0.024381750 + 0.00000538691 * t) * t;
+    }
+
+    /// <summary>
+    /// Fundamental argument, IERS Conventions (2003):
     /// mean elongation of the Moon from the Sun.
     /// SOFA name: iauFad03
     /// </summary>

@@ -5,6 +5,16 @@ internal class FundamentalArgsModuleTest
 {
 
     [Test]
+    public void GeneralAccumulatedPrecessionInLongitudeIERS03_Test()
+    {
+        double t = 0.8;
+
+        var result = FundamentalArgsModule.GeneralAccumulatedPrecessionInLongitudeIERS03(t);
+
+        Assert.That(result, Is.EqualTo(0.1950884762240000000e-1).Within(1e-12));
+    }
+
+    [Test]
     public void MeanElongationOfMoonFromSunIERS03_Test()
     {
         double t = 0.8;
