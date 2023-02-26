@@ -33,6 +33,7 @@ public static class FundamentalArgsModule
         {
             SolarSystemObject.Sun => MeanLongitudeOfSun,
             SolarSystemObject.Mercury => MeanLongitudeOfMercury,
+            SolarSystemObject.Venus => MeanLongitudeOfVenus,
             SolarSystemObject.Earth => MeanLongitudeOfEarth,
             SolarSystemObject.Moon => MeanLongitudeOfMoon,
             SolarSystemObject.Mars => MeanLongitudeOfMars,
@@ -72,6 +73,18 @@ public static class FundamentalArgsModule
     internal static double MeanLongitudeOfMercury(double t)
     {
         return (4.402608842 + 2608.7903141574 * t) % Constants.PI2;
+    }
+
+    /// <summary>
+    /// Fundamental argument, IERS Conventions (2003):
+    /// mean longitude of Venus.
+    /// SOFA name: iauFave03
+    /// </summary>
+    /// <param name="t"></param>
+    /// <returns></returns>
+    internal static double MeanLongitudeOfVenus(double t)
+    {
+        return (3.176146697 + 1021.3285546211 * t) % Constants.PI2;
     }
 
     /// <summary>
