@@ -56,7 +56,7 @@ public static class FundamentalArgsModule
     /// <returns></returns>
     internal static double MeanLongitudeOfJupiter(double t)
     {
-        return (1.753470314 + 628.3075849991 * t) % Constants.PI2;
+        return (0.599546497 + 52.9690962641 * t) % Constants.PI2;
     }
 
 }
