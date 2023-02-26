@@ -1,6 +1,6 @@
 ﻿namespace SOFA.NET;
 
-public enum PlanetaryObject
+public enum SolarSystemObject
 {
     Unknown,
     Sun,

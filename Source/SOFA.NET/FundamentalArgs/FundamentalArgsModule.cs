@@ -21,20 +21,37 @@ public static class FundamentalArgsModule
 
     /// <summary>
     /// Fundamental argument, IERS Conventions (2003):
-    /// mean longitude of given <see cref="PlanetaryObject"/>.
+    /// mean longitude of given <see cref="SolarSystemObject"/>.
     /// </summary>
-    /// <param name="planetaryObject"></param>
+    /// <param name="solarSystemObject"></param>
     /// <param name="t"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
-    public static double MeanLongitudeIERS03Of(PlanetaryObject planetaryObject, double t)
-        => planetaryObject switch
+    public static double MeanLongitudeIERS03Of(SolarSystemObject solarSystemObject, double t)
+        => solarSystemObject switch
         {
-            PlanetaryObject.Earth => MeanLongitudeOfEarth(t),
-            PlanetaryObject.Moon => MeanLongitudeOfMoon(t),
-            PlanetaryObject.Jupiter => MeanLongitudeOfJupiter(t),
-            _ => throw new ArgumentException($"Cannot calculate mean longitude of given planetary object")
+            SolarSystemObject.Sun => MeanLongitudeOfSun(t),
+            SolarSystemObject.Earth => MeanLongitudeOfEarth(t),
+            SolarSystemObject.Moon => MeanLongitudeOfMoon(t),
+            SolarSystemObject.Jupiter => MeanLongitudeOfJupiter(t),
+            _ => throw new ArgumentException($"Cannot calculate mean longitude of given solar system object")
         };
+
+    /// <summary>
+    /// Fundamental argument, IERS Conventions (2003):
+    /// mean anomaly of the Sun.
+    /// SOFA name: iauFalp03
+    /// </summary>
+    /// <param name="t"></param>
+    /// <returns></returns>
+    internal static double MeanLongitudeOfSun(double t)
+    {
+        return ((1287104.793048 +
+             t * (129596581.0481 +
+             t * (-0.5532 +
+             t * (0.000136 +
+             t * (-0.00001149))))) % Constants.TURNAS) * Constants.DAS2R;
+    }
 
     /// <summary>
     /// Fundamental argument, IERS Conventions (2003):
