@@ -21,6 +21,23 @@ public static class FundamentalArgsModule
 
     /// <summary>
     /// Fundamental argument, IERS Conventions (2003):
+    /// mean longitude of the Moon minus mean longitude of the ascending
+    /// node.
+    /// SOFA name: iauFaf03
+    /// </summary>
+    /// <param name="t"></param>
+    /// <returns></returns>
+    public static double MeanLongitudeOfMoonMinusAscendingNodeIERS03(double t)
+    {
+        return ((335779.526232 +
+             t * (1739527262.8478 +
+             t * (-12.7512 +
+             t * (-0.001037 +
+             t * (0.00000417))))) % Constants.TURNAS) * Constants.DAS2R;
+    }
+
+    /// <summary>
+    /// Fundamental argument, IERS Conventions (2003):
     /// mean longitude of given <see cref="SolarSystemObject"/>.
     /// </summary>
     /// <param name="solarSystemObject"></param>

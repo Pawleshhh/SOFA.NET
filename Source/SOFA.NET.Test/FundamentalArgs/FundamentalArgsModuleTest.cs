@@ -14,6 +14,16 @@ internal class FundamentalArgsModuleTest
         Assert.That(result, Is.EqualTo(1.946709205396925672).Within(1e-12));
     }
 
+    [Test]
+    public void MeanLongitudeOfMoonMinusAscendingNodeIERS03_Test()
+    {
+        double t = 0.8;
+
+        var result = FundamentalArgsModule.MeanLongitudeOfMoonMinusAscendingNodeIERS03(t);
+
+        Assert.That(result, Is.EqualTo(0.2597711366745499518).Within(1e-12));
+    }
+
     [TestCase(SolarSystemObject.Sun, 6.226797973505507345)]
     [TestCase(SolarSystemObject.Mercury, 5.417338184297289661)]
     [TestCase(SolarSystemObject.Venus, 3.424900460533758000)]

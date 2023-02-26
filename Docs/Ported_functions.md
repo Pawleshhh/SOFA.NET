@@ -128,7 +128,7 @@
 #### Astronomy/FundamentalArgs
 - [x] double iauFad03(double t);
 - [x] double iauFae03(double t);
-- [ ]x double iauFaf03(double t);
+- [x] double iauFaf03(double t);
 - [x] double iauFaju03(double t);
 - [x] double iauFal03(double t);
 - [x] double iauFalp03(double t);
