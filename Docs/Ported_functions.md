@@ -255,7 +255,7 @@
 - [ ] double iauEe00a(double date1, double date2);
 - [ ] double iauEe00b(double date1, double date2);
 - [ ] double iauEe06a(double date1, double date2);
-- [ ] double iauEect00(double date1, double date2);
+- [x] double iauEect00(double date1, double date2);
 - [x] double iauEqeq94(double date1, double date2);
 - [ ] double iauEra00(double dj1, double dj2);
 - [ ] double iauGmst00(double uta, double utb, double tta, double ttb);

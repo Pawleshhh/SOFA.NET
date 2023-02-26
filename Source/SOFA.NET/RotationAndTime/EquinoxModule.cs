@@ -1,4 +1,6 @@
-﻿namespace SOFA.NET;
+﻿using static System.Runtime.InteropServices.JavaScript.JSType;
+
+namespace SOFA.NET;
 
 public static class EquinoxModule
 {
@@ -28,6 +30,87 @@ public static class EquinoxModule
         ee = dpsi * Math.Cos(eps0) + Constants.DAS2R * (0.00264 * Math.Sin(om) + 0.000063 * Math.Sin(om + om));
 
         return ee;
+    }
+
+    /// <summary>
+    /// Equation of the equinoxes complementary terms, consistent with
+    /// IAU 2000 resolutions.
+    /// SOFA name: iauEect00
+    /// </summary>
+    /// <param name="ttJulianDate"></param>
+    /// <returns></returns>
+    public static double EquinoxesComplementaryTermsIAU00(JulianDate ttJulianDate)
+    {
+        ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
+
+        /* Time since J2000.0, in Julian centuries */
+        double t;
+
+        /* Miscellaneous */
+        double a, s0, s1;
+
+        /* Fundamental arguments */
+        double[] fa = new double[14];
+
+        /* Returned value. */
+        double eect;
+
+        var e0 = EquinoxesComplementaryTermsCoefficients.Coefficients;
+        var e1 = new EquinoxesComplementaryTermsCoefficients(new[] { 0, 0, 0, 0, 1, 0, 0, 0 }, -0.87e-6, 0.00e-6);
+
+        /* Interval between fundamental epoch J2000.0 and current date (JC). */
+        t = ttJulianDate.JulianCentury();
+
+        /* Fundamental Arguments (from IERS Conventions 2003) */
+
+        /* Mean anomaly of the Moon. */
+        fa[0] = FundamentalArgsModule.MeanLongitudeIERS03Of(SolarSystemObject.Moon, t);
+
+        /* Mean anomaly of the Sun. */
+        fa[1] = FundamentalArgsModule.MeanLongitudeIERS03Of(SolarSystemObject.Sun, t);
+
+        /* Mean longitude of the Moon minus that of the ascending node. */
+        fa[2] = FundamentalArgsModule.MeanLongitudeOfMoonMinusAscendingNodeIERS03(t);
+
+        /* Mean elongation of the Moon from the Sun. */
+        fa[3] = FundamentalArgsModule.MeanElongationOfMoonFromSunIERS03(t);
+
+        /* Mean longitude of the ascending node of the Moon. */
+        fa[4] = FundamentalArgsModule.MeanLongitudeOfMoonAscendingNodeIERS03(t);
+
+        /* Mean longitude of Venus. */
+        fa[5] = FundamentalArgsModule.MeanLongitudeIERS03Of(SolarSystemObject.Venus, t);
+
+        /* Mean longitude of Earth. */
+        fa[6] = FundamentalArgsModule.MeanLongitudeIERS03Of(SolarSystemObject.Earth, t);
+
+        /* General precession in longitude. */
+        fa[7] = FundamentalArgsModule.GeneralAccumulatedPrecessionInLongitudeIERS03(t);
+
+        /* Evaluate the EE complementary terms. */
+        s0 = 0.0;
+        s1 = 0.0;
+
+        for (int i = e0.Length - 1; i >= 0; i--)
+        {
+            a = 0.0;
+            for (int j = 0; j < 8; j++)
+            {
+                a += (e0[i].nfa[j]) * fa[j];
+            }
+            s0 += e0[i].s * Math.Sin(a) + e0[i].c * Math.Cos(a);
+        }
+
+        a = 0.0;
+        for (int j = 0; j < 8; j++)
+        {
+            a += (e1.nfa[j]) * fa[j];
+        }
+        s1 += e1.s * Math.Sin(a) + e1.c * Math.Cos(a);
+
+        eect = (s0 + s1 * t) * Constants.DAS2R;
+
+        return eect;
     }
 
 }
