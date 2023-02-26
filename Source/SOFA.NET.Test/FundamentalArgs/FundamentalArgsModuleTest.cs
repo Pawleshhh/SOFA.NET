@@ -21,6 +21,7 @@ internal class FundamentalArgsModuleTest
     [TestCase(SolarSystemObject.Mars, 3.275506840277781492)]
     [TestCase(SolarSystemObject.Jupiter, 5.275711665202481138)]
     [TestCase(SolarSystemObject.Saturn, 5.371574539440827046)]
+    [TestCase(SolarSystemObject.Uranus, 5.180636450180413523)]
     [TestCase(SolarSystemObject.Neptune, 2.079343830860413523)]
     public void MeanLongitudeIERS03Of_Test(SolarSystemObject solarSystemObject, double expected)
     {

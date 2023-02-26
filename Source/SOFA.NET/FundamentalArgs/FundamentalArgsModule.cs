@@ -38,6 +38,7 @@ public static class FundamentalArgsModule
             SolarSystemObject.Mars => MeanLongitudeOfMars,
             SolarSystemObject.Jupiter => MeanLongitudeOfJupiter,
             SolarSystemObject.Saturn => MeanLongitudeOfSaturn,
+            SolarSystemObject.Uranus => MeanLongitudeOfUranus,
             SolarSystemObject.Neptune => MeanLongitudeOfNeptune,
             _ => throw new ArgumentException($"Cannot calculate mean longitude of given solar system object")
         };
@@ -135,6 +136,18 @@ public static class FundamentalArgsModule
     internal static double MeanLongitudeOfSaturn(double t)
     {
         return (0.874016757 + 21.3299104960 * t) % Constants.PI2;
+    }
+
+    /// <summary>
+    /// Fundamental argument, IERS Conventions (2003):
+    /// mean longitude of Uranus.
+    /// SOFA name: iauFaur03
+    /// </summary>
+    /// <param name="t"></param>
+    /// <returns></returns>
+    internal static double MeanLongitudeOfUranus(double t)
+    {
+        return (5.481293872 + 7.4781598567 * t) % Constants.PI2;
     }
 
     /// <summary>

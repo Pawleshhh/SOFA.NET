@@ -138,7 +138,7 @@
 - [ ]x double iauFaom03(double t);
 - [ ]x double iauFapa03(double t);
 - [x] double iauFasa03(double t);
-- [ ] double iauFaur03(double t);
+- [x] double iauFaur03(double t);
 - [ ]x double iauFave03(double t);
 
 #### Astronomy/PrecNutPolar
