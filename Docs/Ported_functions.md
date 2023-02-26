@@ -126,20 +126,20 @@
 - [ ] int iauPlan94(double date1, double date2, int np, double pv[2][3]);
 
 #### Astronomy/FundamentalArgs
-- [ ] double iauFad03(double t);
-- [ ] double iauFae03(double t);
-- [ ] double iauFaf03(double t);
+- [x] double iauFad03(double t);
+- [ ]x double iauFae03(double t);
+- [ ]x double iauFaf03(double t);
 - [ ] double iauFaju03(double t);
-- [ ] double iauFal03(double t);
-- [ ] double iauFalp03(double t);
+- [ ]x double iauFal03(double t);
+- [ ]x double iauFalp03(double t);
 - [ ] double iauFama03(double t);
 - [ ] double iauFame03(double t);
 - [ ] double iauFane03(double t);
-- [ ] double iauFaom03(double t);
-- [ ] double iauFapa03(double t);
+- [ ]x double iauFaom03(double t);
+- [ ]x double iauFapa03(double t);
 - [ ] double iauFasa03(double t);
 - [ ] double iauFaur03(double t);
-- [ ] double iauFave03(double t);
+- [ ]x double iauFave03(double t);
 
 #### Astronomy/PrecNutPolar
 - [ ] void iauBi00(double *dpsibi, double *depsbi, double *dra);
