@@ -15,6 +15,7 @@ internal class FundamentalArgsModuleTest
     }
 
     [TestCase(SolarSystemObject.Sun, 6.226797973505507345)]
+    [TestCase(SolarSystemObject.Mercury, 5.417338184297289661)]
     [TestCase(SolarSystemObject.Earth, 1.744713738913081846)]
     [TestCase(SolarSystemObject.Moon, 5.132369751108684150)]
     [TestCase(SolarSystemObject.Mars, 3.275506840277781492)]
