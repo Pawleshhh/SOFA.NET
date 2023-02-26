@@ -33,6 +33,7 @@ public static class FundamentalArgsModule
             SolarSystemObject.Sun => MeanLongitudeOfSun(t),
             SolarSystemObject.Earth => MeanLongitudeOfEarth(t),
             SolarSystemObject.Moon => MeanLongitudeOfMoon(t),
+            SolarSystemObject.Mars => MeanLongitudeOfMars(t),
             SolarSystemObject.Jupiter => MeanLongitudeOfJupiter(t),
             _ => throw new ArgumentException($"Cannot calculate mean longitude of given solar system object")
         };
@@ -79,6 +80,18 @@ public static class FundamentalArgsModule
              t * (31.8792 +
              t * (0.051635 +
              t * (-0.00024470))))) % Constants.TURNAS) * Constants.DAS2R;
+    }
+
+    /// <summary>
+    /// Fundamental argument, IERS Conventions (2003):
+    /// mean longitude of Mars.
+    /// SOFA name: iauFama03
+    /// </summary>
+    /// <param name="t"></param>
+    /// <returns></returns>
+    internal static double MeanLongitudeOfMars(double t)
+    {
+        return (6.203480913 + 334.0612426700 * t) % Constants.PI2;
     }
 
     /// <summary>

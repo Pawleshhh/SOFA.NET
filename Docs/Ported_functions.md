@@ -132,7 +132,7 @@
 - [x] double iauFaju03(double t);
 - [x] double iauFal03(double t);
 - [x] double iauFalp03(double t);
-- [ ] double iauFama03(double t);
+- [x] double iauFama03(double t);
 - [ ] double iauFame03(double t);
 - [ ] double iauFane03(double t);
 - [ ]x double iauFaom03(double t);
