@@ -19,4 +19,31 @@ public static class FundamentalArgsModule
             t * (-0.00003169))))) % Constants.TURNAS) * Constants.DAS2R;
     }
 
+    /// <summary>
+    /// Fundamental argument, IERS Conventions (2003):
+    /// mean longitude of given <see cref="PlanetaryObject"/>.
+    /// </summary>
+    /// <param name="planetaryObject"></param>
+    /// <param name="t"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    public static double MeanLongitudeIERS03Of(PlanetaryObject planetaryObject, double t)
+        => planetaryObject switch
+        {
+            PlanetaryObject.Earth => MeanLongitudeOfEarth(t),
+            _ => throw new ArgumentException($"Cannot calculate mean longitude of given planetary object")
+        };
+
+    /// <summary>
+    /// Fundamental argument, IERS Conventions (2003):
+    /// mean longitude of Earth.
+    /// SOFA name: iauFae03
+    /// </summary>
+    /// <param name="t"></param>
+    /// <returns></returns>
+    internal static double MeanLongitudeOfEarth(double t)
+    {
+        return (1.753470314 + 628.3075849991 * t) % Constants.PI2;
+    }
+
 }
