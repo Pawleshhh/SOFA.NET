@@ -113,4 +113,40 @@ public static class EquinoxModule
         return eect;
     }
 
+    /// <summary>
+    /// Earth rotation angle (IAU 2000 model).
+    /// </summary>
+    /// <param name="ut1JulianDate"></param>
+    /// <returns></returns>
+    public static double EarthRotationAngleIAU00(JulianDate ut1JulianDate)
+    {
+        ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Ut1, ut1JulianDate);
+
+        double d1, d2, t, f, theta;
+
+        var (dj1, dj2) = ut1JulianDate;
+
+        /* Days since fundamental epoch. */
+        if (dj1 < dj2)
+        {
+            d1 = dj1;
+            d2 = dj2;
+        }
+        else
+        {
+            d1 = dj2;
+            d2 = dj1;
+        }
+        t = d1 + (d2 - Constants.DJ00);
+
+        /* Fractional part of T (days). */
+        f = (d1 % 1.0) + (d2 % 1.0);
+
+        /* Earth rotation angle at this UT1. */
+        theta = MathHelper.NormalizeAngleIntoZero2PI(
+            Constants.PI2 * (f + 0.7790572732640 + 0.00273781191135448 * t));
+
+        return theta;
+    }
+
 }

@@ -24,4 +24,14 @@ internal class EquinoxModuleTest
         Assert.That(result, Is.EqualTo(0.2046085004885125264e-8).Within(1e-20));
     }
 
+    [Test]
+    public void EarthRotationAngleIAU00_Test()
+    {
+        var julianDate = new JulianDate(2400000.5 + 54388.0);
+
+        var result = EquinoxModule.EarthRotationAngleIAU00(julianDate);
+
+        Assert.That(result, Is.EqualTo(0.4022837240028158102).Within(1e-12));
+    }
+
 }
