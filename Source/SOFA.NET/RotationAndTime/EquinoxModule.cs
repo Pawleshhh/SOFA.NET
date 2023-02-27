@@ -6,6 +6,23 @@ public static class EquinoxModule
 {
 
     /// <summary>
+    /// The equation of the equinoxes, compatible with IAU 2000 resolutions,
+    /// given the nutation in longitude and the mean obliquity.
+    /// SOFA name: iauEe00
+    /// </summary>
+    /// <param name="ttJulianDate"></param>
+    /// <param name="nutation"></param>
+    /// <returns></returns>
+    public static double EquationOfEquinoxesIAU00(JulianDate ttJulianDate, Nutation nutation)
+    {
+        ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
+
+        var (longitude, obliquity) = nutation;
+
+        return longitude * Math.Cos(obliquity) + EquinoxesComplementaryTermsIAU00(ttJulianDate);
+    }
+
+    /// <summary>
     /// Equation of the equinoxes, IAU 1994 model.
     /// SOFA name: iauEqeq94
     /// </summary>
@@ -115,6 +132,7 @@ public static class EquinoxModule
 
     /// <summary>
     /// Earth rotation angle (IAU 2000 model).
+    /// SOFA name: iauEra00
     /// </summary>
     /// <param name="ut1JulianDate"></param>
     /// <returns></returns>

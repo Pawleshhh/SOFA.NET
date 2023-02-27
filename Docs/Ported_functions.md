@@ -251,7 +251,7 @@
                double *x, double *y, double *s);
 
 #### Astronomy/RotationAndTime
-- [ ] double iauEe00(double date1, double date2, double epsa, double dpsi);
+- [x] double iauEe00(double date1, double date2, double epsa, double dpsi);
 - [ ] double iauEe00a(double date1, double date2);
 - [ ] double iauEe00b(double date1, double date2);
 - [ ] double iauEe06a(double date1, double date2);
