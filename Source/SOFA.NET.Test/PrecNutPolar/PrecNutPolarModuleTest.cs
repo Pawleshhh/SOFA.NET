@@ -143,4 +143,19 @@ internal class PrecNutPolarModuleTest
         });
     }
 
+    [Test]
+    public static void PrecessionRateIAU00_Test()
+    {
+        var julianDate = new JulianDate(2400000.5 + 53736);
+
+        var result = PrecNutPolarModule.PrecessionRateIAU00(julianDate);
+
+        Assert.Multiple(() =>
+        {
+            double delta = 1e-22;
+            Assert.That(result.Precession, Is.EqualTo(-0.8716465172668347629e-7).Within(delta));
+            Assert.That(result.Obliquity, Is.EqualTo(-0.7342018386722813087e-8).Within(delta));
+        });
+    }
+
 }

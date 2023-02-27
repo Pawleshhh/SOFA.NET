@@ -23,6 +23,32 @@ public static class EquinoxModule
     }
 
     /// <summary>
+    /// Equation of the equinoxes, compatible with IAU 2000 resolutions.
+    /// </summary>
+    /// <param name="ttJulianDate"></param>
+    /// <returns></returns>
+    //public static double EquationOfEquinoxesIAU00a(JulianDate ttJulianDate)
+    //{
+    //    ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
+
+    //    double dpsipr, depspr, epsa, dpsi, deps, ee;
+
+    //    /* IAU 2000 precession-rate adjustments. */
+    //    iauPr00(date1, date2, &dpsipr, &depspr);
+
+    //    /* Mean obliquity, consistent with IAU 2000 precession-nutation. */
+    //    epsa = PrecNutPolarModule.MeanObliquityOfTheEclipticIAU80(ttJulianDate) + depspr;
+
+    //    /* Nutation in longitude. */
+    //    iauNut00a(date1, date2, dpsi, deps);
+
+    //    /* Equation of the equinoxes. */
+    //    ee = EquationOfEquinoxesIAU00(ttJulianDate, new(epsa, dpsi));
+
+    //    return ee;
+    //}
+
+    /// <summary>
     /// Equation of the equinoxes, IAU 1994 model.
     /// SOFA name: iauEqeq94
     /// </summary>

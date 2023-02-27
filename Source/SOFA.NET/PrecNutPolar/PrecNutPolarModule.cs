@@ -1,9 +1,12 @@
 ﻿using static SOFA.NET.ThrowHelper;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SOFA.NET;
 
 public static class PrecNutPolarModule
 {
+
+    #region Obliquity
 
     /// <summary>
     /// Mean obliquity of the ecliptic, IAU 2006 precession model.
@@ -47,6 +50,10 @@ public static class PrecNutPolarModule
 
         return eps0;
     }
+
+    #endregion
+
+    #region Precession
 
     /// <summary>
     /// Precession matrix (including frame bias) from GCRS to a specified date, IAU 2006 model
@@ -101,6 +108,28 @@ public static class PrecNutPolarModule
 
         return new(gamb, phib, psib, epsa);
     }
+
+    /// <summary>
+    /// Precession-rate part of the IAU 2000 precession-nutation models
+    /// (part of MHB2000).
+    /// SOFA name: iauPr00
+    /// </summary>
+    /// <param name="ttJulianDate"></param>
+    /// <returns></returns>
+    public static PrecessionCorrection PrecessionRateIAU00(JulianDate ttJulianDate)
+    {
+        /* Precession and obliquity corrections (radians per century) */
+        const double PRECOR = -0.29965 * Constants.DAS2R,
+                     OBLCOR = -0.02524 * Constants.DAS2R;
+
+        /* Interval between fundamental epoch J2000.0 and given date (JC). */
+        var t = ttJulianDate.JulianCentury();
+
+        /* Precession rate contributions with respect to IAU 1976/80. */
+        return new(PRECOR * t, OBLCOR * t);
+    }
+
+    #endregion
 
     /// <summary>
     /// Form rotation matrix given the Fukushima-Williams angles
