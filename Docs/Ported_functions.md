@@ -254,7 +254,7 @@
 - [x] double iauEe00(double date1, double date2, double epsa, double dpsi);
 - [x] double iauEe00a(double date1, double date2);
 - [x] double iauEe00b(double date1, double date2);
-- [ ] double iauEe06a(double date1, double date2);
+- [x] double iauEe06a(double date1, double date2);
 - [x] double iauEect00(double date1, double date2);
 - [x] double iauEqeq94(double date1, double date2);
 - [x] double iauEra00(double dj1, double dj2);
@@ -265,7 +265,7 @@
 - [x] double iauGst00b(double uta, double utb);
 - [x] double iauGst06(double uta, double utb, double tta, double ttb,
                 double rnpb[3][3]);
-- [ ] double iauGst06a(double uta, double utb, double tta, double ttb);
+- [x] double iauGst06a(double uta, double utb, double tta, double ttb);
 - [x] double iauGst94(double uta, double utb);
 
 #### Astronomy/SpaceMotion

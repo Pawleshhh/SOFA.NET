@@ -88,4 +88,15 @@ internal class GstModuleTest
         Assert.That(result, Is.EqualTo(1.754166138018167568).Within(1e-12));
     }
 
+    [Test]
+    public void GreenwichSiderealTimeIAU06a_Test()
+    {
+        var julianDate1 = new JulianDate(2400000.5 + 53736.0);
+        var julianDate2 = new JulianDate(2400000.5 + 53736.0);
+
+        var result = GstModule.GreenwichSiderealTimeIAU06a(julianDate1, julianDate2);
+
+        Assert.That(result, Is.EqualTo(1.754166137675019159).Within(1e-12));
+    }
+
 }

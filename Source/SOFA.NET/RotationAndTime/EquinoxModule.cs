@@ -106,6 +106,27 @@ public static class EquinoxModule
     }
 
     /// <summary>
+    /// Equation of the equinoxes, compatible with IAU 2000 resolutions and
+    /// IAU 2006/2000A precession-nutation.
+    /// SOFA name: iauEe06a
+    /// </summary>
+    /// <param name="ttJulianDate"></param>
+    /// <returns></returns>
+    public static double EquationOfEquinoxesIAU06a(JulianDate ttJulianDate)
+    {
+        double gst06a, gmst06, ee;
+
+        /* Apparent and mean sidereal times. */
+        gst06a = GstModule.GreenwichSiderealTimeIAU06a(new(0.0), ttJulianDate);
+        gmst06 = GstModule.GreenwichMeanSiderealTimeIAU06(new(0.0), ttJulianDate);
+
+        /* Equation of the equinoxes. */
+        ee = MathHelper.NormalizeAngleIntoMinusOnePIToPlusOnePI(gst06a - gmst06);
+
+        return ee;
+    }
+
+    /// <summary>
     /// Equation of the equinoxes complementary terms, consistent with
     /// IAU 2000 resolutions.
     /// SOFA name: iauEect00

@@ -202,4 +202,28 @@ public static class GstModule
         return gst;
     }
 
+    /// <summary>
+    /// Greenwich apparent sidereal time (consistent with IAU 2000 and 2006
+    /// resolutions).
+    /// SOFA name: iauGst06a
+    /// </summary>
+    /// <param name="ut1JulianDate"></param>
+    /// <param name="ttJulianDate"></param>
+    /// <returns></returns>
+    public static double GreenwichSiderealTimeIAU06a(JulianDate ut1JulianDate, JulianDate ttJulianDate)
+    {
+        ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Ut1, ut1JulianDate);
+        ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
+
+        double gst;
+
+        /* Classical nutation x precession x bias matrix, IAU 2000A. */
+        var rnpb = PrecNutPolarModule.BiasPrecessionNutationMatrix(ttJulianDate);
+
+        /* Greenwich apparent sidereal time. */
+        gst = GreenwichSiderealTimeIAU06(ut1JulianDate, ttJulianDate, rnpb);
+
+        return gst;
+    }
+
 }

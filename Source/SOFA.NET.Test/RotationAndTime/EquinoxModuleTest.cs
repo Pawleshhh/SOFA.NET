@@ -65,4 +65,14 @@ internal class EquinoxModuleTest
         Assert.That(result, Is.EqualTo(-0.8835700060003032831e-5).Within(1e-18));
     }
 
+    [Test]
+    public void EquationOfEquinoxesIAU06a_Test()
+    {
+        var julianDate = new JulianDate(2400000.5 + 53736.0);
+
+        var result = EquinoxModule.EquationOfEquinoxesIAU06a(julianDate);
+
+        Assert.That(result, Is.EqualTo(-0.8834195072043790156e-5).Within(1e-15));
+    }
+
 }
