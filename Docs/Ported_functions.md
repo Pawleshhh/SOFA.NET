@@ -261,7 +261,7 @@
 - [x] double iauGmst00(double uta, double utb, double tta, double ttb);
 - [x] double iauGmst06(double uta, double utb, double tta, double ttb);
 - [x] double iauGmst82(double dj1, double dj2);
-- [ ] double iauGst00a(double uta, double utb, double tta, double ttb);
+- [x] double iauGst00a(double uta, double utb, double tta, double ttb);
 - [ ] double iauGst00b(double uta, double utb);
 - [ ] double iauGst06(double uta, double utb, double tta, double ttb,
                 double rnpb[3][3]);

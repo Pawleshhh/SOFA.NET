@@ -129,4 +129,26 @@ public static class GstModule
         return gst;
     }
 
+    /// <summary>
+    /// Greenwich apparent sidereal time (consistent with IAU 2000
+    /// resolutions).
+    /// SOFA name: iauGst00a
+    /// </summary>
+    /// <param name="ut1JulianDate"></param>
+    /// <param name="ttJulianDate"></param>
+    /// <returns></returns>
+    public static double GreenwichSiderealTimeIAU00a(JulianDate ut1JulianDate, JulianDate ttJulianDate)
+    {
+        ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Ut1, ut1JulianDate);
+        ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
+
+        double gmst00, ee00a, gst;
+
+        gmst00 = GreenwichMeanSiderealTimeIAU00(ut1JulianDate, ttJulianDate);
+        ee00a = EquinoxModule.EquationOfEquinoxesIAU00a(ttJulianDate);
+        gst = MathHelper.NormalizeAngleIntoZero2PI(gmst00 + ee00a);
+
+        return gst;
+    }
+
 }
