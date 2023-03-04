@@ -151,4 +151,24 @@ public static class GstModule
         return gst;
     }
 
+    /// <summary>
+    /// Greenwich apparent sidereal time (consistent with IAU 2000
+    /// resolutions but using the truncated nutation model IAU 2000B).
+    /// SOFA name: iauGst00b
+    /// </summary>
+    /// <param name="ut1JulianDate"></param>
+    /// <returns></returns>
+    public static double GreenwichSiderealTimeIAU00b(JulianDate ut1JulianDate)
+    {
+        double gmst00, ee00b, gst;
+
+        var (uta, utb) = ut1JulianDate;
+        var jd = new JulianDate(uta, utb);
+        gmst00 = GreenwichMeanSiderealTimeIAU00(ut1JulianDate, jd);
+        ee00b = EquinoxModule.EquationOfEquinoxesIAU00b(jd);
+        gst = MathHelper.NormalizeAngleIntoZero2PI(gmst00 + ee00b);
+
+        return gst;
+    }
+
 }
