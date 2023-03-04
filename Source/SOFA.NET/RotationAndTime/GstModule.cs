@@ -160,6 +160,8 @@ public static class GstModule
     /// <returns></returns>
     public static double GreenwichSiderealTimeIAU00b(JulianDate ut1JulianDate)
     {
+        ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Ut1, ut1JulianDate);
+
         double gmst00, ee00b, gst;
 
         var (uta, utb) = ut1JulianDate;
@@ -170,5 +172,34 @@ public static class GstModule
 
         return gst;
     }
+
+    /// <summary>
+    /// Greenwich apparent sidereal time, IAU 2006, given the NPB matrix.
+    /// SOFA name: iauGst06
+    /// </summary>
+    /// <param name="ut1JulianDate"></param>
+    /// <param name="ttJulianDate"></param>
+    /// <param name="rnpb"></param>
+    /// <returns></returns>
+    //public static double GreenwichSiderealTimeIAU06(JulianDate ut1JulianDate, JulianDate ttJulianDate, double[,] rnpb)
+    //{
+    //    ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Ut1, ut1JulianDate);
+    //    ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
+
+    //    double s, era, eors, gst;
+
+    //    /* Extract CIP coordinates. */
+    //    var (x, y) = PrecNutPolarModule.ExtractXYOfCelestialIntermediatePole(rnpb);
+
+    //    /* The CIO locator, s. */
+    //    s = iauS06(tta, ttb, x, y);
+
+    //    /* Greenwich apparent sidereal time. */
+    //    era = iauEra00(uta, utb);
+    //    eors = iauEors(rnpb, s);
+    //    gst = MathHelper.NormalizeAngleIntoZero2PI(era - eors);
+
+    //    return gst;
+    //}
 
 }

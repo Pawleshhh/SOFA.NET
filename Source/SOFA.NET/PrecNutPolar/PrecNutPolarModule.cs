@@ -6,6 +6,169 @@ namespace SOFA.NET;
 public static class PrecNutPolarModule
 {
 
+    /// <summary>
+    /// Form rotation matrix given the Fukushima-Williams angles
+    /// SOFA name: iauFw2m
+    /// </summary>
+    /// <param name="angles"></param>
+    /// <returns></returns>
+    public static double[,] FormRotationMatrix(FukushimaWilliamsAngles angles)
+    {
+        double[,] matrix = MatrixHelper.IdentityMatrix();
+        var (gamma, phi, psi, eps) = angles;
+
+        MatrixHelper.RotateZ(matrix, gamma);
+        MatrixHelper.RotateX(matrix, phi);
+        MatrixHelper.RotateZ(matrix, -psi);
+        MatrixHelper.RotateX(matrix, -eps);
+
+        return matrix;
+    }
+
+    /// <summary>
+    /// The CIO locator s, positioning the Celestial Intermediate Origin on
+    /// the equator of the Celestial Intermediate Pole, given the CIP's X,Y
+    /// coordinates.Compatible with IAU 2006/2000A precession-nutation.
+    /// SOFA name: iauS06
+    /// </summary>
+    /// <param name="ttJulianDate"></param>
+    /// <param name="cipCoordinates"></param>
+    /// <returns></returns>
+    public static double CIOLocatorS(JulianDate ttJulianDate, ICoordinateSystem2D<double> cipCoordinates)
+    {
+        ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
+
+        double t, a, w0, w1, w2, w3, w4, w5, s;
+        double[] fa = new double[8];
+        double[] sp = 
+        {
+            /* 1-6 */
+            94.00e-6,
+            3808.65e-6,
+            -122.68e-6,
+            -72574.11e-6,
+            27.98e-6,
+            15.62e-6
+        };
+
+        var s0 = CIOLocatorCoefficients.CoefficientsS0;
+        var s1 = CIOLocatorCoefficients.CoefficientsS1;
+        var s2 = CIOLocatorCoefficients.CoefficientsS2;
+        var s3 = CIOLocatorCoefficients.CoefficientsS3;
+        var s4 = CIOLocatorCoefficients.CoefficientsS4;
+
+        var (x, y) = cipCoordinates;
+
+        /* Interval between fundamental epoch J2000.0 and current date (JC). */
+        t = ttJulianDate.JulianCentury();
+
+        /* Fundamental Arguments (from IERS Conventions 2003) */
+
+        /* Mean anomaly of the Moon. */
+        fa[0] = FundamentalArgsModule.MeanLongitudeIERS03Of(SolarSystemObject.Moon, t);
+
+        /* Mean anomaly of the Sun. */
+        fa[1] = FundamentalArgsModule.MeanLongitudeIERS03Of(SolarSystemObject.Sun, t);
+
+        /* Mean longitude of the Moon minus that of the ascending node. */
+        fa[2] = FundamentalArgsModule.MeanLongitudeOfMoonMinusAscendingNodeIERS03(t);
+
+        /* Mean elongation of the Moon from the Sun. */
+        fa[3] = FundamentalArgsModule.MeanElongationOfMoonFromSunIERS03(t);
+
+        /* Mean longitude of the ascending node of the Moon. */
+        fa[4] = FundamentalArgsModule.MeanLongitudeOfMoonAscendingNodeIERS03(t);
+
+        /* Mean longitude of Venus. */
+        fa[5] = FundamentalArgsModule.MeanLongitudeIERS03Of(SolarSystemObject.Venus, t);
+
+        /* Mean longitude of Earth. */
+        fa[6] = FundamentalArgsModule.MeanLongitudeIERS03Of(SolarSystemObject.Earth, t);
+
+        /* General precession in longitude. */
+        fa[7] = FundamentalArgsModule.GeneralAccumulatedPrecessionInLongitudeIERS03(t);
+
+        /* Evaluate s. */
+        w0 = sp[0];
+        w1 = sp[1];
+        w2 = sp[2];
+        w3 = sp[3];
+        w4 = sp[4];
+        w5 = sp[5];
+
+        int i = 0, j = 0;
+        for (i = s0.Length - 1; i >= 0; i--)
+        {
+            a = 0.0;
+            for (j = 0; j < 8; j++)
+            {
+                a += s0[i].nfa[j] * fa[j];
+            }
+            w0 += s0[i].s * Math.Sin(a) + s0[i].c * Math.Cos(a);
+        }
+
+        for (i = s1.Length - 1; i >= 0; i--)
+        {
+            a = 0.0;
+            for (j = 0; j < 8; j++)
+            {
+                a += s1[i].nfa[j] * fa[j];
+            }
+            w1 += s1[i].s * Math.Sin(a) + s1[i].c * Math.Cos(a);
+        }
+
+        for (i = s2.Length - 1; i >= 0; i--)
+        {
+            a = 0.0;
+            for (j = 0; j < 8; j++)
+            {
+                a += s2[i].nfa[j] * fa[j];
+            }
+            w2 += s2[i].s * Math.Sin(a) + s2[i].c * Math.Cos(a);
+        }
+
+        for (i = s3.Length - 1; i >= 0; i--)
+        {
+            a = 0.0;
+            for (j = 0; j < 8; j++)
+            {
+                a += s3[i].nfa[j] * fa[j];
+            }
+            w3 += s3[i].s * Math.Sin(a) + s3[i].c * Math.Cos(a);
+        }
+
+        for (i = s4.Length - 1; i >= 0; i--)
+        {
+            a = 0.0;
+            for (j = 0; j < 8; j++)
+            {
+                a += s4[i].nfa[j] * fa[j];
+            }
+            w4 += s4[i].s * Math.Sin(a) + s4[i].c * Math.Cos(a);
+        }
+
+        s = (w0 +
+            (w1 +
+            (w2 +
+            (w3 +
+            (w4 +
+             w5 * t) * t) * t) * t) * t) * Constants.DAS2R - x * y / 2.0;
+
+        return s;
+    }
+
+    /// <summary>
+    /// Extract from the bias-precession-nutation matrix the X,Y coordinates
+    /// of the Celestial Intermediate Pole.
+    /// SOFA name: iauBpn2xy
+    /// </summary>
+    /// <param name="rbpn"></param>
+    /// <returns></returns>
+    internal static ICoordinateSystem2D<double> ExtractXYOfCelestialIntermediatePole(double[,] rbpn)
+    {
+        return ICoordinateSystem2D<double>.Create(rbpn[2, 0], rbpn[2, 1]);
+    }
+
     #region Obliquity
 
     /// <summary>
@@ -130,25 +293,6 @@ public static class PrecNutPolarModule
     }
 
     #endregion
-
-    /// <summary>
-    /// Form rotation matrix given the Fukushima-Williams angles
-    /// SOFA name: iauFw2m
-    /// </summary>
-    /// <param name="angles"></param>
-    /// <returns></returns>
-    public static double[,] FormRotationMatrix(FukushimaWilliamsAngles angles)
-    {
-        double[,] matrix = MatrixHelper.IdentityMatrix();
-        var (gamma, phi, psi, eps) = angles;
-
-        MatrixHelper.RotateZ(matrix, gamma);
-        MatrixHelper.RotateX(matrix, phi);
-        MatrixHelper.RotateZ(matrix, -psi);
-        MatrixHelper.RotateX(matrix, -eps);
-
-        return matrix;
-    }
 
     #region LongTermPrecessionOfTheEquator
 

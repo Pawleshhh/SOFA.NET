@@ -203,4 +203,17 @@ internal class PrecNutPolarModuleTest
         });
     }
 
+    [Test]
+    public static void CIOLocatorS_Test()
+    {
+        var cipCoords = ICoordinateSystem2D<double>.Create(
+            0.5791308486706011000e-3,
+            0.4020579816732961219e-4);
+        var julianDate = new JulianDate(2400000.5 + 53736.0);
+
+        var result = PrecNutPolarModule.CIOLocatorS(julianDate, cipCoords);
+
+        Assert.That(result, Is.EqualTo(-0.1220032213076463117e-7).Within(1e-18));
+    }
+
 }

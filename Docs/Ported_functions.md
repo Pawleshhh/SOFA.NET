@@ -147,7 +147,7 @@
              double rb[3][3], double rp[3][3], double rbp[3][3]);
 - [ ] void iauBp06(double date1, double date2,
              double rb[3][3], double rp[3][3], double rbp[3][3]);
-- [ ] void iauBpn2xy(double rbpn[3][3], double *x, double *y);
+- [x] void iauBpn2xy(double rbpn[3][3], double *x, double *y);
 - [ ] void iauC2i00a(double date1, double date2, double rc2i[3][3]);
 - [ ] void iauC2i00b(double date1, double date2, double rc2i[3][3]);
 - [ ] void iauC2i06a(double date1, double date2, double rc2i[3][3]);
@@ -239,7 +239,7 @@
 - [ ] double iauS00(double date1, double date2, double x, double y);
 - [ ] double iauS00a(double date1, double date2);
 - [ ] double iauS00b(double date1, double date2);
-- [ ] double iauS06(double date1, double date2, double x, double y);
+- [x] double iauS06(double date1, double date2, double x, double y);
 - [ ] double iauS06a(double date1, double date2);
 - [ ] double iauSp00(double date1, double date2);
 - [ ] void iauXy06(double date1, double date2, double *x, double *y);
