@@ -236,4 +236,27 @@ internal class PrecNutPolarModuleTest
         Assert.That(result, Is.EqualTo(-0.1332882715130744606e-2).Within(1e-14));
     }
 
+    [Test]
+    public static void BiasPrecessionNutationMatrix_Test()
+    {
+        var julianDate = new JulianDate(2400000.5 + 50123.9999);
+
+        var result = PrecNutPolarModule.BiasPrecessionNutationMatrix(julianDate);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result[0, 0], Is.EqualTo(0.9999995832794205484).Within(1e-12));
+            Assert.That(result[0, 1], Is.EqualTo(0.8372382772630962111e-3).Within(1e-14));
+            Assert.That(result[0, 2], Is.EqualTo(0.3639684771140623099e-3).Within(1e-14));
+
+            Assert.That(result[1, 0], Is.EqualTo(-0.8372533744743683605e-3).Within(1e-14));
+            Assert.That(result[1, 1], Is.EqualTo(0.9999996486492861646).Within(1e-12));
+            Assert.That(result[1, 2], Is.EqualTo(0.4132905944611019498e-4).Within(1e-14));
+
+            Assert.That(result[2, 0], Is.EqualTo(-0.3639337469629464969e-3).Within(1e-14));
+            Assert.That(result[2, 1], Is.EqualTo(-0.4163377605910663999e-4).Within(1e-14));
+            Assert.That(result[2, 2], Is.EqualTo(0.9999999329094260057).Within(1e-12));
+        });
+    }
+
 }

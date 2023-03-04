@@ -228,7 +228,7 @@
               double rn[3][3], double rbpn[3][3]);
 - [ ] void iauPnm00a(double date1, double date2, double rbpn[3][3]);
 - [ ] void iauPnm00b(double date1, double date2, double rbpn[3][3]);
-- [ ] void iauPnm06a(double date1, double date2, double rnpb[3][3]);
+- [x] void iauPnm06a(double date1, double date2, double rnpb[3][3]);
 - [ ] void iauPnm80(double date1, double date2, double rmatpn[3][3]);
 - [ ] void iauPom00(double xp, double yp, double sp, double rpom[3][3]);
 - [x] void iauPr00(double date1, double date2,

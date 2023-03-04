@@ -1,5 +1,4 @@
 ﻿using static SOFA.NET.ThrowHelper;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SOFA.NET;
 
@@ -180,6 +179,28 @@ public static class PrecNutPolarModule
         eo = ((p != 0) || (q != 0)) ? s - Math.Atan2(q, p) : s;
 
         return eo;
+    }
+
+    /// <summary>
+    /// Form the matrix of precession-nutation for a given date (including
+    /// frame bias), equinox based, IAU 2006 precession and IAU 2000A
+    /// nutation models.
+    /// SOFA name: iauPnm06a
+    /// </summary>
+    /// <param name="ttJulianDate"></param>
+    /// <returns></returns>
+    public static double[,] BiasPrecessionNutationMatrix(JulianDate ttJulianDate)
+    {
+        ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
+
+        /* Fukushima-Williams angles for frame bias and precession. */
+        var (gamb, phib, psib, epsa) = PrecessionAnglesIAU06(ttJulianDate);
+
+        /* Nutation components. */
+        var (dp, de) = NutationIAU06a(ttJulianDate);
+
+        /* Equinox based nutation x precession x bias matrix. */
+        return FormRotationMatrix(new(gamb, phib, psib + dp, epsa + de));
     }
 
     /// <summary>
