@@ -5,6 +5,34 @@ namespace SOFA.NET;
 public static class EquinoxModule
 {
 
+
+    /// <summary>
+    /// Equation of the equinoxes, IAU 1994 model.
+    /// SOFA name: iauEqeq94
+    /// </summary>
+    /// <param name="tdbJulianDate"></param>
+    /// <returns></returns>
+    public static double EquationOfEquinoxesIAU94(JulianDate tdbJulianDate)
+    {
+        ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tdb, tdbJulianDate);
+
+        double t, om, eps0, ee;
+
+        t = tdbJulianDate.JulianCentury();
+
+        om = MathHelper.NormalizeAngleIntoMinusOnePIToPlusOnePI((450160.280 + (-482890.539
+           + (7.455 + 0.008 * t) * t) * t) * Constants.DAS2R
+           + ((-5.0 * t) % 1.0) * Constants.PI2);
+
+        var ttJulianDate = new JulianDate(tdbJulianDate.DayNumber, tdbJulianDate.FractionOfDay, JulianDateKind.Tt);
+        var dpsi = PrecNutPolarModule.NutationIAU80(ttJulianDate).Longitude;
+        eps0 = PrecNutPolarModule.MeanObliquityOfTheEclipticIAU80(ttJulianDate);
+
+        ee = dpsi * Math.Cos(eps0) + Constants.DAS2R * (0.00264 * Math.Sin(om) + 0.000063 * Math.Sin(om + om));
+
+        return ee;
+    }
+
     /// <summary>
     /// The equation of the equinoxes, compatible with IAU 2000 resolutions,
     /// given the nutation in longitude and the mean obliquity.
@@ -50,28 +78,29 @@ public static class EquinoxModule
     }
 
     /// <summary>
-    /// Equation of the equinoxes, IAU 1994 model.
-    /// SOFA name: iauEqeq94
+    /// Equation of the equinoxes, compatible with IAU 2000 resolutions but
+    /// using the truncated nutation model IAU 2000B.
+    /// SOFA name: iauEe00b
     /// </summary>
-    /// <param name="tdbJulianDate"></param>
+    /// <param name="ttJulianDate"></param>
     /// <returns></returns>
-    public static double EquationOfEquinoxesIAU94(JulianDate tdbJulianDate)
+    public static double EquationOfEquinoxesIAU00b(JulianDate ttJulianDate)
     {
-        ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tdb, tdbJulianDate);
+        ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
 
-        double t, om, eps0, ee;
+        double epsa, ee;
 
-        t = tdbJulianDate.JulianCentury();
+        /* IAU 2000 precession-rate adjustments. */
+        var (_, depspr) = PrecNutPolarModule.PrecessionRateIAU00(ttJulianDate);
 
-        om = MathHelper.NormalizeAngleIntoMinusOnePIToPlusOnePI((450160.280 + (-482890.539
-           + (7.455 + 0.008 * t) * t) * t) * Constants.DAS2R
-           + ((-5.0 * t) % 1.0) * Constants.PI2);
+        /* Mean obliquity, consistent with IAU 2000 precession-nutation. */
+        epsa = PrecNutPolarModule.MeanObliquityOfTheEclipticIAU80(ttJulianDate) + depspr;
 
-        var ttJulianDate = new JulianDate(tdbJulianDate.DayNumber, tdbJulianDate.FractionOfDay, JulianDateKind.Tt);
-        var dpsi = PrecNutPolarModule.NutationIAU80(ttJulianDate).Longitude;
-        eps0 = PrecNutPolarModule.MeanObliquityOfTheEclipticIAU80(ttJulianDate);
+        /* Nutation in longitude. */
+        var (dpsi, _) = PrecNutPolarModule.NutationIAU00b(ttJulianDate);
 
-        ee = dpsi * Math.Cos(eps0) + Constants.DAS2R * (0.00264 * Math.Sin(om) + 0.000063 * Math.Sin(om + om));
+        /* Equation of the equinoxes. */
+        ee = EquationOfEquinoxesIAU00(ttJulianDate, new(dpsi, epsa));
 
         return ee;
     }
