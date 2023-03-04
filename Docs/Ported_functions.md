@@ -266,7 +266,7 @@
 - [ ] double iauGst06(double uta, double utb, double tta, double ttb,
                 double rnpb[3][3]);
 - [ ] double iauGst06a(double uta, double utb, double tta, double ttb);
-- [ ] double iauGst94(double uta, double utb);
+- [x] double iauGst94(double uta, double utb);
 
 #### Astronomy/SpaceMotion
 - [ ] int iauPvstar(double pv[2][3], double *ra, double *dec,
