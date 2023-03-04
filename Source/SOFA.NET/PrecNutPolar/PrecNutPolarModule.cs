@@ -555,6 +555,91 @@ public static class PrecNutPolarModule
         return new(dpsils + dpsipl, depsls + depspl);
     }
 
+    /// <summary>
+    /// Nutation, IAU 2000B model.
+    /// SOFA name: iauNut00b
+    /// </summary>
+    /// <param name="ttJulianDate"></param>
+    /// <returns></returns>
+    public static Nutation NutationIAU00b(JulianDate ttJulianDate)
+    {
+        ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
+
+        double t, el, elp, f, d, om, arg, dp, de, sarg, carg,
+          dpsils, depsls, dpsipl, depspl;
+        const double U2R = Constants.DAS2R / 1e7;
+        const double DPPLAN = -0.135 * Constants.DMAS2R;
+        const double DEPLAN = 0.388 * Constants.DMAS2R;
+
+        /* Interval between fundamental epoch J2000.0 and given date (JC). */
+        t = ttJulianDate.JulianCentury();
+
+        /* --------------------*/
+        /* LUNI-SOLAR NUTATION */
+        /* --------------------*/
+
+        /* Fundamental (Delaunay) arguments from Simon et al. (1994) */
+
+        /* Mean anomaly of the Moon. */
+        el = DelaunayArgument(485868.249036, 1717915923.2178);
+
+        /* Mean anomaly of the Sun. */
+        elp = DelaunayArgument(1287104.79305, 129596581.0481);
+
+        /* Mean argument of the latitude of the Moon. */
+        f = DelaunayArgument(335779.526232, 1739527262.8478);
+
+        /* Mean elongation of the Moon from the Sun. */
+        d = DelaunayArgument(1072260.70369, 1602961601.2090);
+
+        /* Mean longitude of the ascending node of the Moon. */
+        om = DelaunayArgument(450160.398036, -6962890.5431);
+
+        /* Initialize the nutation values. */
+        dp = 0.0;
+        de = 0.0;
+
+        /* Summation of luni-solar nutation series (smallest terms first). */
+        var x = NutationIAU00bCoefficients.Coefficients;
+        for (int i = x.Length - 1; i >= 0; i--)
+        {
+            /* Argument and functions. */
+            arg = ((x[i].nl * el +
+                    x[i].nlp * elp +
+                    x[i].nf * f +
+                    x[i].nd * d +
+                    x[i].nom * om) % Constants.PI2);
+            sarg = Math.Sin(arg);
+            carg = Math.Cos(arg);
+
+            /* Term. */
+            dp += (x[i].ps + x[i].pst * t) * sarg + x[i].pc * carg;
+            de += (x[i].ec + x[i].ect * t) * carg + x[i].es * sarg;
+        }
+
+        /* Convert from 0.1 microarcsec units to radians. */
+        dpsils = dp * U2R;
+        depsls = de * U2R;
+
+        /* ------------------------------*/
+        /* IN LIEU OF PLANETARY NUTATION */
+        /* ------------------------------*/
+
+        /* Fixed offset to correct for missing terms in truncated series. */
+        dpsipl = DPPLAN;
+        depspl = DEPLAN;
+
+        /* --------*/
+        /* RESULTS */
+        /* --------*/
+
+        /* Add luni-solar and planetary components. */
+        return new(dpsils + dpsipl, depsls + depspl);
+
+        double DelaunayArgument(double a, double b)
+            => ((a + (b * t)) % Constants.TURNAS) * Constants.DAS2R;
+    }
+
     #endregion
 
 }

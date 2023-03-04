@@ -1,8 +1,6 @@
-﻿using System.Runtime.Intrinsics.X86;
+﻿namespace SOFA.NET;
 
-namespace SOFA.NET;
-
-public readonly struct NutationIAU00aLuniSolarCoefficients
+internal readonly struct NutationIAU00aLuniSolarCoefficients
 {
 
     public readonly int nl, nlp, nf, nd, nom;
@@ -851,7 +849,7 @@ public readonly struct NutationIAU00aLuniSolarCoefficients
 
 }
 
-public readonly struct NutationIAU80aPlanetaryCoefficients
+internal readonly struct NutationIAU80aPlanetaryCoefficients
 {
     public readonly int nl, nf, nd, nom, nme, nve, nea, nma, nju, nsa, nur, nne, npa, sp, cp, se, ce;
 
