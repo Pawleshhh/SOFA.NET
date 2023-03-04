@@ -181,25 +181,25 @@ public static class GstModule
     /// <param name="ttJulianDate"></param>
     /// <param name="rnpb"></param>
     /// <returns></returns>
-    //public static double GreenwichSiderealTimeIAU06(JulianDate ut1JulianDate, JulianDate ttJulianDate, double[,] rnpb)
-    //{
-    //    ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Ut1, ut1JulianDate);
-    //    ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
+    public static double GreenwichSiderealTimeIAU06(JulianDate ut1JulianDate, JulianDate ttJulianDate, double[,] rnpb)
+    {
+        ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Ut1, ut1JulianDate);
+        ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
 
-    //    double s, era, eors, gst;
+        double s, era, eors, gst;
 
-    //    /* Extract CIP coordinates. */
-    //    var cipCoords = PrecNutPolarModule.ExtractXYOfCelestialIntermediatePole(rnpb);
+        /* Extract CIP coordinates. */
+        var cipCoords = PrecNutPolarModule.ExtractXYOfCelestialIntermediatePole(rnpb);
 
-    //    /* The CIO locator, s. */
-    //    s = PrecNutPolarModule.CIOLocatorS(ttJulianDate, cipCoords);
+        /* The CIO locator, s. */
+        s = PrecNutPolarModule.CIOLocatorS(ttJulianDate, cipCoords);
 
-    //    /* Greenwich apparent sidereal time. */
-    //    era = EquinoxModule.EarthRotationAngleIAU00(ut1JulianDate);
-    //    eors = iauEors(rnpb, s);
-    //    gst = MathHelper.NormalizeAngleIntoZero2PI(era - eors);
+        /* Greenwich apparent sidereal time. */
+        era = EquinoxModule.EarthRotationAngleIAU00(ut1JulianDate);
+        eors = PrecNutPolarModule.EquationOfOrigins(rnpb, s);
+        gst = MathHelper.NormalizeAngleIntoZero2PI(era - eors);
 
-    //    return gst;
-    //}
+        return gst;
+    }
 
 }
