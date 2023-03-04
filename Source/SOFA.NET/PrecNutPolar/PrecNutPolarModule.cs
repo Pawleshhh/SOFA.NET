@@ -158,6 +158,31 @@ public static class PrecNutPolarModule
     }
 
     /// <summary>
+    /// Equation of the origins, given the classical NPB matrix and the
+    /// quantity s.
+    /// SOFA name: iauEors
+    /// </summary>
+    /// <param name="rnpb"></param>
+    /// <param name="s"></param>
+    /// <returns></returns>
+    public static double EquationOfOrigins(double[,] rnpb, double s)
+    {
+        double x, ax, xs, ys, zs, p, q, eo;
+
+        /* Evaluate Wallace & Capitaine (2006) expression (16). */
+        x = rnpb[2, 0];
+        ax = x / (1.0 + rnpb[2, 2]);
+        xs = 1.0 - ax * x;
+        ys = -ax * rnpb[2, 1];
+        zs = -x;
+        p = rnpb[0, 0] * xs + rnpb[0, 1] * ys + rnpb[0, 2] * zs;
+        q = rnpb[1, 0] * xs + rnpb[1, 1] * ys + rnpb[1, 2] * zs;
+        eo = ((p != 0) || (q != 0)) ? s - Math.Atan2(q, p) : s;
+
+        return eo;
+    }
+
+    /// <summary>
     /// Extract from the bias-precession-nutation matrix the X,Y coordinates
     /// of the Celestial Intermediate Pole.
     /// SOFA name: iauBpn2xy

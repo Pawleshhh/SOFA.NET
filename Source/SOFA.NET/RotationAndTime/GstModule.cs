@@ -189,13 +189,13 @@ public static class GstModule
     //    double s, era, eors, gst;
 
     //    /* Extract CIP coordinates. */
-    //    var (x, y) = PrecNutPolarModule.ExtractXYOfCelestialIntermediatePole(rnpb);
+    //    var cipCoords = PrecNutPolarModule.ExtractXYOfCelestialIntermediatePole(rnpb);
 
     //    /* The CIO locator, s. */
-    //    s = iauS06(tta, ttb, x, y);
+    //    s = PrecNutPolarModule.CIOLocatorS(ttJulianDate, cipCoords);
 
     //    /* Greenwich apparent sidereal time. */
-    //    era = iauEra00(uta, utb);
+    //    era = EquinoxModule.EarthRotationAngleIAU00(ut1JulianDate);
     //    eors = iauEors(rnpb, s);
     //    gst = MathHelper.NormalizeAngleIntoZero2PI(era - eors);
 

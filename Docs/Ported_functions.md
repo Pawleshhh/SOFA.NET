@@ -173,7 +173,7 @@
               double x, double y, double xp, double yp,
               double rc2t[3][3]);
 - [ ] double iauEo06a(double date1, double date2);
-- [ ] double iauEors(double rnpb[3][3], double s);
+- [x] double iauEors(double rnpb[3][3], double s);
 - [x] void iauFw2m(double gamb, double phib, double psi, double eps,
              double r[3][3]);
 - [ ] void iauFw2xy(double gamb, double phib, double psi, double eps,
