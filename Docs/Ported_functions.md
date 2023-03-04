@@ -258,9 +258,9 @@
 - [x] double iauEect00(double date1, double date2);
 - [x] double iauEqeq94(double date1, double date2);
 - [x] double iauEra00(double dj1, double dj2);
-- [ ] double iauGmst00(double uta, double utb, double tta, double ttb);
-- [ ] double iauGmst06(double uta, double utb, double tta, double ttb);
-- [ ] double iauGmst82(double dj1, double dj2);
+- [x] double iauGmst00(double uta, double utb, double tta, double ttb);
+- [x] double iauGmst06(double uta, double utb, double tta, double ttb);
+- [x] double iauGmst82(double dj1, double dj2);
 - [ ] double iauGst00a(double uta, double utb, double tta, double ttb);
 - [ ] double iauGst00b(double uta, double utb);
 - [ ] double iauGst06(double uta, double utb, double tta, double ttb,
