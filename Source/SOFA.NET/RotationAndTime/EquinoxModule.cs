@@ -24,29 +24,30 @@ public static class EquinoxModule
 
     /// <summary>
     /// Equation of the equinoxes, compatible with IAU 2000 resolutions.
+    /// SOFA name: iauEe00a
     /// </summary>
     /// <param name="ttJulianDate"></param>
     /// <returns></returns>
-    //public static double EquationOfEquinoxesIAU00a(JulianDate ttJulianDate)
-    //{
-    //    ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
+    public static double EquationOfEquinoxesIAU00a(JulianDate ttJulianDate)
+    {
+        ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
 
-    //    double dpsipr, depspr, epsa, dpsi, deps, ee;
+        double epsa, ee;
 
-    //    /* IAU 2000 precession-rate adjustments. */
-    //    iauPr00(date1, date2, &dpsipr, &depspr);
+        /* IAU 2000 precession-rate adjustments. */
+        var (_, depspr) = PrecNutPolarModule.PrecessionRateIAU00(ttJulianDate);
 
-    //    /* Mean obliquity, consistent with IAU 2000 precession-nutation. */
-    //    epsa = PrecNutPolarModule.MeanObliquityOfTheEclipticIAU80(ttJulianDate) + depspr;
+        /* Mean obliquity, consistent with IAU 2000 precession-nutation. */
+        epsa = PrecNutPolarModule.MeanObliquityOfTheEclipticIAU80(ttJulianDate) + depspr;
 
-    //    /* Nutation in longitude. */
-    //    iauNut00a(date1, date2, dpsi, deps);
+        /* Nutation in longitude. */
+        var (dpsi, _) = PrecNutPolarModule.NutationIAU00a(ttJulianDate);
 
-    //    /* Equation of the equinoxes. */
-    //    ee = EquationOfEquinoxesIAU00(ttJulianDate, new(epsa, dpsi));
+        /* Equation of the equinoxes. */
+        ee = EquationOfEquinoxesIAU00(ttJulianDate, new(dpsi, epsa));
 
-    //    return ee;
-    //}
+        return ee;
+    }
 
     /// <summary>
     /// Equation of the equinoxes, IAU 1994 model.
