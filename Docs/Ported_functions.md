@@ -186,7 +186,7 @@
 - [ ] void iauNum00b(double date1, double date2, double rmatn[3][3]);
 - [ ] void iauNum06a(double date1, double date2, double rmatn[3][3]);
 - [ ] void iauNumat(double epsa, double dpsi, double deps, double rmatn[3][3]);
-- [ ] void iauNut00a(double date1, double date2, double *dpsi, double *deps);
+- [x] void iauNut00a(double date1, double date2, double *dpsi, double *deps);
 - [ ] void iauNut00b(double date1, double date2, double *dpsi, double *deps);
 - [ ] void iauNut06a(double date1, double date2, double *dpsi, double *deps);
 - [x] void iauNut80(double date1, double date2, double *dpsi, double *deps);

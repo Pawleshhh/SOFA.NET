@@ -402,6 +402,159 @@ public static class PrecNutPolarModule
         return new(dp * U2R, de * U2R);
     }
 
+    /// <summary>
+    /// Nutation, IAU 2000A model (MHB2000 luni-solar and planetary nutation
+    /// with free core nutation omitted).
+    /// SOFA name: iauNut00a
+    /// </summary>
+    /// <param name="ttJulianDate"></param>
+    /// <returns></returns>
+    public static Nutation NutationIAU00a(JulianDate ttJulianDate)
+    {
+        ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
+
+        double t, el, elp, f, d, om, arg, dp, de, sarg, carg,
+          al, af, ad, aom, alme, alve, alea, alma,
+          alju, alsa, alur, alne, apa, dpsils, depsls,
+          dpsipl, depspl;
+
+        /* Units of 0.1 microarcsecond to radians */
+        const double U2R = Constants.DAS2R / 1e7;
+
+        t = ttJulianDate.JulianCentury();
+
+        /* Mean anomaly of the Moon (IERS 2003). */
+        el = FundamentalArgsModule.MeanLongitudeIERS03Of(SolarSystemObject.Moon, t);
+
+        /* Mean anomaly of the Sun (MHB2000). */
+        elp = ((1287104.79305 +
+                 t * (129596581.0481 +
+                 t * (-0.5532 +
+                 t * (0.000136 +
+                 t * (-0.00001149))))) % Constants.TURNAS) * Constants.DAS2R;
+
+        /* Mean longitude of the Moon minus that of the ascending node */
+        /* (IERS 2003. */
+        f = FundamentalArgsModule.MeanLongitudeOfMoonMinusAscendingNodeIERS03(t);
+
+        /* Mean elongation of the Moon from the Sun (MHB2000). */
+        d = ((1072260.70369 +
+               t * (1602961601.2090 +
+               t * (-6.3706 +
+               t * (0.006593 +
+               t * (-0.00003169))))) % Constants.TURNAS) * Constants.DAS2R;
+
+        /* Mean longitude of the ascending node of the Moon (IERS 2003). */
+        om = FundamentalArgsModule.MeanLongitudeOfMoonAscendingNodeIERS03(t);
+
+        /* Initialize the nutation values. */
+        dp = 0.0;
+        de = 0.0;
+
+        /* Summation of luni-solar nutation series (in reverse order). */
+        var xls = NutationIAU00aLuniSolarCoefficients.Coefficients;
+        for (int i = xls.Length - 1; i >= 0; i--)
+        {
+            /* Argument and functions. */
+            arg = ((xls[i].nl * el +
+                       xls[i].nlp * elp +
+                       xls[i].nf * f +
+                       xls[i].nd * d +
+                       xls[i].nom * om) % Constants.PI2);
+            sarg = Math.Sin(arg);
+            carg = Math.Cos(arg);
+
+            /* Term. */
+            dp += (xls[i].sp + xls[i].spt * t) * sarg + xls[i].cp * carg;
+            de += (xls[i].ce + xls[i].cet * t) * carg + xls[i].se * sarg;
+        }
+
+        /* Convert from 0.1 microarcsec units to radians. */
+        dpsils = dp * U2R;
+        depsls = de * U2R;
+
+        /* ------------------ */
+        /* PLANETARY NUTATION */
+        /* ------------------ */
+
+        /* n.b.  The MHB2000 code computes the luni-solar and planetary nutation */
+        /* in different functions, using slightly different Delaunay */
+        /* arguments in the two cases.  This behaviour is faithfully */
+        /* reproduced here.  Use of the IERS 2003 expressions for both */
+        /* cases leads to negligible changes, well below */
+        /* 0.1 microarcsecond. */
+
+        /* Mean anomaly of the Moon (MHB2000). */
+        al = (2.35555598 + 8328.6914269554 * t) % Constants.PI2;
+
+        /* Mean longitude of the Moon minus that of the ascending node */
+        /*(MHB2000). */
+        af = (1.627905234 + 8433.466158131 * t) % Constants.PI2;
+
+        /* Mean elongation of the Moon from the Sun (MHB2000). */
+        ad = (5.198466741 + 7771.3771468121 * t) % Constants.PI2;
+
+        /* Mean longitude of the ascending node of the Moon (MHB2000). */
+        aom = (2.18243920 - 33.757045 * t) % Constants.PI2;
+
+        /* General accumulated precession in longitude (IERS 2003). */
+        apa = FundamentalArgsModule.GeneralAccumulatedPrecessionInLongitudeIERS03(t);
+
+        /* Planetary longitudes, Mercury through Uranus (IERS 2003). */
+        alme = FundamentalArgsModule.MeanLongitudeIERS03Of(SolarSystemObject.Mercury, t);
+        alve = FundamentalArgsModule.MeanLongitudeIERS03Of(SolarSystemObject.Venus, t);
+        alea = FundamentalArgsModule.MeanLongitudeIERS03Of(SolarSystemObject.Earth, t);
+        alma = FundamentalArgsModule.MeanLongitudeIERS03Of(SolarSystemObject.Mars, t);
+        alju = FundamentalArgsModule.MeanLongitudeIERS03Of(SolarSystemObject.Jupiter, t);
+        alsa = FundamentalArgsModule.MeanLongitudeIERS03Of(SolarSystemObject.Saturn, t);
+        alur = FundamentalArgsModule.MeanLongitudeIERS03Of(SolarSystemObject.Uranus, t);
+
+        /* Neptune longitude (MHB2000). */
+        alne = (5.321159000 + 3.8127774000 * t) % Constants.PI2;
+
+        /* Initialize the nutation values. */
+        dp = 0.0;
+        de = 0.0;
+
+        /* Summation of planetary nutation series (in reverse order). */
+        var xpl = NutationIAU80aPlanetaryCoefficients.Coefficients;
+        for (int i = xpl.Length - 1; i >= 0; i--)
+        {
+
+            /* Argument and functions. */
+            arg = ((xpl[i].nl * al +
+                       xpl[i].nf * af +
+                       xpl[i].nd * ad +
+                       xpl[i].nom * aom +
+                       xpl[i].nme * alme +
+                       xpl[i].nve * alve +
+                       xpl[i].nea * alea +
+                       xpl[i].nma * alma +
+                       xpl[i].nju * alju +
+                       xpl[i].nsa * alsa +
+                       xpl[i].nur * alur +
+                       xpl[i].nne * alne +
+                       xpl[i].npa * apa) % Constants.PI2);
+            sarg = Math.Sin(arg);
+            carg = Math.Cos(arg);
+
+            /* Term. */
+            dp += xpl[i].sp * sarg + xpl[i].cp * carg;
+            de += xpl[i].se * sarg + xpl[i].ce * carg;
+        }
+
+        /* Convert from 0.1 microarcsec units to radians. */
+        dpsipl = dp * U2R;
+        depspl = de * U2R;
+
+        /* ------- */
+        /* RESULTS */
+        /* ------- */
+
+        /* Add luni-solar and planetary components. */
+        return new(dpsils + dpsipl, depsls + depspl);
+    }
+
     #endregion
 
 }

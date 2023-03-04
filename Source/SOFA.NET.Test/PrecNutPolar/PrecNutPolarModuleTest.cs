@@ -158,4 +158,19 @@ internal class PrecNutPolarModuleTest
         });
     }
 
+    [Test]
+    public static void NutationIAU00a_Test()
+    {
+        var julianDate = new JulianDate(2400000.5 + 53736.0);
+
+        var result = PrecNutPolarModule.NutationIAU00a(julianDate);
+
+        Assert.Multiple(() =>
+        {
+            double delta = 1e-13;
+            Assert.That(result.Longitude, Is.EqualTo(-0.9630909107115518431e-5).Within(delta));
+            Assert.That(result.Obliquity, Is.EqualTo(0.4063239174001678710e-4).Within(delta));
+        });
+    }
+
 }
