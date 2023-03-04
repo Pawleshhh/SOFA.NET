@@ -640,6 +640,32 @@ public static class PrecNutPolarModule
             => ((a + (b * t)) % Constants.TURNAS) * Constants.DAS2R;
     }
 
+    /// <summary>
+    /// IAU 2000A nutation with adjustments to match the IAU 2006
+    /// precession.
+    /// SOFA name: iauNut06a
+    /// </summary>
+    /// <param name="ttJulianDate"></param>
+    /// <returns></returns>
+    public static Nutation NutationIAU06a(JulianDate ttJulianDate)
+    {
+        ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
+
+        double t, fj2;
+
+        /* Interval between fundamental date J2000.0 and given date (JC). */
+        t = ttJulianDate.JulianCentury();
+
+        /* Factor correcting for secular variation of J2. */
+        fj2 = -2.7774e-6 * t;
+
+        /* Obtain IAU 2000A nutation. */
+        var (dp, de) = NutationIAU00a(ttJulianDate);
+
+        /* Apply P03 adjustments (Wallace & Capitaine, 2006, Eqs.5). */
+        return new(dp + dp * (0.4697e-6 + fj2), de + de * fj2);
+    }
+
     #endregion
 
 }
