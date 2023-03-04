@@ -126,20 +126,20 @@
 - [ ] int iauPlan94(double date1, double date2, int np, double pv[2][3]);
 
 #### Astronomy/FundamentalArgs
-- [ ] double iauFad03(double t);
-- [ ] double iauFae03(double t);
-- [ ] double iauFaf03(double t);
-- [ ] double iauFaju03(double t);
-- [ ] double iauFal03(double t);
-- [ ] double iauFalp03(double t);
-- [ ] double iauFama03(double t);
-- [ ] double iauFame03(double t);
-- [ ] double iauFane03(double t);
-- [ ] double iauFaom03(double t);
-- [ ] double iauFapa03(double t);
-- [ ] double iauFasa03(double t);
-- [ ] double iauFaur03(double t);
-- [ ] double iauFave03(double t);
+- [x] double iauFad03(double t);
+- [x] double iauFae03(double t);
+- [x] double iauFaf03(double t);
+- [x] double iauFaju03(double t);
+- [x] double iauFal03(double t);
+- [x] double iauFalp03(double t);
+- [x] double iauFama03(double t);
+- [x] double iauFame03(double t);
+- [x] double iauFane03(double t);
+- [x] double iauFaom03(double t);
+- [x] double iauFapa03(double t);
+- [x] double iauFasa03(double t);
+- [x] double iauFaur03(double t);
+- [x] double iauFave03(double t);
 
 #### Astronomy/PrecNutPolar
 - [ ] void iauBi00(double *dpsibi, double *depsbi, double *dra);
@@ -147,7 +147,7 @@
              double rb[3][3], double rp[3][3], double rbp[3][3]);
 - [ ] void iauBp06(double date1, double date2,
              double rb[3][3], double rp[3][3], double rbp[3][3]);
-- [ ] void iauBpn2xy(double rbpn[3][3], double *x, double *y);
+- [x] void iauBpn2xy(double rbpn[3][3], double *x, double *y);
 - [ ] void iauC2i00a(double date1, double date2, double rc2i[3][3]);
 - [ ] void iauC2i00b(double date1, double date2, double rc2i[3][3]);
 - [ ] void iauC2i06a(double date1, double date2, double rc2i[3][3]);
@@ -173,7 +173,7 @@
               double x, double y, double xp, double yp,
               double rc2t[3][3]);
 - [ ] double iauEo06a(double date1, double date2);
-- [ ] double iauEors(double rnpb[3][3], double s);
+- [x] double iauEors(double rnpb[3][3], double s);
 - [x] void iauFw2m(double gamb, double phib, double psi, double eps,
              double r[3][3]);
 - [ ] void iauFw2xy(double gamb, double phib, double psi, double eps,
@@ -186,13 +186,13 @@
 - [ ] void iauNum00b(double date1, double date2, double rmatn[3][3]);
 - [ ] void iauNum06a(double date1, double date2, double rmatn[3][3]);
 - [ ] void iauNumat(double epsa, double dpsi, double deps, double rmatn[3][3]);
-- [ ] void iauNut00a(double date1, double date2, double *dpsi, double *deps);
-- [ ] void iauNut00b(double date1, double date2, double *dpsi, double *deps);
-- [ ] void iauNut06a(double date1, double date2, double *dpsi, double *deps);
-- [ ] void iauNut80(double date1, double date2, double *dpsi, double *deps);
+- [x] void iauNut00a(double date1, double date2, double *dpsi, double *deps);
+- [x] void iauNut00b(double date1, double date2, double *dpsi, double *deps);
+- [x] void iauNut06a(double date1, double date2, double *dpsi, double *deps);
+- [x] void iauNut80(double date1, double date2, double *dpsi, double *deps);
 - [ ] void iauNutm80(double date1, double date2, double rmatn[3][3]);
 - [x] double iauObl06(double date1, double date2);
-- [ ] double iauObl80(double date1, double date2);
+- [x] double iauObl80(double date1, double date2);
 - [ ] void iauP06e(double date1, double date2,
              double *eps0, double *psia, double *oma, double *bpa,
              double *bqa, double *pia, double *bpia,
@@ -228,10 +228,10 @@
               double rn[3][3], double rbpn[3][3]);
 - [ ] void iauPnm00a(double date1, double date2, double rbpn[3][3]);
 - [ ] void iauPnm00b(double date1, double date2, double rbpn[3][3]);
-- [ ] void iauPnm06a(double date1, double date2, double rnpb[3][3]);
+- [x] void iauPnm06a(double date1, double date2, double rnpb[3][3]);
 - [ ] void iauPnm80(double date1, double date2, double rmatpn[3][3]);
 - [ ] void iauPom00(double xp, double yp, double sp, double rpom[3][3]);
-- [ ] void iauPr00(double date1, double date2,
+- [x] void iauPr00(double date1, double date2,
              double *dpsipr, double *depspr);
 - [ ] void iauPrec76(double date01, double date02,
                double date11, double date12,
@@ -239,7 +239,7 @@
 - [ ] double iauS00(double date1, double date2, double x, double y);
 - [ ] double iauS00a(double date1, double date2);
 - [ ] double iauS00b(double date1, double date2);
-- [ ] double iauS06(double date1, double date2, double x, double y);
+- [x] double iauS06(double date1, double date2, double x, double y);
 - [ ] double iauS06a(double date1, double date2);
 - [ ] double iauSp00(double date1, double date2);
 - [ ] void iauXy06(double date1, double date2, double *x, double *y);
@@ -251,22 +251,22 @@
                double *x, double *y, double *s);
 
 #### Astronomy/RotationAndTime
-- [ ] double iauEe00(double date1, double date2, double epsa, double dpsi);
-- [ ] double iauEe00a(double date1, double date2);
-- [ ] double iauEe00b(double date1, double date2);
-- [ ] double iauEe06a(double date1, double date2);
-- [ ] double iauEect00(double date1, double date2);
-- [ ] double iauEqeq94(double date1, double date2);
-- [ ] double iauEra00(double dj1, double dj2);
-- [ ] double iauGmst00(double uta, double utb, double tta, double ttb);
-- [ ] double iauGmst06(double uta, double utb, double tta, double ttb);
-- [ ] double iauGmst82(double dj1, double dj2);
-- [ ] double iauGst00a(double uta, double utb, double tta, double ttb);
-- [ ] double iauGst00b(double uta, double utb);
-- [ ] double iauGst06(double uta, double utb, double tta, double ttb,
+- [x] double iauEe00(double date1, double date2, double epsa, double dpsi);
+- [x] double iauEe00a(double date1, double date2);
+- [x] double iauEe00b(double date1, double date2);
+- [x] double iauEe06a(double date1, double date2);
+- [x] double iauEect00(double date1, double date2);
+- [x] double iauEqeq94(double date1, double date2);
+- [x] double iauEra00(double dj1, double dj2);
+- [x] double iauGmst00(double uta, double utb, double tta, double ttb);
+- [x] double iauGmst06(double uta, double utb, double tta, double ttb);
+- [x] double iauGmst82(double dj1, double dj2);
+- [x] double iauGst00a(double uta, double utb, double tta, double ttb);
+- [x] double iauGst00b(double uta, double utb);
+- [x] double iauGst06(double uta, double utb, double tta, double ttb,
                 double rnpb[3][3]);
-- [ ] double iauGst06a(double uta, double utb, double tta, double ttb);
-- [ ] double iauGst94(double uta, double utb);
+- [x] double iauGst06a(double uta, double utb, double tta, double ttb);
+- [x] double iauGst94(double uta, double utb);
 
 #### Astronomy/SpaceMotion
 - [ ] int iauPvstar(double pv[2][3], double *ra, double *dec,
