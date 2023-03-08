@@ -25,4 +25,24 @@ internal class EphemeridesModuleTest
         });
     }
 
+    [Test]
+    public void ApproximateGeocentricPositionAndVelocityOfTheMoon_Test()
+    {
+        var julianDate = new JulianDate(2400000.5 + 43999.9);
+
+        var result = EphemeridesModule.ApproximateGeocentricPositionAndVelocityOfTheMoon(julianDate);
+
+        Assert.Multiple(() =>
+        {
+            double delta = 1e-11;
+            Assert.That(result[0, 0], Is.EqualTo(-0.2601295959971044180e-2).Within(delta));
+            Assert.That(result[0, 1], Is.EqualTo(0.6139750944302742189e-3).Within(delta));
+            Assert.That(result[0, 2], Is.EqualTo(0.2640794528229828909e-3).Within(delta));
+
+            Assert.That(result[1, 0], Is.EqualTo(-0.1244321506649895021e-3).Within(delta));
+            Assert.That(result[1, 1], Is.EqualTo(-0.5219076942678119398e-3).Within(delta));
+            Assert.That(result[1, 2], Is.EqualTo(-0.1716132214378462047e-3).Within(delta));
+        });
+    }
+
 }

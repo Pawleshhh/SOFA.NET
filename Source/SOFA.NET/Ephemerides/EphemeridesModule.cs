@@ -1,4 +1,5 @@
 ﻿using static System.Math;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace SOFA.NET;
 
@@ -145,6 +146,299 @@ public static class EphemeridesModule
         pv[1, 2] = y * SINEPS + z * COSEPS;
 
         return pv;
+    }
+
+    /* Moon's mean longitude (wrt mean equinox and ecliptic of date) */
+    private const double elp0 = 218.31665436, /* Simon et al. (1994). */
+        elp1 = 481267.88123421,
+        elp2 = -0.0015786,
+        elp3 = 1.0 / 538841.0,
+        elp4 = -1.0 / 65194000.0;
+    /* Moon's mean elongation */
+    private const double d0 = 297.8501921,
+        d1 = 445267.1114034,
+        d2 = -0.0018819,
+        d3 = 1.0 / 545868.0,
+        d4 = 1.0 / 113065000.0;
+    private const double em0 = 357.5291092,
+        em1 = 35999.0502909,
+        em2 = -0.0001536,
+        em3 = 1.0 / 24490000.0,
+        em4 = 0.0;
+    private const double emp0 = 134.9633964,
+        emp1 = 477198.8675055,
+        emp2 = 0.0087414,
+        emp3 = 1.0 / 69699.0,
+        emp4 = -1.0 / 14712000.0;
+    private const double f0 = 93.2720950,
+        f1 = 483202.0175233,
+        f2 = -0.0036539,
+        f3 = 1.0 / 3526000.0,
+        f4 = 1.0 / 863310000.0;
+    private const double a10 = 119.75,
+        a11 = 131.849;
+    private const double a20 = 53.09,
+        a21 = 479264.290;
+    private const double a30 = 313.45,
+        a31 = 481266.484;
+    private const double al1 = 0.003958,
+        al2 = 0.001962,
+        al3 = 0.000318;
+    private const double ab1 = -0.002235,
+        ab2 = 0.000382,
+        ab3 = 0.000175,
+        ab4 = 0.000175,
+        ab5 = 0.000127,
+        ab6 = -0.000115;
+    private const double r0 = 385000560.0;
+    private const double e1 = -0.002516,
+        e2 = -0.0000074;
+
+    /// <summary>
+    /// Multiply a pv-vector by an r-matrix.
+    /// SOFA name: iauMoon98
+    /// </summary>
+    /// <param name="ttJulianDate"></param>
+    /// <returns></returns>
+    public static double[,] ApproximateGeocentricPositionAndVelocityOfTheMoon(JulianDate ttJulianDate)
+    {
+        ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tt, ttJulianDate);
+
+        double elp, delp, d, dd,
+        /* Sun's mean anomaly */
+            em, dem,
+        /* Moon's mean anomaly */
+            emp, demp,
+        /* Mean distance of the Moon from its ascending node */
+            f, df,
+        /* Meeus A_1, due to Venus (deg) */
+            a1, da1,
+        /* Meeus A_2, due to Jupiter (deg) */
+            a2, da2,
+        /* Meeus A_3, due to sidereal motion of the Moon in longitude (deg) */
+            a3, da3,
+        /* Coefficients for (dimensionless) E factor */
+            e, de, esq, desq;
+
+        double t, elpmf, delpmf, vel, vdel, vr, vdr, a1mf, da1mf, a1pf,
+               da1pf, dlpmp, slpmp, vb, vdb, v, dv, emn, empn, dn, fn, en,
+               den, arg, darg, farg, coeff, el, del, r, dr, b, db;
+        int i = 0;
+
+        var tlr = ApproximateGeocentricPositionAndVelocityOfTheMoonCoefficients.LongitudeCoefficients;
+        var tb = ApproximateGeocentricPositionAndVelocityOfTheMoonCoefficients.LatitudeCoefficients;
+
+        /* Centuries since J2000.0 */
+        t = ttJulianDate.JulianCentury();
+
+        /* --------------------- */
+        /* Fundamental arguments */
+        /* --------------------- */
+
+        /* Arguments (radians) and derivatives (radians per Julian century)
+           for the current date. */
+
+        /* Moon's mean longitude. */
+        elp = Constants.DD2R * ((elp0
+                        + (elp1
+                        + (elp2
+                        + (elp3
+                        + elp4 * t) * t) * t) * t) % 360.0);
+        delp = Constants.DD2R * (elp1
+                        + (elp2 * 2.0
+                        + (elp3 * 3.0
+                        + elp4 * 4.0 * t) * t) * t);
+
+        /* Moon's mean elongation. */
+        d = Constants.DD2R * ((d0
+                      + (d1
+                      + (d2
+                      + (d3
+                      + d4 * t) * t) * t) * t) % 360.0);
+        dd = Constants.DD2R * (d1
+                      + (d2 * 2.0
+                      + (d3 * 3.0
+                      + d4 * 4.0 * t) * t) * t);
+
+        /* Sun's mean anomaly. */
+        em = Constants.DD2R * ((em0
+                       + (em1
+                       + (em2
+                       + (em3
+                       + em4 * t) * t) * t) * t) % 360.0);
+        dem = Constants.DD2R * (em1
+                       + (em2 * 2.0
+                       + (em3 * 3.0
+                       + em4 * 4.0 * t) * t) * t);
+
+        /* Moon's mean anomaly. */
+        emp = Constants.DD2R * ((emp0
+                        + (emp1
+                        + (emp2
+                        + (emp3
+                        + emp4 * t) * t) * t) * t) % 360.0);
+        demp = Constants.DD2R * (emp1
+                        + (emp2 * 2.0
+                        + (emp3 * 3.0
+                        + emp4 * 4.0 * t) * t) * t);
+
+        /* Mean distance of the Moon from its ascending node. */
+        f = Constants.DD2R * ((f0
+                      + (f1
+                      + (f2
+                      + (f3
+                      + f4 * t) * t) * t) * t) % 360.0);
+        df = Constants.DD2R * (f1
+                      + (f2 * 2.0
+                      + (f3 * 3.0
+                      + f4 * 4.0 * t) * t) * t);
+
+        /* Meeus further arguments. */
+        a1 = Constants.DD2R * (a10 + a11 * t);
+        da1 = Constants.DD2R * al1;
+        a2 = Constants.DD2R * (a20 + a21 * t);
+        da2 = Constants.DD2R * a21;
+        a3 = Constants.DD2R * (a30 + a31 * t);
+        da3 = Constants.DD2R * a31;
+
+        /* E-factor, and square. */
+        e = 1.0 + (e1 + e2 * t) * t;
+        de = e1 + 2.0 * e2 * t;
+        esq = e * e;
+        desq = 2.0 * e * de;
+
+        /* Use the Meeus additive terms (deg) to start off the summations. */
+        elpmf = elp - f;
+        delpmf = delp - df;
+        vel = al1 * Sin(a1)
+            + al2 * Sin(elpmf)
+            + al3 * Sin(a2);
+        vdel = al1 * Cos(a1) * da1
+             + al2 * Cos(elpmf) * delpmf
+             + al3 * Cos(a2) * da2;
+
+        vr = 0.0;
+        vdr = 0.0;
+
+        a1mf = a1 - f;
+        da1mf = da1 - df;
+        a1pf = a1 + f;
+        da1pf = da1 + df;
+        dlpmp = elp - emp;
+        slpmp = elp + emp;
+        vb = ab1 * Sin(elp)
+           + ab2 * Sin(a3)
+           + ab3 * Sin(a1mf)
+           + ab4 * Sin(a1pf)
+           + ab5 * Sin(dlpmp)
+           + ab6 * Sin(slpmp);
+        vdb = ab1 * Cos(elp) * delp
+            + ab2 * Cos(a3) * da3
+            + ab3 * Cos(a1mf) * da1mf
+            + ab4 * Cos(a1pf) * da1pf
+            + ab5 * Cos(dlpmp) * (delp - demp)
+            + ab6 * Cos(slpmp) * (delp + demp);
+
+        /* ----------------- */
+        /* Series expansions */
+        /* ----------------- */
+
+        /* Longitude and distance plus derivatives. */
+        for (int n = tlr.Length - 1; n >= 0; n--)
+        {
+            dn = tlr[n].nd;
+            emn = (i = tlr[n].nem);
+            empn = tlr[n].nemp;
+            fn = tlr[n].nf;
+            switch (Abs(i))
+            {
+                case 1:
+                    en = e;
+                    den = de;
+                    break;
+                case 2:
+                    en = esq;
+                    den = desq;
+                    break;
+                default:
+                    en = 1.0;
+                    den = 0.0;
+                    break;
+            }
+            arg = dn * d + emn * em + empn * emp + fn * f;
+            darg = dn * dd + emn * dem + empn * demp + fn * df;
+            farg = Sin(arg);
+            v = farg * en;
+            dv = Cos(arg) * darg * en + farg * den;
+            coeff = tlr[n].coefl;
+            vel += coeff * v;
+            vdel += coeff * dv;
+            farg = Cos(arg);
+            v = farg * en;
+            dv = -Sin(arg) * darg * en + farg * den;
+            coeff = tlr[n].coefr;
+            vr += coeff * v;
+            vdr += coeff * dv;
+        }
+        el = elp + Constants.DD2R * vel;
+        del = (delp + Constants.DD2R * vdel) / Constants.DJC;
+        r = (vr + r0) / Constants.DAU;
+        dr = vdr / Constants.DAU / Constants.DJC;
+
+        /* Latitude plus derivative. */
+        for (int n = tb.Length - 1; n >= 0; n--)
+        {
+            dn = tb[n].nd;
+            emn = (i = tb[n].nem);
+            empn = tb[n].nemp;
+            fn = tb[n].nf;
+            switch (Abs(i))
+            {
+                case 1:
+                    en = e;
+                    den = de;
+                    break;
+                case 2:
+                    en = esq;
+                    den = desq;
+                    break;
+                default:
+                    en = 1.0;
+                    den = 0.0;
+                    break;
+            }
+            arg = dn * d + emn * em + empn * emp + fn * f;
+            darg = dn * dd + emn * dem + empn * demp + fn * df;
+            farg = Sin(arg);
+            v = farg * en;
+            dv = Cos(arg) * darg * en + farg * den;
+            coeff = tb[n].coefb;
+            vb += coeff * v;
+            vdb += coeff * dv;
+        }
+        b = vb * Constants.DD2R;
+        db = vdb * Constants.DD2R / Constants.DJC;
+
+        /* ------------------------------ */
+        /* Transformation into final form */
+        /* ------------------------------ */
+
+        /* Longitude, latitude to x, y, z (AU). */
+        // el, b, r, del, db, dr
+        var pv = CoordinatesModule.SphericalToCartesianPositionAndVelocityCoordinates(
+            ICoordinateSystem3D<SphericalCoordinate>.Create(new(el, del), new(b, db), new(r, dr)));
+
+        /* IAU 2006 Fukushima-Williams bias+precession angles. */
+        var (gamb, phib, psib, _) = PrecNutPolarModule.PrecessionAnglesIAU06(ttJulianDate);
+
+        /* Mean ecliptic coordinates to GCRS rotation matrix. */
+        var rm = MatrixHelper.IdentityMatrix()
+            .RotateZ(psib)
+            .RotateX(-phib)
+            .RotateZ(-gamb);
+
+        /* Rotate the Moon position and velocity into GCRS (Note 6). */
+        return MatrixHelper.MultiplyPvVectorByRMatrix(rm, pv);
     }
 
 }
