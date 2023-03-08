@@ -195,7 +195,7 @@ public static class EphemeridesModule
         e2 = -0.0000074;
 
     /// <summary>
-    /// Multiply a pv-vector by an r-matrix.
+    /// Approximate geocentric position and velocity of the Moon.
     /// SOFA name: iauMoon98
     /// </summary>
     /// <param name="ttJulianDate"></param>
