@@ -1,10 +1,213 @@
 ﻿using static System.Math;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+using EpvHelper = SOFA.NET.EarthPositionVelocityHelper;
 
 namespace SOFA.NET;
 
 public static class EphemeridesModule
 {
+
+    #region EarthPositionVelocity
+
+    public readonly struct EarthPositionVelocityResult
+    {
+        public required double[] HeliocentricPosition { get; init; }
+        public required double[] HeliocentricVelocity { get; init; }
+        public required double[] BarycentricPosition { get; init; }
+        public required double[] BarycentricVelocity { get; init; }
+
+        public required bool DateOutsideRange { get; init; }
+    }
+
+    public static EarthPositionVelocityResult EarthPositionVelocity(JulianDate julianDate)
+    {
+        const double am12 = 0.000000211284 , am13 = -0.000000091603,
+                     am21 = -0.000000230286, am22 = 0.917482137087 , am23 = -0.397776982902,
+                     am32 = 0.397776982902 , am33 = 0.917482137087;
+
+        int[] ne0 = GetArraysLengths(EpvHelper.e0x, EpvHelper.e0y, EpvHelper.e0z),
+              ne1 = GetArraysLengths(EpvHelper.e1x, EpvHelper.e1y, EpvHelper.e1z),
+              ne2 = GetArraysLengths(EpvHelper.e2x, EpvHelper.e2y, EpvHelper.e2z),
+              ns0 = GetArraysLengths(EpvHelper.s0x, EpvHelper.s0y, EpvHelper.s0z),
+              ns1 = GetArraysLengths(EpvHelper.s1x, EpvHelper.s1y, EpvHelper.s1z),
+              ns2 = GetArraysLengths(EpvHelper.s2x, EpvHelper.s2y, EpvHelper.s2z);
+
+        int[] GetArraysLengths(params Lazy<double[]>[] arrays)
+            => arrays.Select(x => x.Value.Length).ToArray();
+
+        double[][] 
+            ce0 = new[] { EpvHelper.e0x.Value, EpvHelper.e0y.Value, EpvHelper.e0z.Value },
+            ce1 = new[] { EpvHelper.e1x.Value, EpvHelper.e1y.Value, EpvHelper.e1z.Value },
+            ce2 = new[] { EpvHelper.e2x.Value, EpvHelper.e2y.Value, EpvHelper.e2z.Value },
+            cs0 = new[] { EpvHelper.s0x.Value, EpvHelper.s0y.Value, EpvHelper.s0z.Value },
+            cs1 = new[] { EpvHelper.s1x.Value, EpvHelper.s1y.Value, EpvHelper.s1z.Value },
+            cs2 = new[] { EpvHelper.s2x.Value, EpvHelper.s2y.Value, EpvHelper.s2z.Value };
+
+        int jstat, i, j, nterms;
+        double t, t2, xyz, xyzd, a, b, c, ct, p, cp, x, y, z;
+        double[] ph = new double[3],
+            vh = new double[3],
+            pb = new double[3],
+            vb = new double[3];
+        double[] coeffs;
+
+        /* Time since reference epoch, Julian years. */
+        t = julianDate.JulianYear(Constants.DJ00);
+        t2 = t * t;
+
+        /* Set status. */
+        jstat = Abs(t) <= 100.0 ? 0 : 1;
+
+        ///* X then Y then Z. */
+        //for (i = 0; i < 3; i++)
+        //{
+        //    /* Initialize position and velocity component. */
+        //    xyz = 0.0;
+        //    xyzd = 0.0;
+
+        //    /* ------------------------------------------------ */
+        //    /* Obtain component of Sun to Earth ecliptic vector */
+        //    /* ------------------------------------------------ */
+
+        //    /* Sun to Earth, T^0 terms. */
+        //    coeffs = ce0[i];
+        //    nterms = ne0[i];
+        //    for (j = 0; j < nterms; j++)
+        //    {
+        //        a = coeffs++;
+        //        b = coeffs++;
+        //        c = coeffs++;
+        //        p = b + c * t;
+        //        xyz += a * cos(p);
+        //        xyzd -= a * c * sin(p);
+        //    }
+
+        //    /* Sun to Earth, T^1 terms. */
+        //    coeffs = ce1[i];
+        //    nterms = ne1[i];
+        //    for (j = 0; j < nterms; j++)
+        //    {
+        //        a = *coeffs++;
+        //        b = *coeffs++;
+        //        c = *coeffs++;
+        //        ct = c * t;
+        //        p = b + ct;
+        //        cp = cos(p);
+        //        xyz += a * t * cp;
+        //        xyzd += a * (cp - ct * sin(p));
+        //    }
+
+        //    /* Sun to Earth, T^2 terms. */
+        //    coeffs = ce2[i];
+        //    nterms = ne2[i];
+        //    for (j = 0; j < nterms; j++)
+        //    {
+        //        a = *coeffs++;
+        //        b = *coeffs++;
+        //        c = *coeffs++;
+        //        ct = c * t;
+        //        p = b + ct;
+        //        cp = cos(p);
+        //        xyz += a * t2 * cp;
+        //        xyzd += a * t * (2.0 * cp - ct * sin(p));
+        //    }
+
+        //    /* Heliocentric Earth position and velocity component. */
+        //    ph[i] = xyz;
+        //    vh[i] = xyzd / DJY;
+
+        //    /* ------------------------------------------------ */
+        //    /* Obtain component of SSB to Earth ecliptic vector */
+        //    /* ------------------------------------------------ */
+
+        //    /* SSB to Sun, T^0 terms. */
+        //    coeffs = cs0[i];
+        //    nterms = ns0[i];
+        //    for (j = 0; j < nterms; j++)
+        //    {
+        //        a = *coeffs++;
+        //        b = *coeffs++;
+        //        c = *coeffs++;
+        //        p = b + c * t;
+        //        xyz += a * cos(p);
+        //        xyzd -= a * c * sin(p);
+        //    }
+
+        //    /* SSB to Sun, T^1 terms. */
+        //    coeffs = cs1[i];
+        //    nterms = ns1[i];
+        //    for (j = 0; j < nterms; j++)
+        //    {
+        //        a = *coeffs++;
+        //        b = *coeffs++;
+        //        c = *coeffs++;
+        //        ct = c * t;
+        //        p = b + ct;
+        //        cp = cos(p);
+        //        xyz += a * t * cp;
+        //        xyzd += a * (cp - ct * sin(p));
+        //    }
+
+        //    /* SSB to Sun, T^2 terms. */
+        //    coeffs = cs2[i];
+        //    nterms = ns2[i];
+        //    for (j = 0; j < nterms; j++)
+        //    {
+        //        a = *coeffs++;
+        //        b = *coeffs++;
+        //        c = *coeffs++;
+        //        ct = c * t;
+        //        p = b + ct;
+        //        cp = cos(p);
+        //        xyz += a * t2 * cp;
+        //        xyzd += a * t * (2.0 * cp - ct * sin(p));
+        //    }
+
+        //    /* Barycentric Earth position and velocity component. */
+        //    pb[i] = xyz;
+        //    vb[i] = xyzd / DJY;
+
+        //    /* Next Cartesian component. */
+        //}
+
+        ///* Rotate from ecliptic to BCRS coordinates. */
+
+        //x = ph[0];
+        //y = ph[1];
+        //z = ph[2];
+        //pvh[0][0] = x + am12 * y + am13 * z;
+        //pvh[0][1] = am21 * x + am22 * y + am23 * z;
+        //pvh[0][2] = am32 * y + am33 * z;
+
+        //x = vh[0];
+        //y = vh[1];
+        //z = vh[2];
+        //pvh[1][0] = x + am12 * y + am13 * z;
+        //pvh[1][1] = am21 * x + am22 * y + am23 * z;
+        //pvh[1][2] = am32 * y + am33 * z;
+
+        //x = pb[0];
+        //y = pb[1];
+        //z = pb[2];
+        //pvb[0][0] = x + am12 * y + am13 * z;
+        //pvb[0][1] = am21 * x + am22 * y + am23 * z;
+        //pvb[0][2] = am32 * y + am33 * z;
+
+        //x = vb[0];
+        //y = vb[1];
+        //z = vb[2];
+        //pvb[1][0] = x + am12 * y + am13 * z;
+        //pvb[1][1] = am21 * x + am22 * y + am23 * z;
+        //pvb[1][2] = am32 * y + am33 * z;
+
+        ///* Return the status. */
+        //return jstat;
+
+        throw new NotImplementedException();
+    }
+
+    #endregion
+
+    #region ApproximateHeliocentricPositionAndVelocity
 
     /// <summary>
     /// Approximate heliocentric position and velocity of a nominated major
@@ -147,6 +350,10 @@ public static class EphemeridesModule
 
         return pv;
     }
+
+    #endregion
+
+    #region ApproximateGeocentricPositionAndVelocityOfTheMoon
 
     /* Moon's mean longitude (wrt mean equinox and ecliptic of date) */
     private const double elp0 = 218.31665436, /* Simon et al. (1994). */
@@ -440,5 +647,7 @@ public static class EphemeridesModule
         /* Rotate the Moon position and velocity into GCRS (Note 6). */
         return MatrixHelper.MultiplyPvVectorByRMatrix(rm, pv);
     }
+
+    #endregion
 
 }
