@@ -120,10 +120,10 @@
               double *refa, double *refb);
 
 #### Astronomy/Ephemerides
-- [ ] int iauEpv00(double date1, double date2,
+- [x] int iauEpv00(double date1, double date2,
              double pvh[2][3], double pvb[2][3]);
-- [ ] void iauMoon98(double date1, double date2, double pv[2][3]);
-- [ ] int iauPlan94(double date1, double date2, int np, double pv[2][3]);
+- [x] void iauMoon98(double date1, double date2, double pv[2][3]);
+- [x] int iauPlan94(double date1, double date2, int np, double pv[2][3]);
 
 #### Astronomy/FundamentalArgs
 - [x] double iauFad03(double t);

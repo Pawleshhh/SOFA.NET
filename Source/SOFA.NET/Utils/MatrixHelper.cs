@@ -260,4 +260,35 @@ internal static class MatrixHelper
         return (unitVector, w);
     }
 
+    /// <summary>
+    /// SOFA name: iauRxpv
+    /// </summary>
+    /// <param name="r"></param>
+    /// <param name="pv"></param>
+    /// <returns></returns>
+    public static double[,] MultiplyPvVectorByRMatrix(double[,] r, double[,] pv)
+    {
+        double[,] result = new double[2, 3];
+        double[] pvRow0 = new double[3];
+        for(int i = 0; i < 3; i++)
+        {
+            pvRow0[i] = pv[0, i];
+        }
+        double[] pvRow1 = new double[3];
+        for (int i = 0; i < 3; i++)
+        {
+            pvRow1[i] = pv[1, i];
+        }
+
+        double[] r0 = r.Multiply(pvRow0);
+        double[] r1 = r.Multiply(pvRow1);
+        for (int i = 0; i < 3; i++)
+        {
+            result[0, i] = r0[i];
+            result[1, i] = r1[i];
+        }
+
+        return result;
+    }
+
 }

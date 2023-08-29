@@ -1,4 +1,4 @@
-﻿namespace SOFA.NET;
+﻿namespace SOFA.NET.Test;
 
 [TestFixture]
 internal class GstModuleTest
