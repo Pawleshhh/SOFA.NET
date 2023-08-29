@@ -1,6 +1,6 @@
 ﻿namespace SOFA.NET;
 
-internal static class EarthPositionVelocityHelper
+internal static class EarthPositionVelocityCoefficients
 {
 
     public static readonly Lazy<double[]> e0x = new(CreateE0X);

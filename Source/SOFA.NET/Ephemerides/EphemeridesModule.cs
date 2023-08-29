@@ -1,5 +1,5 @@
 ﻿using static System.Math;
-using EpvHelper = SOFA.NET.EarthPositionVelocityHelper;
+using EpvHelper = SOFA.NET.EarthPositionVelocityCoefficients;
 
 namespace SOFA.NET;
 
