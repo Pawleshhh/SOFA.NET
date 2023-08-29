@@ -15,9 +15,16 @@ public static class EphemeridesModule
         public required double[] BarycentricPosition { get; init; }
         public required double[] BarycentricVelocity { get; init; }
 
-        public required bool DateOutsideRange { get; init; }
+        public bool DateOutsideRange { get; init; }
     }
 
+    /// <summary>
+    /// Earth position and velocity, heliocentric and barycentric, with
+    /// respect to the Barycentric Celestial Reference System.
+    /// SOFA name: iauEpv00
+    /// </summary>
+    /// <param name="julianDate"></param>
+    /// <returns></returns>
     public static EarthPositionVelocityResult EarthPositionVelocity(JulianDate julianDate)
     {
         const double am12 = 0.000000211284 , am13 = -0.000000091603,
@@ -32,7 +39,7 @@ public static class EphemeridesModule
               ns2 = GetArraysLengths(EpvHelper.s2x, EpvHelper.s2y, EpvHelper.s2z);
 
         int[] GetArraysLengths(params Lazy<double[]>[] arrays)
-            => arrays.Select(x => x.Value.Length).ToArray();
+            => arrays.Select(x => x.Value.Length / 3).ToArray();
 
         double[][] 
             ce0 = new[] { EpvHelper.e0x.Value, EpvHelper.e0y.Value, EpvHelper.e0z.Value },
@@ -42,7 +49,7 @@ public static class EphemeridesModule
             cs1 = new[] { EpvHelper.s1x.Value, EpvHelper.s1y.Value, EpvHelper.s1z.Value },
             cs2 = new[] { EpvHelper.s2x.Value, EpvHelper.s2y.Value, EpvHelper.s2z.Value };
 
-        int jstat, i, j, nterms;
+        int jstat, i, j, nterms, k = 0;
         double t, t2, xyz, xyzd, a, b, c, ct, p, cp, x, y, z;
         double[] ph = new double[3],
             vh = new double[3],
@@ -57,152 +64,167 @@ public static class EphemeridesModule
         /* Set status. */
         jstat = Abs(t) <= 100.0 ? 0 : 1;
 
-        ///* X then Y then Z. */
-        //for (i = 0; i < 3; i++)
-        //{
-        //    /* Initialize position and velocity component. */
-        //    xyz = 0.0;
-        //    xyzd = 0.0;
+        /* X then Y then Z. */
+        for (i = 0; i < 3; i++)
+        {
+            /* Initialize position and velocity component. */
+            xyz = 0.0;
+            xyzd = 0.0;
 
-        //    /* ------------------------------------------------ */
-        //    /* Obtain component of Sun to Earth ecliptic vector */
-        //    /* ------------------------------------------------ */
+            /* ------------------------------------------------ */
+            /* Obtain component of Sun to Earth ecliptic vector */
+            /* ------------------------------------------------ */
 
-        //    /* Sun to Earth, T^0 terms. */
-        //    coeffs = ce0[i];
-        //    nterms = ne0[i];
-        //    for (j = 0; j < nterms; j++)
-        //    {
-        //        a = coeffs++;
-        //        b = coeffs++;
-        //        c = coeffs++;
-        //        p = b + c * t;
-        //        xyz += a * cos(p);
-        //        xyzd -= a * c * sin(p);
-        //    }
+            /* Sun to Earth, T^0 terms. */
+            coeffs = ce0[i];
+            k = 0;
+            nterms = ne0[i];
+            for (j = 0; j < nterms; j++)
+            {
+                a = coeffs[k++];
+                b = coeffs[k++];
+                c = coeffs[k++];
+                p = b + c * t;
+                xyz += a * Cos(p);
+                xyzd -= a * c * Sin(p);
+            }
 
-        //    /* Sun to Earth, T^1 terms. */
-        //    coeffs = ce1[i];
-        //    nterms = ne1[i];
-        //    for (j = 0; j < nterms; j++)
-        //    {
-        //        a = *coeffs++;
-        //        b = *coeffs++;
-        //        c = *coeffs++;
-        //        ct = c * t;
-        //        p = b + ct;
-        //        cp = cos(p);
-        //        xyz += a * t * cp;
-        //        xyzd += a * (cp - ct * sin(p));
-        //    }
+            /* Sun to Earth, T^1 terms. */
+            coeffs = ce1[i];
+            k = 0;
+            nterms = ne1[i];
+            for (j = 0; j < nterms; j++)
+            {
+                a = coeffs[k++];
+                b = coeffs[k++];
+                c = coeffs[k++];
+                ct = c * t;
+                p = b + ct;
+                cp = Cos(p);
+                xyz += a * t * cp;
+                xyzd += a * (cp - ct * Sin(p));
+            }
 
-        //    /* Sun to Earth, T^2 terms. */
-        //    coeffs = ce2[i];
-        //    nterms = ne2[i];
-        //    for (j = 0; j < nterms; j++)
-        //    {
-        //        a = *coeffs++;
-        //        b = *coeffs++;
-        //        c = *coeffs++;
-        //        ct = c * t;
-        //        p = b + ct;
-        //        cp = cos(p);
-        //        xyz += a * t2 * cp;
-        //        xyzd += a * t * (2.0 * cp - ct * sin(p));
-        //    }
+            /* Sun to Earth, T^2 terms. */
+            coeffs = ce2[i];
+            k = 0;
+            nterms = ne2[i];
+            for (j = 0; j < nterms; j++)
+            {
+                a = coeffs[k++];
+                b = coeffs[k++];
+                c = coeffs[k++];
+                ct = c * t;
+                p = b + ct;
+                cp = Cos(p);
+                xyz += a * t2 * cp;
+                xyzd += a * t * (2.0 * cp - ct * Sin(p));
+            }
 
-        //    /* Heliocentric Earth position and velocity component. */
-        //    ph[i] = xyz;
-        //    vh[i] = xyzd / DJY;
+            /* Heliocentric Earth position and velocity component. */
+            ph[i] = xyz;
+            vh[i] = xyzd / Constants.DJY;
 
-        //    /* ------------------------------------------------ */
-        //    /* Obtain component of SSB to Earth ecliptic vector */
-        //    /* ------------------------------------------------ */
+            /* ------------------------------------------------ */
+            /* Obtain component of SSB to Earth ecliptic vector */
+            /* ------------------------------------------------ */
 
-        //    /* SSB to Sun, T^0 terms. */
-        //    coeffs = cs0[i];
-        //    nterms = ns0[i];
-        //    for (j = 0; j < nterms; j++)
-        //    {
-        //        a = *coeffs++;
-        //        b = *coeffs++;
-        //        c = *coeffs++;
-        //        p = b + c * t;
-        //        xyz += a * cos(p);
-        //        xyzd -= a * c * sin(p);
-        //    }
+            /* SSB to Sun, T^0 terms. */
+            coeffs = cs0[i];
+            k = 0;
+            nterms = ns0[i];
+            for (j = 0; j < nterms; j++)
+            {
+                a = coeffs[k++];
+                b = coeffs[k++];
+                c = coeffs[k++];
+                p = b + c * t;
+                xyz += a * Cos(p);
+                xyzd -= a * c * Sin(p);
+            }
 
-        //    /* SSB to Sun, T^1 terms. */
-        //    coeffs = cs1[i];
-        //    nterms = ns1[i];
-        //    for (j = 0; j < nterms; j++)
-        //    {
-        //        a = *coeffs++;
-        //        b = *coeffs++;
-        //        c = *coeffs++;
-        //        ct = c * t;
-        //        p = b + ct;
-        //        cp = cos(p);
-        //        xyz += a * t * cp;
-        //        xyzd += a * (cp - ct * sin(p));
-        //    }
+            /* SSB to Sun, T^1 terms. */
+            coeffs = cs1[i];
+            k = 0;
+            nterms = ns1[i];
+            for (j = 0; j < nterms; j++)
+            {
+                a = coeffs[k++];
+                b = coeffs[k++];
+                c = coeffs[k++];
+                ct = c * t;
+                p = b + ct;
+                cp = Cos(p);
+                xyz += a * t * cp;
+                xyzd += a * (cp - ct * Sin(p));
+            }
 
-        //    /* SSB to Sun, T^2 terms. */
-        //    coeffs = cs2[i];
-        //    nterms = ns2[i];
-        //    for (j = 0; j < nterms; j++)
-        //    {
-        //        a = *coeffs++;
-        //        b = *coeffs++;
-        //        c = *coeffs++;
-        //        ct = c * t;
-        //        p = b + ct;
-        //        cp = cos(p);
-        //        xyz += a * t2 * cp;
-        //        xyzd += a * t * (2.0 * cp - ct * sin(p));
-        //    }
+            /* SSB to Sun, T^2 terms. */
+            coeffs = cs2[i];
+            k = 0;
+            nterms = ns2[i];
+            for (j = 0; j < nterms; j++)
+            {
+                a = coeffs[k++];
+                b = coeffs[k++];
+                c = coeffs[k++];
+                ct = c * t;
+                p = b + ct;
+                cp = Cos(p);
+                xyz += a * t2 * cp;
+                xyzd += a * t * (2.0 * cp - ct * Sin(p));
+            }
 
-        //    /* Barycentric Earth position and velocity component. */
-        //    pb[i] = xyz;
-        //    vb[i] = xyzd / DJY;
+            /* Barycentric Earth position and velocity component. */
+            pb[i] = xyz;
+            vb[i] = xyzd / Constants.DJY;
 
-        //    /* Next Cartesian component. */
-        //}
+            /* Next Cartesian component. */
+        }
 
-        ///* Rotate from ecliptic to BCRS coordinates. */
+        /* Rotate from ecliptic to BCRS coordinates. */
 
-        //x = ph[0];
-        //y = ph[1];
-        //z = ph[2];
-        //pvh[0][0] = x + am12 * y + am13 * z;
-        //pvh[0][1] = am21 * x + am22 * y + am23 * z;
-        //pvh[0][2] = am32 * y + am33 * z;
+        var heliocentricPosition = new double[3];
 
-        //x = vh[0];
-        //y = vh[1];
-        //z = vh[2];
-        //pvh[1][0] = x + am12 * y + am13 * z;
-        //pvh[1][1] = am21 * x + am22 * y + am23 * z;
-        //pvh[1][2] = am32 * y + am33 * z;
+        x = ph[0];
+        y = ph[1];
+        z = ph[2];
+        heliocentricPosition[0] = x + am12 * y + am13 * z;
+        heliocentricPosition[1] = am21 * x + am22 * y + am23 * z;
+        heliocentricPosition[2] = am32 * y + am33 * z;
 
-        //x = pb[0];
-        //y = pb[1];
-        //z = pb[2];
-        //pvb[0][0] = x + am12 * y + am13 * z;
-        //pvb[0][1] = am21 * x + am22 * y + am23 * z;
-        //pvb[0][2] = am32 * y + am33 * z;
+        var heliocentricVelocity = new double[3];
+        x = vh[0];
+        y = vh[1];
+        z = vh[2];
+        heliocentricVelocity[0] = x + am12 * y + am13 * z;
+        heliocentricVelocity[1] = am21 * x + am22 * y + am23 * z;
+        heliocentricVelocity[2] = am32 * y + am33 * z;
 
-        //x = vb[0];
-        //y = vb[1];
-        //z = vb[2];
-        //pvb[1][0] = x + am12 * y + am13 * z;
-        //pvb[1][1] = am21 * x + am22 * y + am23 * z;
-        //pvb[1][2] = am32 * y + am33 * z;
+        var barycentricPosition = new double[3];
+        x = pb[0];
+        y = pb[1];
+        z = pb[2];
+        barycentricPosition[0] = x + am12 * y + am13 * z;
+        barycentricPosition[1] = am21 * x + am22 * y + am23 * z;
+        barycentricPosition[2] = am32 * y + am33 * z;
 
-        ///* Return the status. */
-        //return jstat;
+        var barycentricVelocity = new double[3];
+        x = vb[0];
+        y = vb[1];
+        z = vb[2];
+        barycentricVelocity[0] = x + am12 * y + am13 * z;
+        barycentricVelocity[1] = am21 * x + am22 * y + am23 * z;
+        barycentricVelocity[2] = am32 * y + am33 * z;
 
-        throw new NotImplementedException();
+        return new()
+        {
+            HeliocentricPosition = heliocentricPosition,
+            HeliocentricVelocity = heliocentricVelocity,
+            BarycentricPosition = barycentricPosition,
+            BarycentricVelocity = barycentricVelocity,
+            DateOutsideRange = jstat == 1
+        };
     }
 
     #endregion
