@@ -27,6 +27,8 @@ public static class EphemeridesModule
     /// <returns></returns>
     public static EarthPositionVelocityResult EarthPositionVelocity(JulianDate julianDate)
     {
+        ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tdb, julianDate);
+
         const double am12 = 0.000000211284 , am13 = -0.000000091603,
                      am21 = -0.000000230286, am22 = 0.917482137087 , am23 = -0.397776982902,
                      am32 = 0.397776982902 , am33 = 0.917482137087;
