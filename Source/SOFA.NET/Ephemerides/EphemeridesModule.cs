@@ -23,10 +23,12 @@ public static class EphemeridesModule
     /// respect to the Barycentric Celestial Reference System.
     /// SOFA name: iauEpv00
     /// </summary>
-    /// <param name="julianDate"></param>
+    /// <param name="tdbJulianDate"></param>
     /// <returns></returns>
-    public static EarthPositionVelocityResult EarthPositionVelocity(JulianDate julianDate)
+    public static EarthPositionVelocityResult EarthPositionVelocity(JulianDate tdbJulianDate)
     {
+        ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tdb, tdbJulianDate);
+
         const double am12 = 0.000000211284 , am13 = -0.000000091603,
                      am21 = -0.000000230286, am22 = 0.917482137087 , am23 = -0.397776982902,
                      am32 = 0.397776982902 , am33 = 0.917482137087;
@@ -58,7 +60,7 @@ public static class EphemeridesModule
         double[] coeffs;
 
         /* Time since reference epoch, Julian years. */
-        t = julianDate.JulianYear(Constants.DJ00);
+        t = tdbJulianDate.JulianYear(Constants.DJ00);
         t2 = t * t;
 
         /* Set status. */
@@ -232,15 +234,48 @@ public static class EphemeridesModule
     #region ApproximateHeliocentricPositionAndVelocity
 
     /// <summary>
+    /// 
+    /// </summary>
+    public enum Plan94Status
+    {
+        /// <summary>
+        /// Ok
+        /// </summary>
+        Ok,
+        /// <summary>
+        /// Warning: year outside 1000-3000
+        /// </summary>
+        YearOutsideRange,
+        /// <summary>
+        /// Warning: failed to converge
+        /// </summary>
+        ConvergeFailure
+    }
+
+    /// <summary>
     /// Approximate heliocentric position and velocity of a nominated major
     /// planet:  Mercury, Venus, EMB (<see cref="Planet.Earth"/>), Mars, Jupiter, Saturn, Uranus or
     /// Neptune (but not the Earth itself).
     /// SOFA name: iauPlan94
     /// </summary>
+    public static double[,] ApproximateHeliocentricPositionAndVelocity(JulianDate tdbJulianDate, Planet planet)
+    {
+        var result = ApproximateHeliocentricPositionAndVelocity(tdbJulianDate, planet, out var status);
+
+        return result;
+    }
+
+    /// <summary>
+    /// Approximate heliocentric position and velocity of a nominated major
+    /// planet:  Mercury, Venus, EMB (<see cref="Planet.Earth"/>), Mars, Jupiter, Saturn, Uranus or
+    /// Neptune (but not the Earth itself).
+    /// Returns status of the calculation.
+    /// SOFA name: iauPlan94
+    /// </summary>
     /// <param name="tdbJulianDate"></param>
     /// <param name="planet"></param>
     /// <returns></returns>
-    public static double[,] ApproximateHeliocentricPositionAndVelocity(JulianDate tdbJulianDate, Planet planet)
+    public static double[,] ApproximateHeliocentricPositionAndVelocity(JulianDate tdbJulianDate, Planet planet, out Plan94Status status)
     {
         ThrowHelper.ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tdb, tdbJulianDate);
 
@@ -252,6 +287,7 @@ public static class EphemeridesModule
         /* Maximum number of iterations allowed to solve Kepler's equation */
         const int KMAX = 10;
 
+        int i, k;
         double t, da, dl, de, dp, di, dom, dmu, arga, argl, am,
           ae, dae, ae2, at, r, v, si2, xq, xp, tl, xsw,
           xcw, xm2, xf, ci2, xms, xmc, xpxq2, x, y, z;
@@ -273,6 +309,9 @@ public static class EphemeridesModule
 
         /* Time: Julian millennia since J2000.0. */
         t = tdbJulianDate.JulianMillenium();
+
+        /* OK status unless remote date. */
+        status = Abs(t) <= 1.0 ? Plan94Status.Ok : Plan94Status.YearOutsideRange;
 
         /* Compute the mean elements. */
         da = a[0] +
@@ -296,7 +335,7 @@ public static class EphemeridesModule
 
         /* Apply the trigonometric terms. */
         dmu = 0.35953620 * t;
-        for (int k = 0; k < 8; k++)
+        for (k = 0; k < 8; k++)
         {
             arga = kp[k] * dmu;
             argl = kq[k] * dmu;
@@ -308,7 +347,7 @@ public static class EphemeridesModule
         arga = kp[8] * dmu;
         da += t * (ca[8] * Cos(arga) +
                    sa[8] * Sin(arga)) * 1e-7;
-        for (int k = 8; k < 10; k++)
+        for (k = 8; k < 10; k++)
         {
             argl = kq[k] * dmu;
             dl += t * (cl[k] * Cos(argl) +
@@ -319,13 +358,17 @@ public static class EphemeridesModule
         /* Iterative soln. of Kepler's equation to get eccentric anomaly. */
         am = dl - dp;
         ae = am + de * Sin(am);
-        int j = 0;
+        k = 0;
         dae = 1.0;
-        while (j < KMAX && Abs(dae) > 1e-12)
+        while (k < KMAX && Abs(dae) > 1e-12)
         {
             dae = (am - ae + de * Sin(ae)) / (1.0 - de * Cos(ae));
             ae += dae;
-            j++;
+            k++;
+            if (k == KMAX - 1)
+            {
+                status = Plan94Status.ConvergeFailure;
+            }
         }
 
         /* True anomaly. */

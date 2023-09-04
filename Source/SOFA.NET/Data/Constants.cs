@@ -3,6 +3,8 @@
 public static class Constants
 {
 
+    public const int IYV = 2021;
+
     /// <summary>
     /// 2Pi.
     /// Sofa name: D2PI

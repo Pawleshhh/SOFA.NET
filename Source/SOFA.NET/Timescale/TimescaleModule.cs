@@ -30,6 +30,37 @@ public static class TimescaleModule
     #region SOFA
 
     /// <summary>
+    /// Status of returned calculation given by <see cref="DeltaAT"/>.
+    /// </summary>
+    public enum DatStatus
+    {
+        /// <summary>
+        /// UTC began at 1960 January 1.0 (JD 2436934.5) and it is improper
+        /// to call the function with an earlier date. If this is attempted,
+        /// zero is returned together with a warning status.
+        ///
+        /// Because leap seconds cannot, in principle, be predicted in
+        /// advance, a reliable check for dates beyond the valid range is
+        /// impossible. To guard against gross errors, a year five or more
+        /// after the release year of the present function (see the constant
+        /// IYV) is considered dubious. In this case a warning status is
+        /// returned but the result is computed in the normal way.
+        /// </summary>
+        DubiousYear = 1,
+        Ok = 0,
+        /// <summary>
+        /// The fraction of day is used only for dates before the
+        /// introduction of leap seconds, the first of which occurred at the
+        /// end of 1971. It is tested for validity (0 to 1 is the valid
+        /// range) even if not used;  if invalid, zero is used and status -4
+        /// is returned. For many applications, setting fd to zero is
+        /// acceptable; the resulting error is always less than 3 ms (and
+        /// occurs only pre-1972).
+        /// </summary>
+        BadFraction = -4
+    }
+
+    /// <summary>
     /// For a given UTC date, calculate Delta(AT) = TAI - UTC
     /// SOFA name: iauDat
     /// </summary>
@@ -38,7 +69,19 @@ public static class TimescaleModule
     public static double DeltaAT(DateTime dateTime)
     {
         var (year, month, day) = dateTime;
-        return DeltaAT(year, month, day, dateTime.TimeOfDay.TotalSeconds / Constants.DAYSEC);
+        return DeltaAT(year, month, day, dateTime.TimeOfDay.TotalSeconds / Constants.DAYSEC, out var _);
+    }
+
+    /// <summary>
+    /// For a given UTC date, calculate Delta(AT) = TAI - UTC
+    /// SOFA name: iauDat
+    /// </summary>
+    /// <param name="dateTime"></param>
+    /// <returns></returns>
+    public static double DeltaAT(DateTime dateTime, out DatStatus status)
+    {
+        var (year, month, day) = dateTime;
+        return DeltaAT(year, month, day, dateTime.TimeOfDay.TotalSeconds / Constants.DAYSEC, out status);
     }
 
     /// <summary>
@@ -191,9 +234,18 @@ public static class TimescaleModule
     /// <param name="taiJulianDate"></param>
     /// <returns></returns>
     public static JulianDate TaiToUtc(JulianDate taiJulianDate)
-        => TaiToUtc(taiJulianDate, false);
+        => TaiToUtc(taiJulianDate, false, out var _);
 
-    internal static JulianDate TaiToUtc(JulianDate taiJulianDate, bool ignoreKind)
+    /// <summary>
+    /// International Atomic Time, TAI, to Coordinated Universal Time, UTC
+    /// SOFA name: iauTaiutc
+    /// </summary>
+    /// <param name="taiJulianDate"></param>
+    /// <returns></returns>
+    public static JulianDate TaiToUtc(JulianDate taiJulianDate, out DatStatus status)
+        => TaiToUtc(taiJulianDate, false, out status);
+
+    internal static JulianDate TaiToUtc(JulianDate taiJulianDate, bool ignoreKind, out DatStatus status)
     {
         ThrowIfNotExpectedJulianDateKind(JulianDateKind.Tai, taiJulianDate, ignoreKind);
         var (taiDayNumber, taiFractionOfDay) = taiJulianDate;
@@ -215,14 +267,17 @@ public static class TimescaleModule
         double u1 = a1;
         double u2 = a2;
 
+        var tempStatus = DatStatus.Ok;
         for (int i = 0; i < 3; i++)
         {
-            var (g1, g2) = UtcToTai(new(u1, u2), true);
+            var (g1, g2) = UtcToTai(new(u1, u2), true, out tempStatus);
+            ThrowIfStatusIsUnacceptable(tempStatus);
 
             u2 += a1 - g1;
             u2 += a2 - g2;
         }
 
+        status = tempStatus;
         if (bigFirstOrder)
         {
             return new(u1, u2, JulianDateKind.Utc);
@@ -240,9 +295,18 @@ public static class TimescaleModule
     /// <param name="utcJulianDate"></param>
     /// <returns></returns>
     public static JulianDate UtcToTai(JulianDate utcJulianDate)
-        => UtcToTai(utcJulianDate, false);
+        => UtcToTai(utcJulianDate, false, out var _);
 
-    internal static JulianDate UtcToTai(JulianDate utcJulianDate, bool ignoreKind)
+    /// <summary>
+    /// Coordinated Universal Time, UTC, to International Atomic Time, TAI
+    /// SOFA name: iauUtctai
+    /// </summary>
+    /// <param name="utcJulianDate"></param>
+    /// <returns></returns>
+    public static JulianDate UtcToTai(JulianDate utcJulianDate, out DatStatus status)
+        => UtcToTai(utcJulianDate, false, out status);
+
+    internal static JulianDate UtcToTai(JulianDate utcJulianDate, bool ignoreKind, out DatStatus status)
     {
         ThrowIfNotExpectedJulianDateKind(JulianDateKind.Utc, utcJulianDate, ignoreKind);
         var (utcDayNumber, utcFractionOfDay) = utcJulianDate;
@@ -261,11 +325,14 @@ public static class TimescaleModule
         }
 
         var (yearToday, monthToday, dayToday, fractionOfDay) = CalendarsModule.JulianDateToGregorianCalendar(u1, u2);
-        double dat0 = DeltaAT(yearToday, monthToday, dayToday, 0.0);
-        double dat12 = DeltaAT(yearToday, monthToday, dayToday, 0.5);
+        double dat0 = DeltaAT(yearToday, monthToday, dayToday, 0.0, out status);
+        ThrowIfStatusIsUnacceptable(status);
+        double dat12 = DeltaAT(yearToday, monthToday, dayToday, 0.5, out status);
+        ThrowIfStatusIsUnacceptable(status);
 
         var (tomorrowYear, tomorrowMonth, tomorrowDay, _) = CalendarsModule.JulianDateToGregorianCalendar(u1 + 1.5, u2 - fractionOfDay);
-        double dat24 = DeltaAT(tomorrowYear, tomorrowMonth, tomorrowDay, 0.0);
+        double dat24 = DeltaAT(tomorrowYear, tomorrowMonth, tomorrowDay, 0.0, out status);
+        ThrowIfStatusIsUnacceptable(status);
 
         double perDay = 2.0 * (dat12 - dat0);
         double jump = dat24 - (dat0 + perDay);
@@ -513,9 +580,19 @@ public static class TimescaleModule
     /// <param name="ut1MinusUtcDelta"></param>
     /// <returns></returns>
     public static JulianDate Ut1ToUtc(JulianDate ut1JulianDate, double ut1MinusUtcDelta)
-        => Ut1ToUtc(ut1JulianDate, ut1MinusUtcDelta, false);
+        => Ut1ToUtc(ut1JulianDate, ut1MinusUtcDelta, false, out var _);
 
-    internal static JulianDate Ut1ToUtc(JulianDate ut1JulianDate, double ut1MinusUtcDelta, bool ignoreKind)
+    /// <summary>
+    /// Universal Time, UT1, to Coordinated Universal Time, UTC
+    /// SOFA name: iauUt1utc
+    /// </summary>
+    /// <param name="ut1JulianDate"></param>
+    /// <param name="ut1MinusUtcDelta"></param>
+    /// <returns></returns>
+    public static JulianDate Ut1ToUtc(JulianDate ut1JulianDate, double ut1MinusUtcDelta, out DatStatus status)
+        => Ut1ToUtc(ut1JulianDate, ut1MinusUtcDelta, false, out status);
+
+    internal static JulianDate Ut1ToUtc(JulianDate ut1JulianDate, double ut1MinusUtcDelta, bool ignoreKind, out DatStatus status)
     {
         ThrowIfNotExpectedJulianDateKind(JulianDateKind.Ut1, ut1JulianDate, ignoreKind);
         double u1, u2, dayNumberTemp, fractionOfDayTemp, dats, deltaAT, deltaDats, us1, us2, du;
@@ -535,11 +612,13 @@ public static class TimescaleModule
 
         dayNumberTemp = u1;
         dats = 0;
+        var statusTemp = DatStatus.Ok;
         for (int i = -1; i <= 3; i++)
         {
             fractionOfDayTemp = u2 + i;
             var (year, month, day, fd) = CalendarsModule.JulianDateToGregorianCalendar(new JulianDate(dayNumberTemp + fractionOfDayTemp));
-            deltaAT = DeltaAT(year, month, day, 0.0);
+            deltaAT = DeltaAT(year, month, day, 0.0, out statusTemp);
+            ThrowIfStatusIsUnacceptable(statusTemp);
 
             if (i == -1)
             {
@@ -577,6 +656,7 @@ public static class TimescaleModule
 
         u2 -= ut1MinusUtcDelta / Constants.DAYSEC;
 
+        status = statusTemp;
         if (bigFirstOrder)
         {
             return new(u1, u2, JulianDateKind.Utc);
@@ -595,19 +675,31 @@ public static class TimescaleModule
     /// <param name="ut1MinusUtcDelta"></param>
     /// <returns></returns>
     public static JulianDate UtcToUt1(JulianDate utcJulianDate, double ut1MinusUtcDelta)
-        => UtcToUt1(utcJulianDate, ut1MinusUtcDelta, false);
+        => UtcToUt1(utcJulianDate, ut1MinusUtcDelta, false, out var _);
 
-    internal static JulianDate UtcToUt1(JulianDate utcJulianDate, double ut1MinusUtcDelta, bool ignoreKind)
+    /// <summary>
+    /// Coordinated Universal Time, UTC, to Universal Time, UT1
+    /// SOFA name: iauUtcut1
+    /// </summary>
+    /// <param name="utcJulianDate"></param>
+    /// <param name="ut1MinusUtcDelta"></param>
+    /// <returns></returns>
+    public static JulianDate UtcToUt1(JulianDate utcJulianDate, double ut1MinusUtcDelta, out DatStatus status)
+        => UtcToUt1(utcJulianDate, ut1MinusUtcDelta, false, out status);
+
+    internal static JulianDate UtcToUt1(JulianDate utcJulianDate, double ut1MinusUtcDelta, bool ignoreKind, out DatStatus status)
     {
         ThrowIfNotExpectedJulianDateKind(JulianDateKind.Utc, utcJulianDate, ignoreKind);
         var (dayNumber, fractionOfDay) = utcJulianDate;
 
         var (year, month, day, _) = CalendarsModule.JulianDateToGregorianCalendar(new JulianDate(dayNumber, fractionOfDay));
 
-        double deltaAT = DeltaAT(year, month, day, 0.0);
+        double deltaAT = DeltaAT(year, month, day, 0.0, out status);
+        ThrowIfStatusIsUnacceptable(status);
         double ut1TaiDelta = ut1MinusUtcDelta - deltaAT;
 
-        var taiJulianDate = UtcToTai(utcJulianDate, true);
+        var taiJulianDate = UtcToTai(utcJulianDate, true, out status);
+        ThrowIfStatusIsUnacceptable(status);
 
         return TaiToUt1(taiJulianDate, ut1TaiDelta, true);
     }
@@ -673,12 +765,17 @@ public static class TimescaleModule
         .Into(x => TtToTcg(x, ignoreKind));
 
     public static JulianDate TtToUtc(JulianDate ttJulianDate)
-        => TtToUtc(ttJulianDate, false);
+        => TtToUtc(ttJulianDate, false, out var _);
 
-    internal static JulianDate TtToUtc(JulianDate ttJulianDate, bool ignoreKind)
-        => ThrowIfWrongKind(JulianDateKind.Tt, ttJulianDate, ignoreKind)
-        .Into(_ => TtToTai(ttJulianDate, ignoreKind))
-        .Into(x => TaiToUtc(x, ignoreKind));
+    public static JulianDate TtToUtc(JulianDate ttJulianDate, out DatStatus status)
+        => TtToUtc(ttJulianDate, false, out status);
+
+    internal static JulianDate TtToUtc(JulianDate ttJulianDate, bool ignoreKind, out DatStatus status)
+    {
+        ThrowIfWrongKind(JulianDateKind.Tt, ttJulianDate, ignoreKind);
+        var tai = TtToTai(ttJulianDate, ignoreKind);
+        return TaiToUtc(tai, ignoreKind, out status);
+    }
 
     public static JulianDate TtToTcb(JulianDate ttJulianDate, double tdbMinusTtDelta)
         => TtToTcb(ttJulianDate, tdbMinusTtDelta, false);
@@ -713,12 +810,17 @@ public static class TimescaleModule
         .Into(x => TtToTai(x, ignoreKind));
 
     public static JulianDate TcbToUtc(JulianDate tcbJulianDate, double tdbMinusTtDelta)
-        => TcbToUtc(tcbJulianDate, tdbMinusTtDelta, false);
+        => TcbToUtc(tcbJulianDate, tdbMinusTtDelta, false, out var _);
 
-    internal static JulianDate TcbToUtc(JulianDate tcbJulianDate, double tdbMinusTtDelta, bool ignoreKind)
-        => ThrowIfWrongKind(JulianDateKind.Tcb, tcbJulianDate, ignoreKind)
-        .Into(_ => TcbToTai(tcbJulianDate, tdbMinusTtDelta, ignoreKind))
-        .Into(x => TaiToUtc(x, ignoreKind));
+    public static JulianDate TcbToUtc(JulianDate tcbJulianDate, double tdbMinusTtDelta, out DatStatus status)
+        => TcbToUtc(tcbJulianDate, tdbMinusTtDelta, false, out status);
+
+    internal static JulianDate TcbToUtc(JulianDate tcbJulianDate, double tdbMinusTtDelta, bool ignoreKind, out DatStatus status)
+    {
+        ThrowIfWrongKind(JulianDateKind.Tcb, tcbJulianDate, ignoreKind);
+        var tai = TcbToTai(tcbJulianDate, tdbMinusTtDelta, ignoreKind);
+        return TaiToUtc(tai, ignoreKind, out status);
+    }
 
     public static JulianDate TcbToTcg(JulianDate tcbJulianDate, double tdbMinusTtDelta)
         => TcbToTcg(tcbJulianDate, tdbMinusTtDelta, false);
@@ -745,12 +847,17 @@ public static class TimescaleModule
         .Into(x => TtToTai(x, ignoreKind));
 
     public static JulianDate TdbToUtc(JulianDate tdbJulianDate, double tdbMinusTtDelta)
-        => TdbToUtc(tdbJulianDate, tdbMinusTtDelta, false);
+        => TdbToUtc(tdbJulianDate, tdbMinusTtDelta, false, out var _);
 
-    internal static JulianDate TdbToUtc(JulianDate tdbJulianDate, double tdbMinusTtDelta, bool ignoreKind)
-        => ThrowIfWrongKind(JulianDateKind.Tdb, tdbJulianDate, ignoreKind)
-        .Into(_ => TdbToTai(tdbJulianDate, tdbMinusTtDelta, ignoreKind))
-        .Into(x => TaiToUtc(x, ignoreKind));
+    public static JulianDate TdbToUtc(JulianDate tdbJulianDate, double tdbMinusTtDelta, out DatStatus status)
+        => TdbToUtc(tdbJulianDate, tdbMinusTtDelta, false, out status);
+
+    internal static JulianDate TdbToUtc(JulianDate tdbJulianDate, double tdbMinusTtDelta, bool ignoreKind, out DatStatus status)
+    {
+        ThrowIfWrongKind(JulianDateKind.Tdb, tdbJulianDate, ignoreKind);
+        var tai = TdbToTai(tdbJulianDate, tdbMinusTtDelta, ignoreKind);
+        return TaiToUtc(tai, ignoreKind, out status);
+    }
 
     public static JulianDate TdbToTcg(JulianDate tdbJulianDate, double tdbMinusTtDelta)
         => TdbToTcg(tdbJulianDate, tdbMinusTtDelta, false);
@@ -777,12 +884,17 @@ public static class TimescaleModule
         .Into(x => TtToTai(x, ignoreKind));
 
     public static JulianDate TcgToUtc(JulianDate tcgJulianDate)
-        => TcgToUtc(tcgJulianDate, false);
+        => TcgToUtc(tcgJulianDate, false, out var _);
 
-    internal static JulianDate TcgToUtc(JulianDate tcgJulianDate, bool ignoreKind)
-        => ThrowIfWrongKind(JulianDateKind.Tcg, tcgJulianDate, ignoreKind)
-        .Into(_ => TcgToTai(tcgJulianDate, ignoreKind))
-        .Into(x => TaiToUtc(x, ignoreKind));
+    public static JulianDate TcgToUtc(JulianDate tcgJulianDate, out DatStatus status)
+        => TcgToUtc(tcgJulianDate, false, out status);
+
+    internal static JulianDate TcgToUtc(JulianDate tcgJulianDate, bool ignoreKind, out DatStatus status)
+    {
+        ThrowIfWrongKind(JulianDateKind.Tcg, tcgJulianDate, ignoreKind);
+        var tai = TcgToTai(tcgJulianDate, ignoreKind);
+        return TaiToUtc(tai, ignoreKind, out status);
+    }
 
     public static JulianDate TcgToTdb(JulianDate tcgJulianDate, double tdbMinusTtDelta)
         => TcgToTdb(tcgJulianDate, tdbMinusTtDelta, false);
@@ -838,7 +950,7 @@ public static class TimescaleModule
     {
         private Drift(double referenceDate, double drift)
         {
-            ReferenceDate = referenceDate; DriftRate = drift;
+            this.ReferenceDate = referenceDate; this.DriftRate = drift;
         }
 
         public readonly double ReferenceDate;
@@ -870,7 +982,7 @@ public static class TimescaleModule
     {
         private Change(int year, int month, double delta)
         {
-            Year = year; Month = month; Delta = delta;
+            this.Year = year; this.Month = month; this.Delta = delta;
         }
 
         public readonly int Year;
@@ -927,7 +1039,7 @@ public static class TimescaleModule
         });
     }
 
-    internal static double DeltaAT(int year, int month, int day, double fractionOfDay)
+    internal static double DeltaAT(int year, int month, int day, double fractionOfDay, out DatStatus status)
     {
         Drift[] drift = Drift.Drifts.Value;
         Change[] changes = Change.Changes.Value;
@@ -935,6 +1047,19 @@ public static class TimescaleModule
         double da;
 
         var mjdForZeroHours = CalendarsModule.GregorianCalendarToJulianDate(new DateTime(year, month, day)).Date - Constants.DJM0;
+
+        status = DatStatus.Ok;
+
+        if (year < changes[0].Year)
+        {
+            status = DatStatus.DubiousYear;
+            return 0.0;
+        }
+
+        if (year > Constants.IYV + 5)
+        {
+            status = DatStatus.DubiousYear;
+        }
 
         int dateOrdered = 12 * year + month;
 
@@ -971,6 +1096,14 @@ public static class TimescaleModule
         else
         {
             return new(newDayNumber, fractionOfDay, kind);
+        }
+    }
+
+    private static void ThrowIfStatusIsUnacceptable(DatStatus status)
+    {
+        if ((int)status < 0)
+        {
+            throw new InvalidOperationException($"Conversion was not possible. Could not calculate Delta(AT) = TAI - UTC because of the {status} status");
         }
     }
 

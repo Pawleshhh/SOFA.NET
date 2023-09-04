@@ -129,17 +129,57 @@ public static partial class CoordinatesModule
         return new(phi, elong, height);
     }
 
+    #region GeodeticToGeocentricCoordinates
+
+    /// <summary>
+    /// Status of returned calculation given by <see cref="GeodeticToGeocentricCoordinates"/>.
+    /// </summary>
+    public enum Gd2gceStatus
+    {
+        Ok = 0,
+        /// <summary>
+        ///  An error status -2 protects against cases that would 
+        ///  lead to arithmetic exceptions.
+        /// </summary>
+        IllegalCase = -2,
+    }
+
+    /// <summary>
+    /// Transform geodetic coordinates to geocentric using the specified
+    /// reference ellipsoid.
+    /// SOFA name: iauGd2gc
+    /// </summary>
+    /// <param name="geodeticCoordinates"></param>
+    /// <param name="referenceEllipsoid"></param>
+    /// <returns></returns>
     public static GeocentricCoordinates GeodeticToGeocentricCoordinates(
         GeodeticCoordinates geodeticCoordinates,
         ReferenceEllipsoid referenceEllipsoid)
     {
+        return GeodeticToGeocentricCoordinates(geodeticCoordinates, referenceEllipsoid, out var _);
+    }
+
+    /// <summary>
+    /// Transform geodetic coordinates to geocentric using the specified
+    /// reference ellipsoid.
+    /// Returns status of the calculation.
+    /// SOFA name: iauGd2gc
+    /// </summary>
+    /// <param name="geodeticCoordinates"></param>
+    /// <param name="referenceEllipsoid"></param>
+    /// <returns></returns>
+    public static GeocentricCoordinates GeodeticToGeocentricCoordinates(
+        GeodeticCoordinates geodeticCoordinates,
+        ReferenceEllipsoid referenceEllipsoid,
+        out Gd2gceStatus status)
+    {
         var referenceEllipsoidParams = referenceEllipsoid.EarthReferenceEllipsoids();
-        var geocentricCoords = GeodeticToGeocentricCoordinates(geodeticCoordinates, referenceEllipsoidParams);
+        var geocentricCoords = GeodeticToGeocentricCoordinates(geodeticCoordinates, referenceEllipsoidParams, out status);
 
         return geocentricCoords;
     }
 
-    private static readonly GeocentricCoordinates geocentricArithmeticException = new(double.NaN, double.NaN, double.NaN);
+    private static readonly GeocentricCoordinates geocentricArithmeticException = new(0, 0, 0);
 
     /// <summary>
     /// Transform geodetic coordinates to geocentric for a reference
@@ -153,6 +193,23 @@ public static partial class CoordinatesModule
         GeodeticCoordinates geodeticCoordinates,
         EllipsoidParameter ellipsoidParameter)
     {
+        return GeodeticToGeocentricCoordinates(geodeticCoordinates, ellipsoidParameter, out var _);
+    }
+
+    /// <summary>
+    /// Transform geodetic coordinates to geocentric for a reference
+    /// ellipsoid of specified form.
+    /// Returns status of the calculation.
+    /// SOFA name: iauGd2gce
+    /// </summary>
+    /// <param name="geodeticCoordinates"></param>
+    /// <param name="ellipsoidParameter"></param>
+    /// <returns></returns>
+    public static GeocentricCoordinates GeodeticToGeocentricCoordinates(
+        GeodeticCoordinates geodeticCoordinates,
+        EllipsoidParameter ellipsoidParameter,
+        out Gd2gceStatus status)
+    {
         double sp, cp, w, d, ac, @as, r;
         var (phi, elong, height) = geodeticCoordinates;
         var (a, f) = ellipsoidParameter;
@@ -165,6 +222,7 @@ public static partial class CoordinatesModule
         d = cp * cp + w * sp * sp;
         if (d <= 0.0)
         {
+            status = Gd2gceStatus.IllegalCase;
             return geocentricArithmeticException;
         }
         ac = a / Math.Sqrt(d);
@@ -176,7 +234,10 @@ public static partial class CoordinatesModule
         var y = r * Math.Sin(elong);
         var z = (@as + height) * sp;
 
+        status = Gd2gceStatus.Ok;
         return new(x, y, z);
     }
+
+    #endregion
 
 }
