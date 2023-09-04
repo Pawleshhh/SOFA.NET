@@ -17,7 +17,7 @@ internal class TimescaleModuleTest
     public void DeltaAT_ProvideGregorianCalendarDate_ReturnsExpectedDeltaAT(int year, int month, int day, double fractionOfDay, double expected)
     {
         // ACT
-        double result = TimescaleModule.DeltaAT(year, month, day, fractionOfDay);
+        double result = TimescaleModule.DeltaAT(year, month, day, fractionOfDay, out var _);
 
         // ASSERT
         Assert.That(result, Is.EqualTo(expected));
