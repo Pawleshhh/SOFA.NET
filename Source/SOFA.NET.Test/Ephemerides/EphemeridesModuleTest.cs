@@ -7,7 +7,7 @@ internal class EphemeridesModuleTest
     [Test]
     public void EarthPositionVelocity_Test()
     {
-        var julianDate = new JulianDate(2453411.5, 0.52501161); // 2005-02-10 12:36:01
+        var julianDate = new JulianDate(2453412.02501161); // 2005-02-10 12:36:01
 
         var result = EphemeridesModule.EarthPositionVelocity(julianDate);
 

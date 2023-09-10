@@ -133,16 +133,16 @@ public readonly struct JulianDate : IComparable, IComparable<JulianDate>, IEquat
 
     private static double RetrieveFractionOfDay(double date)
     {
-        var fraction = date - Math.Truncate(date) + 0.5;
+        var dateM = Convert.ToDecimal(date);
+        var fraction = dateM - Math.Truncate(dateM) + 0.5m;
 
-        if (fraction >= 1.0)
+        var factor = 0.0m;
+        if (fraction >= 1.0m)
         {
-            return fraction - 1.0;
+            factor = 1.0m;
         }
-        else
-        {
-            return fraction;
-        }
+
+        return Convert.ToDouble(fraction - factor);
     }
 
     private static void ThrowIfDateIsNotValid(double date)
