@@ -7,27 +7,29 @@ internal class EphemeridesModuleTest
     [Test]
     public void EarthPositionVelocity_Test()
     {
-        var julianDate = new JulianDate(2400000.5 + 53411.52501161); // 2005-02-10 12:36:01
+        var julianDate = new JulianDate(2453412.02501161); // 2005-02-10 12:36:01
 
         var result = EphemeridesModule.EarthPositionVelocity(julianDate);
 
         Assert.Multiple(() =>
         {
-            Assert.That(result.HeliocentricPosition[0], Is.EqualTo(-0.7757238809297706813).Within(1e-11));
-            Assert.That(result.HeliocentricPosition[1], Is.EqualTo(0.5598052241363340596).Within(1e-11));
-            Assert.That(result.HeliocentricPosition[2], Is.EqualTo(0.2426998466481686993).Within(1e-11));
+            double delta14 = 1e-14, delta15 = 1e-15;
 
-            Assert.That(result.HeliocentricVelocity[0], Is.EqualTo(-0.1091891824147313846e-1).Within(1e-12));
-            Assert.That(result.HeliocentricVelocity[1], Is.EqualTo(-0.1247187268440845008e-1).Within(1e-12));
-            Assert.That(result.HeliocentricVelocity[2], Is.EqualTo(-0.5407569418065039061e-2).Within(1e-12));
+            Assert.That(result.HeliocentricPosition[0], Is.EqualTo(-0.7757238809297706813).Within(delta14));
+            Assert.That(result.HeliocentricPosition[1], Is.EqualTo(0.5598052241363340596).Within(delta14));
+            Assert.That(result.HeliocentricPosition[2], Is.EqualTo(0.2426998466481686993).Within(delta14));
 
-            Assert.That(result.BarycentricPosition[0], Is.EqualTo(-0.7714104440491111971).Within(1e-11));
-            Assert.That(result.BarycentricPosition[1], Is.EqualTo(0.5598412061824171323).Within(1e-11));
-            Assert.That(result.BarycentricPosition[2], Is.EqualTo(0.2425996277722452400).Within(1e-11));
+            Assert.That(result.HeliocentricVelocity[0], Is.EqualTo(-0.1091891824147313846e-1).Within(delta15));
+            Assert.That(result.HeliocentricVelocity[1], Is.EqualTo(-0.1247187268440845008e-1).Within(delta15));
+            Assert.That(result.HeliocentricVelocity[2], Is.EqualTo(-0.5407569418065039061e-2).Within(delta15));
 
-            Assert.That(result.BarycentricVelocity[0], Is.EqualTo(-0.1091874268116823295e-1).Within(1e-12));
-            Assert.That(result.BarycentricVelocity[1], Is.EqualTo(-0.1246525461732861538e-1).Within(1e-12));
-            Assert.That(result.BarycentricVelocity[2], Is.EqualTo(-0.5404773180966231279e-2).Within(1e-12));
+            Assert.That(result.BarycentricPosition[0], Is.EqualTo(-0.7714104440491111971).Within(delta14));
+            Assert.That(result.BarycentricPosition[1], Is.EqualTo(0.5598412061824171323).Within(delta14));
+            Assert.That(result.BarycentricPosition[2], Is.EqualTo(0.2425996277722452400).Within(delta14));
+
+            Assert.That(result.BarycentricVelocity[0], Is.EqualTo(-0.1091874268116823295e-1).Within(delta15));
+            Assert.That(result.BarycentricVelocity[1], Is.EqualTo(-0.1246525461732861538e-1).Within(delta15));
+            Assert.That(result.BarycentricVelocity[2], Is.EqualTo(-0.5404773180966231279e-2).Within(delta15));
 
             Assert.That(result.DateOutsideRange, Is.False);
         });
