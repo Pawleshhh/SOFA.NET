@@ -131,6 +131,11 @@ internal static class VectorHelper
         return adb;
     }
 
+    public static (double PositionModulus, double VelocityModulus) ModulusOfPositionVelocityVector(double[,] pv)
+    {
+        return (PositionVectorModulus(pv.GetRow(0)), PositionVectorModulus(pv.GetRow(1)));
+    }
+
     /// <summary>
     /// Multiply a p-vector by a scalar.
     /// SOFA name: iauSxp
