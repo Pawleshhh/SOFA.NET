@@ -43,4 +43,21 @@ internal static class VectorHelper
         };
     }
 
+    /// <summary>
+    /// Multiply a p-vector by a scalar.
+    /// SOFA name: iauSxp
+    /// </summary>
+    /// <param name="s"></param>
+    /// <param name="p"></param>
+    /// <returns></returns>
+    public static double[] VectorMultiplyByScalar(double s, double[] p)
+    {
+        return new[]
+        {
+            s * p[0],
+            s * p[1],
+            s * p[2],
+        };
+    }
+
 }

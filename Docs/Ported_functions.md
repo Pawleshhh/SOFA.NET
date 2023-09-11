@@ -465,5 +465,5 @@
 - [ ] void iauPvxpv(double a[2][3], double b[2][3], double axb[2][3]);
 - [ ] void iauPxp(double a[3], double b[3], double axb[3]);
 - [ ] void iauS2xpv(double s1, double s2, double pv[2][3], double spv[2][3]);
-- [ ] void iauSxp(double s, double p[3], double sp[3]);
+- [x] void iauSxp(double s, double p[3], double sp[3]);
 - [ ] void iauSxpv(double s, double pv[2][3], double spv[2][3]);
