@@ -455,7 +455,7 @@
 - [x] void iauPmp(double a[3], double b[3], double amb[3]);
 - [x] void iauPn(double p[3], double *r, double u[3]);
 - [x] void iauPpp(double a[3], double b[3], double apb[3]);
-- [ ] void iauPpsp(double a[3], double s, double b[3], double apsb[3]);
+- [x] void iauPpsp(double a[3], double s, double b[3], double apsb[3]);
 - [ ] void iauPvdpv(double a[2][3], double b[2][3], double adb[2]);
 - [ ] void iauPvm(double pv[2][3], double *r, double *s);
 - [ ] void iauPvmpv(double a[2][3], double b[2][3], double amb[2][3]);

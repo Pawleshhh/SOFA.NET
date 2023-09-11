@@ -93,6 +93,12 @@ internal static class VectorHelper
         };
     }
 
+    public static double[] VectorPlusScaledVector(double[] a, double s, double[] b)
+    {
+        var sb = VectorMultiplyByScalar(s, b);
+        return VectorAddition(a, sb);
+    }
+
     /// <summary>
     /// Multiply a p-vector by a scalar.
     /// SOFA name: iauSxp
