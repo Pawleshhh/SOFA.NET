@@ -20,7 +20,7 @@ internal static class VectorHelper
     /// <param name="a"></param>
     /// <param name="b"></param>
     /// <returns></returns>
-    public static double VectorDotProduct(double[] a, double[] b)
+    public static double PositionVectorInnerProduct(double[] a, double[] b)
     {
         return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
     }
@@ -31,7 +31,7 @@ internal static class VectorHelper
     /// </summary>
     /// <param name="p"></param>
     /// <returns></returns>
-    public static double VectorModulus(double[] p)
+    public static double PositionVectorModulus(double[] p)
     {
         return Math.Sqrt(p[0] * p[0] + p[1] * p[1] + p[2] * p[2]);
     }
@@ -43,7 +43,7 @@ internal static class VectorHelper
     /// <param name="a"></param>
     /// <param name="b"></param>
     /// <returns></returns>
-    public static double[] VectorSubstraction(double[] a, double[] b)
+    public static double[] PositionVectorSubstraction(double[] a, double[] b)
     {
         return new[]
         {
@@ -59,14 +59,14 @@ internal static class VectorHelper
     /// </summary>
     /// <param name="p"></param>
     /// <returns></returns>
-    public static (double Modulus, double[] UnitVector) VectorToModulusAndUnitVector(double[] p)
+    public static (double Modulus, double[] UnitVector) PositionVectorToModulusAndUnitVector(double[] p)
     {
-        double w = VectorModulus(p);
+        double w = PositionVectorModulus(p);
         double[] u;
 
         if (w != 0.0)
         {
-            u = VectorMultiplyByScalar(1.0 / w, p);
+            u = PositionVectorMultiplyByScalar(1.0 / w, p);
         }
         else
         {
@@ -83,7 +83,7 @@ internal static class VectorHelper
     /// <param name="a"></param>
     /// <param name="b"></param>
     /// <returns></returns>
-    public static double[] VectorAddition(double[] a, double[] b)
+    public static double[] PositionVectorAddition(double[] a, double[] b)
     {
         return new[]
         {
@@ -93,10 +93,42 @@ internal static class VectorHelper
         };
     }
 
-    public static double[] VectorPlusScaledVector(double[] a, double s, double[] b)
+    /// <summary>
+    /// P-vector plus scaled p-vector.
+    /// SOFA name: iauPpsp
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="s"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public static double[] PositionVectorPlusScaledPositionVector(double[] a, double s, double[] b)
     {
-        var sb = VectorMultiplyByScalar(s, b);
-        return VectorAddition(a, sb);
+        var sb = PositionVectorMultiplyByScalar(s, b);
+        return PositionVectorAddition(a, sb);
+    }
+
+    /// <summary>
+    /// Inner (=scalar=dot) product of two pv-vectors.
+    /// SOFA name: iauPvdpv
+    /// </summary>
+    /// <param name="a"></param>
+    /// <param name="b"></param>
+    /// <returns></returns>
+    public static double[] InnerProductOfTwoPositionVelocityVectors(double[,] a , double[,] b)
+    {
+        double[] adb = new double[2];
+
+        var aFirstRow = a.GetRow(0);
+        var bFirstRow = b.GetRow(0);
+
+        adb[0] = PositionVectorInnerProduct(aFirstRow, bFirstRow);
+
+        var adbd = PositionVectorInnerProduct(aFirstRow, b.GetRow(1));
+        var addb = PositionVectorInnerProduct(a.GetRow(1), bFirstRow);
+
+        adb[1] = adbd + addb;
+
+        return adb;
     }
 
     /// <summary>
@@ -106,7 +138,7 @@ internal static class VectorHelper
     /// <param name="s"></param>
     /// <param name="p"></param>
     /// <returns></returns>
-    public static double[] VectorMultiplyByScalar(double s, double[] p)
+    public static double[] PositionVectorMultiplyByScalar(double s, double[] p)
     {
         return new[]
         {

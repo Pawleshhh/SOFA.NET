@@ -76,7 +76,6 @@ internal static class Array2D
         return newArray2d;
     }
 
-
     public static U[,] Select<T, U>(this T[,] array2d, Func<int, int, T, U> map)
     {
         var (length1, length2) = array2d.GetLength();
@@ -89,6 +88,30 @@ internal static class Array2D
             }
         }
         return newArray2d;
+    }
+
+    public static T[] GetRow<T>(this T[,] array, int rowIndex)
+    {
+        var size = array.GetLength();
+        T[] row = new T[size.RowLength];
+        for (int i = 0; i < size.ColumnLength; i++)
+        {
+            row[i] = array[rowIndex, i];
+        }
+
+        return row;
+    }
+
+    public static T[] GetColumn<T>(this T[,] array, int columnIndex)
+    {
+        var size = array.GetLength();
+        T[] column = new T[size.ColumnLength];
+        for (int i = 0; i < size.RowLength; i++)
+        {
+            column[i] = array[i, columnIndex];
+        }
+
+        return column;
     }
 
 }
