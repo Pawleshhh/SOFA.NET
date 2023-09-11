@@ -54,6 +54,29 @@ internal static class VectorHelper
     }
 
     /// <summary>
+    /// Convert a p-vector into modulus and unit vector.
+    /// SOFA name: iauPn
+    /// </summary>
+    /// <param name="p"></param>
+    /// <returns></returns>
+    public static (double Modulus, double[] UnitVector) VectorToModulusAndUnitVector(double[] p)
+    {
+        double w = VectorModulus(p);
+        double[] u;
+
+        if (w != 0.0)
+        {
+            u = VectorMultiplyByScalar(1.0 / w, p);
+        }
+        else
+        {
+            u = new double[3];
+        }
+
+        return (w, u);
+    }
+
+    /// <summary>
     /// Multiply a p-vector by a scalar.
     /// SOFA name: iauSxp
     /// </summary>
