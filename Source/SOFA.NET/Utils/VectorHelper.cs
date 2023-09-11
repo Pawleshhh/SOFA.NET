@@ -15,4 +15,15 @@ internal static class VectorHelper
         return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
     }
 
+    /// <summary>
+    /// Modulus of p-vector.
+    /// SOFA name: iauPm
+    /// </summary>
+    /// <param name="p"></param>
+    /// <returns></returns>
+    public static double VectorModulus(double[] p)
+    {
+        return Math.Sqrt(p[0] * p[0] + p[1] * p[1] + p[2] * p[2]);
+    }
+
 }
