@@ -4,6 +4,16 @@ internal static class VectorHelper
 {
 
     /// <summary>
+    /// Zero a p-vector.
+    /// SOFA name: iauZp
+    /// </summary>
+    /// <param name="p"></param>
+    public static void ZeroVector(double[] p)
+    {
+        p[0] = p[1] = p[2] = 0;
+    }
+
+    /// <summary>
     /// p-vector inner (=scalar=dot) product.
     /// SOFA name: iauPdp
     /// </summary>

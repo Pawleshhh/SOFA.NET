@@ -413,7 +413,7 @@
 
 #### VectorMatrix/Initialization
 - [x] void iauIr(double r[3][3]);
-- [ ] void iauZp(double p[3]);
+- [x] void iauZp(double p[3]);
 - [ ] void iauZpv(double pv[2][3]);
 - [ ] void iauZr(double r[3][3]);
 
