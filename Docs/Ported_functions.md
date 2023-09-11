@@ -450,7 +450,7 @@
              double pv[2][3]);
 
 #### VectorMatrix/VectorOps
-- [ ] double iauPdp(double a[3], double b[3]);
+- [x] double iauPdp(double a[3], double b[3]);
 - [ ] double iauPm(double p[3]);
 - [ ] void iauPmp(double a[3], double b[3], double amb[3]);
 - [ ] void iauPn(double p[3], double *r, double u[3]);
