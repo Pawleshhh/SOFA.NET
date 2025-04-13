@@ -5,6 +5,23 @@
 /// </summary>
 public class Calendars
 {
+    /// <summary>
+    /// Days per Julian year.
+    /// </summary>
+    public const double DaysPerJulianYear = 365.25;
+    /// <summary>
+    /// Days per Julian century.
+    /// </summary>
+    public const double DaysPerJulianCentury = 36525.0;
+    /// <summary>
+    /// Days per Julian millenium.
+    /// </summary>
+    public const double DaysPerJulianMillennium = 365250.0;
+
+    /// <summary>
+    /// Reference epoch (J2000.0), Julian Date
+    /// </summary>
+    public static readonly JulianDate J2000_0 = new(2451545.0);
 
     /// <summary>
     /// Converts Gregorian Calendar to Julian Date.
