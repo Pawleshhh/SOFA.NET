@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SOFA.NET", "SOFA.NET\SOFA.NET.csproj", "{297DAFDC-C8CD-412D-8C71-682F68D8BD29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SOFA.NET", "SOFA.NET\SOFA.NET.csproj", "{297DAFDC-C8CD-412D-8C71-682F68D8BD29}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SOFA.NET.Tests", "SOFA.NET.Tests\SOFA.NET.Tests.csproj", "{31029FDE-3829-431D-899C-A89DCBCEFDD8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,8 +17,15 @@ Global
 		{297DAFDC-C8CD-412D-8C71-682F68D8BD29}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{297DAFDC-C8CD-412D-8C71-682F68D8BD29}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{297DAFDC-C8CD-412D-8C71-682F68D8BD29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31029FDE-3829-431D-899C-A89DCBCEFDD8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31029FDE-3829-431D-899C-A89DCBCEFDD8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31029FDE-3829-431D-899C-A89DCBCEFDD8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31029FDE-3829-431D-899C-A89DCBCEFDD8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {72A0DB10-434B-4DA1-8DDF-D15945E1E441}
 	EndGlobalSection
 EndGlobal
