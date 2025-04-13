@@ -1,5 +1,8 @@
 ﻿namespace SOFA.NET;
 
+/// <summary>
+/// SOFA calendar and time related algorithms.
+/// </summary>
 public class Calendars
 {
 
@@ -9,12 +12,12 @@ public class Calendars
     /// <param name="date">Year, month, day in Gregorian calendar.</param>
     /// <returns>Julian Date of given Gregorian Calendar date.</returns>
     /// <exception cref="ArgumentException">Thrown when date is invalid or cannot be converted to Julian Date.</exception>
-    public static JulianDate GregorianToJulian(DateOnly date)
+    public static JulianDate GregorianDateToJulianDate(DateOnly date)
     {
         double djm0 = 0, djm = 0;
         return SofaCalendars.Cal2jd(date.Year, date.Month, date.Day, ref djm0, ref djm) switch
         {
-            0 => new JulianDate(djm0, djm),
+            0 => new JulianDate(djm0 + djm),
             _ => throw new ArgumentException("Invalid date")
         };
     }
@@ -38,7 +41,7 @@ public class Calendars
     {
         double djm0 = 0, djm = 0;
         SofaCalendars.Epb2jd(besselianEpoch, ref djm0, ref djm);
-        return new(djm0, djm);
+        return new(djm0 + djm);
     }
 
     /// <summary>
@@ -60,7 +63,7 @@ public class Calendars
     {
         double djm0 = 0, djm = 0;
         SofaCalendars.Epj2jd(julianEpoch, ref djm0, ref djm);
-        return new(djm0, djm);
+        return new(djm0 + djm);
     }
 
     /// <summary>
