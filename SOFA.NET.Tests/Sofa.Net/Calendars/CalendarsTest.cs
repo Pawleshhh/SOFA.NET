@@ -49,10 +49,13 @@ internal class CalendarsTest
     {
         var jd = new JulianDate(2400000.5 + 50123.9999);
         var result = Calendars.JulianDateToGregorianDateTime(jd);
-        Assert.That(result.Year, Is.EqualTo(1996));
-        Assert.That(result.Month, Is.EqualTo(2));
-        Assert.That(result.Day, Is.EqualTo(10));
-        Assert.That(result.TimeOfDay.TotalDays, Is.EqualTo(0.9999).Within(1e-7));
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Year, Is.EqualTo(1996));
+            Assert.That(result.Month, Is.EqualTo(2));
+            Assert.That(result.Day, Is.EqualTo(10));
+            Assert.That(result.TimeOfDay.TotalDays, Is.EqualTo(0.9999).Within(1e-7));
+        });
     }
 
 }
