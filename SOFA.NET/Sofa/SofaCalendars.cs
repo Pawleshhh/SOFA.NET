@@ -4,7 +4,6 @@ namespace SOFA.NET;
 
 internal static partial class SofaCalendars
 {
-
     [LibraryImport(SofaDllHelper.DllPath, EntryPoint = "iauCal2jd", SetLastError = true)]
     internal static partial int Cal2jd(int iy, int im, int id, ref double djm0, ref double djm);
 
