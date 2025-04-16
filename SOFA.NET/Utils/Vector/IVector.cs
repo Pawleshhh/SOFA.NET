@@ -8,4 +8,6 @@ public interface IVector<T> : IEquatable<IVector<T>>, IReadOnlyCollection<T>, IE
     public T this[int index] { get; }
 
     public T Value(int index);
+
+    public T[] AsArray();
 }

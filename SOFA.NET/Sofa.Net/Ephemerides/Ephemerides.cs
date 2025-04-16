@@ -18,12 +18,8 @@ internal class Ephemerides
         return SofaEphemerides.Epv00(d1, d2, pvh, pvb) switch
         {
             0 => new EarthEphemerisStates(
-                new HeliocentricEarthState(
-                    new Vector3<double>(pvh[0], pvh[1], pvh[2]),
-                    new Vector3<double>(pvh[3], pvh[4], pvh[5])),
-                new BarycentricEarthState(
-                    new Vector3<double>(pvb[0], pvb[1], pvb[2]),
-                    new Vector3<double>(pvb[3], pvb[4], pvb[5]))),
+                Matrix<double>.FromFlatArray(2, 3, pvh),
+                Matrix<double>.FromFlatArray(2, 3, pvb)),
             _ => throw new ArgumentException("Date outside the range 1900 - 2100 AD")
         };
     }

@@ -3,7 +3,7 @@ using System.Numerics;
 
 namespace SOFA.NET;
 
-public readonly struct Vector2<T>(T x, T y) : IVector<T>
+public class Vector2<T>(T x, T y) : IVector<T>
     where T : struct, INumber<T>
 {
 
@@ -18,6 +18,11 @@ public readonly struct Vector2<T>(T x, T y) : IVector<T>
     public T Value(int index)
     {
         return this[index];
+    }
+
+    public T[] AsArray()
+    {
+        return this.values;
     }
 
     public bool Equals(IVector<T>? other)

@@ -18,6 +18,11 @@ public class Vector<T>(params T[] values) : IVector<T>
         return this[index];
     }
 
+    public T[] AsArray()
+    {
+        return this.values;
+    }
+
     public bool Equals(IVector<T>? other)
     {
         if (other is null)
