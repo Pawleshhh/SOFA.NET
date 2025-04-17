@@ -24,4 +24,17 @@ internal class Ephemerides
         };
     }
 
+    /// <summary>
+    /// Approximate geocentric position and velocity of the Moon.
+    /// </summary>
+    /// <param name="julianDate">TT date.</param>
+    /// <returns>Moon p, v, GCRS (au, au/d).</returns>
+    public static Matrix<double> ApproximateGeocentricMoonState(JulianDate julianDate)
+    {
+        var (d1, d2) = julianDate;
+        var pv = new double[6];
+        SofaEphemerides.Moon98(d1, d2, pv);
+        return Matrix<double>.FromFlatArray(2, 3, pv);
+    }
+
 }
