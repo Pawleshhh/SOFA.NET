@@ -44,4 +44,29 @@ internal class EphemeridesTest
             Assert.That(result[1, 2], Is.EqualTo(-0.1716132214378462047e-3).Within(1e-11));
         });
     }
+
+    [TestCase(2400000.5 - 320000, Planet.Earth, 
+        0.9308038666832975759,    0.3258319040261346000,    0.1422794544481140560,
+       -0.6429458958255170006e-2, 0.1468570657704237764e-1, 0.6406996426270981189e-2)]
+    [TestCase(2400000.5 + 43999.9, Planet.Mercury,
+        0.2945293959257430832,   -0.2452204176601049596,   -0.1615427700571978153,
+        0.1413867871404614441e-1, 0.1946548301104706582e-1, 0.8929809783898904786e-2)]
+    public void ApproximatePlanetState_Test(
+        double date,
+        Planet planet,
+        double x, double y, double z,
+        double xdot, double ydot, double zdot)
+    {
+        var jd = new JulianDate(date);
+        var result = Ephemerides.ApproximatePlanetState(jd, planet).Data;
+        Assert.Multiple(() =>
+        {
+            Assert.That(result[0, 0], Is.EqualTo(x).Within(1e-11));
+            Assert.That(result[0, 1], Is.EqualTo(y).Within(1e-11));
+            Assert.That(result[0, 2], Is.EqualTo(z).Within(1e-11));
+            Assert.That(result[1, 0], Is.EqualTo(xdot).Within(1e-11));
+            Assert.That(result[1, 1], Is.EqualTo(ydot).Within(1e-11));
+            Assert.That(result[1, 2], Is.EqualTo(zdot).Within(1e-11));
+        });
+    }
 }
