@@ -7,10 +7,11 @@ internal static class SofaTestHelper
 
     public static void AssertLastError(bool occured = false)
     {
-        var err = Marshal.GetLastWin32Error();
+        var err = Marshal.GetLastPInvokeError();
+        var msg = Marshal.GetLastPInvokeErrorMessage();
         if (occured)
         {
-            Assert.That(err, Is.Not.EqualTo(0));
+            Assert.That(err, Is.Not.EqualTo(0), $"Error code: {err}. Message: {msg}");
         }
         else
         {
