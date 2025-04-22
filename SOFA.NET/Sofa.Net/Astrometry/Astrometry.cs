@@ -29,4 +29,35 @@ public class Astrometry
         return new(result[0], result[1], result[2]);
     }
 
+    /// <summary>
+    /// For a geocentric observer, prepare star-independent astrometry
+    /// parameters for transformations between ICRS and GCRS coordinates.
+    /// The Earth ephemeris is supplied by the caller.
+    /// 
+    /// The parameters produced by this function are required in the
+    /// parallax, light deflection and aberration parts of the astrometric
+    /// transformation chain.
+    /// </summary>
+    /// <param name="julianDate">TDB Julian Date.</param>
+    /// <param name="barycentricEarthState">Earth barycentric pos/vel (au, au/day).</param>
+    /// <param name="heliocentricEarthPosition">Earth heliocentric position (au).</param>
+    /// <returns>
+    /// Star-independent astrometry parameters.
+    /// </returns>
+    public static StarIndependentParameters PrepareAstrometryParametersGeocentric(
+        JulianDate julianDate,
+        Matrix<double> barycentricEarthState,
+        Vector3<double> heliocentricEarthPosition)
+    {
+        var astrom = new ASTROM();
+        SofaAstrometry.Apcg(
+            julianDate.DayNumber,
+            julianDate.FractionOfDay,
+            barycentricEarthState.ToArray(),
+            heliocentricEarthPosition.AsArray(),
+            ref astrom);
+
+        return StarIndependentParameters.FromASTROM(astrom);
+    }
+
 }

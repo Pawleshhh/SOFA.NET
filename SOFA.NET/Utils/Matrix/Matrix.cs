@@ -8,6 +8,7 @@ public class Matrix<T>(int rows, int columns) : IMatrix<T>
 {
 
     private readonly T[,] values = new T[rows, columns];
+    private T[]? flattened = null;
 
     public T this[int row, int column] => this.values[row, column];
 
@@ -75,5 +76,15 @@ public class Matrix<T>(int rows, int columns) : IMatrix<T>
         }
 
         return matrix;
+    }
+
+    internal static Matrix<T> FromArrayZeroIfInvalid(int rows, int columns, T[] array)
+    {
+        if (array is null || array.Length != rows * columns)
+        {
+            return new Matrix<T>(rows, columns);
+        }
+
+        return FromFlatArray(rows, columns, array);
     }
 }

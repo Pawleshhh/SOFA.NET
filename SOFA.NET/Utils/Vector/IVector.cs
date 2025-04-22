@@ -10,4 +10,5 @@ public interface IVector<T> : IEquatable<IVector<T>>, IReadOnlyCollection<T>, IE
     public T Value(int index);
 
     public T[] AsArray();
+
 }
